@@ -4,7 +4,7 @@
 //the zero offest as a parameter in the function call.
 //TODO how to make this device specific so that the function is only called on the device that is starting up?
 
-// xxx
+// xxx 2
 // This #include statement was automatically added by the Particle IDE.
 #include <RunningAverage.h>
 #include <CellularHelper.h>
