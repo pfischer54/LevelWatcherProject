@@ -45,7 +45,7 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
+STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
 //STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
 //STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
@@ -137,7 +137,7 @@ void setup() {
     //
     Serial.printlnf("Startup: Running Setup");
 
-    //Particle.keepAlive(30);
+    Particle.keepAlive(30);  //Needed for 3rd party SIMS
 
     //Register functions to control the electron
     Particle.function("CloudResetFunction", cloudResetFunction);
