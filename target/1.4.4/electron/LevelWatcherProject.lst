@@ -7,35 +7,35 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .dynalib      00000004  08080018  08080018  00010018  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  2 .text         00008260  08080020  08080020  00010020  2**3
+  2 .text         00008270  08080020  08080020  00010020  2**3
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  3 .backup       00000004  40024000  08088280  00024000  2**2
+  3 .backup       00000004  40024000  08088290  00024000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  4 .data         00000100  20000000  08088284  00030000  2**2
+  4 .data         00000100  20000000  08088294  00030000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
   5 .bss          000005e0  20000100  20000100  00040100  2**3
                   ALLOC
-  6 .module_info_suffix 00000028  08088384  08088384  00038384  2**0
+  6 .module_info_suffix 00000028  08088394  08088394  00038394  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .module_info_crc 00000004  080883ac  080883ac  000383ac  2**0
+  7 .module_info_crc 00000004  080883bc  080883bc  000383bc  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .debug_info   000beeb5  00000000  00000000  000383b0  2**0
+  8 .debug_info   000beeb5  00000000  00000000  000383c0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_abbrev 00011e2b  00000000  00000000  000f7265  2**0
+  9 .debug_abbrev 00011e2b  00000000  00000000  000f7275  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000190c9  00000000  00000000  00109090  2**0
+ 10 .debug_loc    000190c9  00000000  00000000  001090a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_aranges 00002570  00000000  00000000  00122159  2**0
+ 11 .debug_aranges 00002570  00000000  00000000  00122169  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00003b50  00000000  00000000  001246c9  2**0
+ 12 .debug_ranges 00003b50  00000000  00000000  001246d9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_macro  0002a46f  00000000  00000000  00128219  2**0
+ 13 .debug_macro  0002a46e  00000000  00000000  00128229  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   0002aacf  00000000  00000000  00152688  2**0
+ 14 .debug_line   0002aacf  00000000  00000000  00152697  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    000abebe  00000000  00000000  0017d157  2**0
+ 15 .debug_str    000abebe  00000000  00000000  0017d166  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_frame  0000d460  00000000  00000000  00229018  2**2
+ 16 .debug_frame  0000d460  00000000  00000000  00229024  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -81,7 +81,7 @@ void* module_user_pre_init() {
  8080044:	bd08      	pop	{r3, pc}
  8080046:	bf00      	nop
  8080048:	20000000 	.word	0x20000000
- 808004c:	08088284 	.word	0x08088284
+ 808004c:	08088294 	.word	0x08088294
  8080050:	20000100 	.word	0x20000100
  8080054:	20000100 	.word	0x20000100
  8080058:	200006e0 	.word	0x200006e0
@@ -127,8 +127,8 @@ void module_user_init()
 }
  8080080:	bd70      	pop	{r4, r5, r6, pc}
  8080082:	bf00      	nop
- 8080084:	0808823c 	.word	0x0808823c
- 8080088:	08088280 	.word	0x08088280
+ 8080084:	08088244 	.word	0x08088244
+ 8080088:	08088288 	.word	0x08088288
 
 0808008c <module_user_setup>:
 
@@ -394,7 +394,7 @@ void sos () {
 
 0808018c <_Z7setZero6String>:
 //STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
-//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
+STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
 
 int setZero(String command)
@@ -628,7 +628,7 @@ class StringSumHelper : public String
  80802e8:	b01a      	add	sp, #104	; 0x68
  80802ea:	bd70      	pop	{r4, r5, r6, pc}
  80802ec:	20000000 	.word	0x20000000
- 80802f0:	080879c2 	.word	0x080879c2
+ 80802f0:	080879ca 	.word	0x080879ca
  80802f4:	080873ca 	.word	0x080873ca
  80802f8:	080873e2 	.word	0x080873e2
  80802fc:	080873e4 	.word	0x080873e4
@@ -1295,7 +1295,7 @@ public:
  80807a8:	20000008 	.word	0x20000008
  80807ac:	08087474 	.word	0x08087474
  80807b0:	08087477 	.word	0x08087477
- 80807b4:	080879c2 	.word	0x080879c2
+ 80807b4:	080879ca 	.word	0x080879ca
  80807b8:	0808747a 	.word	0x0808747a
  80807bc:	200003a8 	.word	0x200003a8
  80807c0:	080873e2 	.word	0x080873e2
@@ -1642,7 +1642,7 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  8080a7c:	080874dd 	.word	0x080874dd
  8080a80:	080873f1 	.word	0x080873f1
  8080a84:	200003e8 	.word	0x200003e8
- 8080a88:	080879c2 	.word	0x080879c2
+ 8080a88:	080879ca 	.word	0x080879ca
  8080a8c:	080874e7 	.word	0x080874e7
  8080a90:	200003f0 	.word	0x200003f0
  8080a94:	0808747a 	.word	0x0808747a
@@ -1657,7 +1657,7 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  8080ab8:	20000008 	.word	0x20000008
  8080abc:	200003a8 	.word	0x200003a8
  8080ac0:	20000000 	.word	0x20000000
- 8080ac4:	080879d4 	.word	0x080879d4
+ 8080ac4:	080879dc 	.word	0x080879dc
  8080ac8:	0808750b 	.word	0x0808750b
  8080acc:	0808746e 	.word	0x0808746e
 
@@ -1823,7 +1823,9 @@ JsonParserStatic<256, 20> parser;
  8080b76:	f002 fcf1 	bl	808355c <__aeabi_atexit>
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
+//STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
+STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
  8080b7a:	4a11      	ldr	r2, [pc, #68]	; (8080bc0 <_GLOBAL__sub_I_rebootSync+0xf0>)
  8080b7c:	4811      	ldr	r0, [pc, #68]	; (8080bc4 <_GLOBAL__sub_I_rebootSync+0xf4>)
  8080b7e:	4611      	mov	r1, r2
@@ -1836,12 +1838,12 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starti
 }
  8080b82:	b002      	add	sp, #8
  8080b84:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
-bool zeroingInProgress = false;
-bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
+//STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
+STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
  8080b88:	f001 b89c 	b.w	8081cc4 <cellular_credentials_set>
  8080b8c:	200003a9 	.word	0x200003a9
  8080b90:	20000370 	.word	0x20000370
@@ -1856,7 +1858,7 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starti
  8080bb4:	20000104 	.word	0x20000104
  8080bb8:	0808738c 	.word	0x0808738c
  8080bbc:	080800b9 	.word	0x080800b9
- 8080bc0:	080879b8 	.word	0x080879b8
+ 8080bc0:	080879c0 	.word	0x080879c0
  8080bc4:	08087522 	.word	0x08087522
 
 08080bc8 <_Z14startupHandlerPKcS0_>:
@@ -2040,10 +2042,10 @@ class StringSumHelper : public String
  8080d0e:	bd30      	pop	{r4, r5, pc}
  8080d10:	20000104 	.word	0x20000104
  8080d14:	200003d0 	.word	0x200003d0
- 8080d18:	08087570 	.word	0x08087570
- 8080d1c:	08087527 	.word	0x08087527
- 8080d20:	0808753c 	.word	0x0808753c
- 8080d24:	08087542 	.word	0x08087542
+ 8080d18:	08087576 	.word	0x08087576
+ 8080d1c:	0808752d 	.word	0x0808752d
+ 8080d20:	08087542 	.word	0x08087542
+ 8080d24:	08087548 	.word	0x08087548
  8080d28:	0808747a 	.word	0x0808747a
  8080d2c:	080873e2 	.word	0x080873e2
  8080d30:	08087480 	.word	0x08087480
@@ -2051,7 +2053,7 @@ class StringSumHelper : public String
  8080d38:	080873f3 	.word	0x080873f3
  8080d3c:	200003f8 	.word	0x200003f8
  8080d40:	200003a9 	.word	0x200003a9
- 8080d44:	08087568 	.word	0x08087568
+ 8080d44:	0808756e 	.word	0x0808756e
  8080d48:	200003b0 	.word	0x200003b0
 
 08080d4c <_ZN13JsonReferenceD1Ev>:
@@ -2100,7 +2102,7 @@ JsonBuffer::~JsonBuffer() {
 }
  8080d70:	4620      	mov	r0, r4
  8080d72:	bd10      	pop	{r4, pc}
- 8080d74:	08087598 	.word	0x08087598
+ 8080d74:	080875a0 	.word	0x080875a0
 
 08080d78 <_ZN10JsonBufferD0Ev>:
 
@@ -2155,7 +2157,7 @@ JsonParser::~JsonParser() {
  8080da6:	4620      	mov	r0, r4
  8080da8:	bd10      	pop	{r4, pc}
  8080daa:	bf00      	nop
- 8080dac:	080875d0 	.word	0x080875d0
+ 8080dac:	080875d8 	.word	0x080875d8
 
 08080db0 <_ZN10JsonParserD0Ev>:
 		JsonBuffer(buffer, bufferLen), tokens(tokens), maxTokens(maxTokens) {
@@ -2363,7 +2365,7 @@ JsonParser::JsonParser(char *buffer, size_t bufferLen, JsonParserGeneratorRK::js
 }
  8080e48:	bd10      	pop	{r4, pc}
  8080e4a:	bf00      	nop
- 8080e4c:	080875d0 	.word	0x080875d0
+ 8080e4c:	080875d8 	.word	0x080875d8
 
 08080e50 <_ZNK10JsonParser12getReferenceEv>:
 	return true;
@@ -2414,7 +2416,7 @@ JsonReference::JsonReference(const JsonParser *parser) : parser(parser), token(0
 	}
 }
  8080e66:	4770      	bx	lr
- 8080e68:	08087588 	.word	0x08087588
+ 8080e68:	08087590 	.word	0x08087590
 
 08080e6c <_ZNK10JsonParser10skipObjectEPKN21JsonParserGeneratorRK9jsmntok_tERS3_>:
 	}
@@ -2966,7 +2968,7 @@ bool JsonParser::getTokenValue(const JsonParserGeneratorRK::jsmntok_t *token, Js
  8081070:	2001      	movs	r0, #1
  8081072:	b004      	add	sp, #16
  8081074:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
- 8081078:	080875a4 	.word	0x080875a4
+ 8081078:	080875ac 	.word	0x080875ac
 
 0808107c <_ZNK10JsonParser13getTokenValueEPKN21JsonParserGeneratorRK9jsmntok_tER6String>:
 	return true;
@@ -3028,7 +3030,7 @@ JsonParserString::JsonParserString(String *str) : str(str), buf(0), bufLen(0), l
  80810ae:	b004      	add	sp, #16
  80810b0:	bd70      	pop	{r4, r5, r6, pc}
  80810b2:	bf00      	nop
- 80810b4:	080879b8 	.word	0x080879b8
+ 80810b4:	080879c0 	.word	0x080879c0
 
 080810b8 <_ZNK10JsonParser18getValueTokenByKeyEPKN21JsonParserGeneratorRK9jsmntok_tEPKcRS3_>:
 
@@ -3111,7 +3113,7 @@ bool JsonParser::getValueTokenByKey(const JsonParserGeneratorRK::jsmntok_t *cont
  8081104:	4620      	mov	r0, r4
  8081106:	b009      	add	sp, #36	; 0x24
  8081108:	e8bd 83f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, pc}
- 808110c:	080879b8 	.word	0x080879b8
+ 808110c:	080879c0 	.word	0x080879c0
 
 08081110 <_ZNK13JsonReference3keyEPKc>:
 }
@@ -3195,7 +3197,7 @@ JsonReference::JsonReference(const JsonParser *parser, const JsonParserGenerator
 }
  808113c:	b002      	add	sp, #8
  808113e:	bd70      	pop	{r4, r5, r6, pc}
- 8081140:	08087588 	.word	0x08087588
+ 8081140:	08087590 	.word	0x08087590
 
 08081144 <_ZN21JsonParserGeneratorRK10jsmn_parseEPNS_11jsmn_parserEPKcjPNS_9jsmntok_tEj>:
 
@@ -5030,24 +5032,24 @@ void CellularHelperCommonResponse::logCellularDebug(int type, const char *buf, i
 }
  8081900:	b00c      	add	sp, #48	; 0x30
  8081902:	bd70      	pop	{r4, r5, r6, pc}
- 8081904:	080879b8 	.word	0x080879b8
- 8081908:	080875f1 	.word	0x080875f1
- 808190c:	0808763a 	.word	0x0808763a
- 8081910:	080875e4 	.word	0x080875e4
- 8081914:	080875f9 	.word	0x080875f9
- 8081918:	08087604 	.word	0x08087604
- 808191c:	08087611 	.word	0x08087611
- 8081920:	08087620 	.word	0x08087620
- 8081924:	08087630 	.word	0x08087630
- 8081928:	08087648 	.word	0x08087648
- 808192c:	08087654 	.word	0x08087654
- 8081930:	0808765e 	.word	0x0808765e
- 8081934:	0808766b 	.word	0x0808766b
- 8081938:	08087675 	.word	0x08087675
+ 8081904:	080879c0 	.word	0x080879c0
+ 8081908:	080875f9 	.word	0x080875f9
+ 808190c:	08087642 	.word	0x08087642
+ 8081910:	080875ec 	.word	0x080875ec
+ 8081914:	08087601 	.word	0x08087601
+ 8081918:	0808760c 	.word	0x0808760c
+ 808191c:	08087619 	.word	0x08087619
+ 8081920:	08087628 	.word	0x08087628
+ 8081924:	08087638 	.word	0x08087638
+ 8081928:	08087650 	.word	0x08087650
+ 808192c:	0808765c 	.word	0x0808765c
+ 8081930:	08087666 	.word	0x08087666
+ 8081934:	08087673 	.word	0x08087673
+ 8081938:	0808767d 	.word	0x0808767d
  808193c:	20000410 	.word	0x20000410
- 8081940:	08087696 	.word	0x08087696
- 8081944:	08087699 	.word	0x08087699
- 8081948:	0808769c 	.word	0x0808769c
+ 8081940:	0808769e 	.word	0x0808769e
+ 8081944:	080876a1 	.word	0x080876a1
+ 8081948:	080876a4 	.word	0x080876a4
 
 0808194c <_ZN30CellularHelperRSSIQualResponse11postProcessEv>:
 
@@ -5102,7 +5104,7 @@ void CellularHelperRSSIQualResponse::postProcess() {
  8081978:	f06f 0302 	mvn.w	r3, #2
  808197c:	6063      	str	r3, [r4, #4]
  808197e:	bd10      	pop	{r4, pc}
- 8081980:	080876a3 	.word	0x080876a3
+ 8081980:	080876ab 	.word	0x080876ab
 
 08081984 <_ZN32CellularHelperPlusStringResponseC1Ev>:
  8081984:	b538      	push	{r3, r4, r5, lr}
@@ -5134,8 +5136,8 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  80819aa:	4620      	mov	r0, r4
  80819ac:	bd38      	pop	{r3, r4, r5, pc}
  80819ae:	bf00      	nop
- 80819b0:	080879b8 	.word	0x080879b8
- 80819b4:	080879d4 	.word	0x080879d4
+ 80819b0:	080879c0 	.word	0x080879c0
+ 80819b4:	080879dc 	.word	0x080879dc
 
 080819b8 <_ZNK19CellularHelperClass11getRSSIQualEv>:
 /**
@@ -5191,9 +5193,9 @@ class CellularHelperRSSIQualResponse : public CellularHelperPlusStringResponse {
  80819ee:	4620      	mov	r0, r4
  80819f0:	bd10      	pop	{r4, pc}
  80819f2:	bf00      	nop
- 80819f4:	080875e0 	.word	0x080875e0
- 80819f8:	080878db 	.word	0x080878db
- 80819fc:	080878df 	.word	0x080878df
+ 80819f4:	080875e8 	.word	0x080875e8
+ 80819f8:	080878e3 	.word	0x080878e3
+ 80819fc:	080878e7 	.word	0x080878e7
  8081a00:	08081787 	.word	0x08081787
 
 08081a04 <_ZNK19CellularHelperClass20appendBufferToStringER6StringPKcib>:
@@ -5352,7 +5354,7 @@ int CellularHelperPlusStringResponse::parse(int type, const char *buf, int len) 
  8081ac2:	b00b      	add	sp, #44	; 0x2c
  8081ac4:	bdf0      	pop	{r4, r5, r6, r7, pc}
  8081ac6:	bf00      	nop
- 8081ac8:	080879c5 	.word	0x080879c5
+ 8081ac8:	080879cd 	.word	0x080879cd
  8081acc:	20000408 	.word	0x20000408
 
 08081ad0 <_GLOBAL__sub_I_CellularHelper>:
@@ -6336,7 +6338,7 @@ SPIClass::SPIClass(HAL_SPI_Interface spi)
  8081ffa:	4620      	mov	r0, r4
  8081ffc:	bd70      	pop	{r4, r5, r6, pc}
  8081ffe:	bf00      	nop
- 8082000:	080879e0 	.word	0x080879e0
+ 8082000:	080879e8 	.word	0x080879e8
 
 08082004 <_ZN8SPIClass9isEnabledEv>:
   //To Do
@@ -7334,7 +7336,7 @@ String String::format(const char* fmt, ...)
  808235a:	b003      	add	sp, #12
  808235c:	4770      	bx	lr
  808235e:	bf00      	nop
- 8082360:	080879b8 	.word	0x080879b8
+ 8082360:	080879c0 	.word	0x080879c0
 
 08082364 <_ZN5Print5writeEPKhj>:
 
@@ -7733,7 +7735,7 @@ inline spark::Logger::Logger(const char *name) :
  80824aa:	4b02      	ldr	r3, [pc, #8]	; (80824b4 <_GLOBAL__sub_I__ZN5spark3LogE+0xc>)
  80824ac:	601a      	str	r2, [r3, #0]
  80824ae:	4770      	bx	lr
- 80824b0:	08087a5e 	.word	0x08087a5e
+ 80824b0:	08087a66 	.word	0x08087a66
  80824b4:	20000410 	.word	0x20000410
 
 080824b8 <_ZN10CloudClass12syncTimeDoneEv.isra.1>:
@@ -7958,8 +7960,8 @@ String TimeClass::timeFormatImpl(tm* calendar_time, const char* format, int time
  80825c4:	b024      	add	sp, #144	; 0x90
  80825c6:	e8bd 87f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
  80825ca:	bf00      	nop
- 80825cc:	08088105 	.word	0x08088105
- 80825d0:	08087ab8 	.word	0x08087ab8
+ 80825cc:	0808810d 	.word	0x0808810d
+ 80825d0:	08087ac0 	.word	0x08087ac0
 
 080825d4 <_ZN9TimeClass6formatElPKc>:
         ascstr[len-1] = 0; // remove final newline
@@ -8370,7 +8372,7 @@ void system_initialize_user_backup_ram()
  8082794:	f001 be7e 	b.w	8084494 <memcpy>
  8082798:	40024000 	.word	0x40024000
  808279c:	40024004 	.word	0x40024004
- 80827a0:	08088280 	.word	0x08088280
+ 80827a0:	08088290 	.word	0x08088290
 
 080827a4 <_Z27ctrl_request_custom_handlerP12ctrl_request>:
 bool __backup_ram_was_valid() { return false; }
@@ -8955,7 +8957,7 @@ public:
 	}
  80829b4:	4620      	mov	r0, r4
  80829b6:	bd38      	pop	{r3, r4, r5, pc}
- 80829b8:	08087ae8 	.word	0x08087ae8
+ 80829b8:	08087af0 	.word	0x08087af0
 
 080829bc <_ZNKSt8functionIFvRKN8particle5ErrorEEEclES3_>:
   template<typename _Res, typename... _ArgTypes>
@@ -10300,7 +10302,7 @@ IPAddress::IPAddress()
 }
  8082e78:	4770      	bx	lr
  8082e7a:	bf00      	nop
- 8082e7c:	08087b04 	.word	0x08087b04
+ 8082e7c:	08087b0c 	.word	0x08087b0c
 
 08082e80 <_ZN9IPAddressC1ERK16_HAL_IPAddress_t>:
 
@@ -10314,7 +10316,7 @@ IPAddress::IPAddress(const HAL_IPAddress& address)
 }
  8082e88:	4770      	bx	lr
  8082e8a:	bf00      	nop
- 8082e8c:	08087b04 	.word	0x08087b04
+ 8082e8c:	08087b0c 	.word	0x08087b0c
 
 08082e90 <_ZN9IPAddressC1Em>:
 IPAddress::IPAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
@@ -10342,7 +10344,7 @@ IPAddress::IPAddress(uint32_t address)
     *this = address;
 }
  8082e96:	4770      	bx	lr
- 8082e98:	08087b04 	.word	0x08087b04
+ 8082e98:	08087b0c 	.word	0x08087b0c
 
 08082e9c <_ZN9IPAddress8set_ipv4Ehhhh>:
     return address.ipv4!=0;
@@ -10379,7 +10381,7 @@ IPAddress::IPAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_oc
 }
  8082ec4:	b003      	add	sp, #12
  8082ec6:	bd30      	pop	{r4, r5, pc}
- 8082ec8:	08087b04 	.word	0x08087b04
+ 8082ec8:	08087b0c 	.word	0x08087b0c
 
 08082ecc <_ZN9USBSerial14blockOnOverrunEb>:
   HAL_USB_USART_Flush_Data(_serial);
@@ -10563,7 +10565,7 @@ USBSerial::USBSerial(HAL_USB_USART_Serial serial, const HAL_USB_USART_Config& co
 }
  8082f70:	4620      	mov	r0, r4
  8082f72:	bd10      	pop	{r4, pc}
- 8082f74:	08087b18 	.word	0x08087b18
+ 8082f74:	08087b20 	.word	0x08087b20
 
 08082f78 <_Z19acquireSerialBufferv>:
  8082f78:	b510      	push	{r4, lr}
@@ -10909,7 +10911,7 @@ public:
  80830fe:	bd38      	pop	{r3, r4, r5, pc}
  8083100:	20000474 	.word	0x20000474
  8083104:	2000046c 	.word	0x2000046c
- 8083108:	08087b48 	.word	0x08087b48
+ 8083108:	08087b50 	.word	0x08087b50
 
 0808310c <_ZN11USARTSerialD1Ev>:
 private:
@@ -11085,7 +11087,7 @@ USARTSerial::USARTSerial(HAL_USART_Serial serial, Ring_Buffer *rx_buffer, Ring_B
  80831b2:	4620      	mov	r0, r4
  80831b4:	bd10      	pop	{r4, pc}
  80831b6:	bf00      	nop
- 80831b8:	08087b7c 	.word	0x08087b7c
+ 80831b8:	08087b84 	.word	0x08087b84
 
 080831bc <_ZN11USARTSerial9isEnabledEv>:
 USARTSerial::operator bool() {
@@ -11362,7 +11364,7 @@ TwoWire::TwoWire(HAL_I2C_Interface i2c)
  80832de:	4620      	mov	r0, r4
  80832e0:	bd10      	pop	{r4, pc}
  80832e2:	bf00      	nop
- 80832e4:	08087bac 	.word	0x08087bac
+ 80832e4:	08087bb4 	.word	0x08087bb4
 
 080832e8 <_ZN7TwoWire5beginEv>:
   HAL_I2C_Stretch_Clock(_i2c, stretch, NULL);
@@ -11617,7 +11619,7 @@ IPAddress NetworkClass::resolve(const char* name) {
  80833e8:	605a      	str	r2, [r3, #4]
  80833ea:	4770      	bx	lr
  80833ec:	200004bc 	.word	0x200004bc
- 80833f0:	08087bd4 	.word	0x08087bd4
+ 80833f0:	08087bdc 	.word	0x08087bdc
 
 080833f4 <pinAvailable>:
 
@@ -13126,9 +13128,9 @@ TwoWire& __fetch_global_Wire()
  8084266:	4620      	mov	r0, r4
  8084268:	b006      	add	sp, #24
  808426a:	bd10      	pop	{r4, pc}
- 808426c:	08087c15 	.word	0x08087c15
- 8084270:	08087c00 	.word	0x08087c00
- 8084274:	08087c39 	.word	0x08087c39
+ 808426c:	08087c1d 	.word	0x08087c1d
+ 8084270:	08087c08 	.word	0x08087c08
+ 8084274:	08087c41 	.word	0x08087c41
 
 08084278 <atol>:
  8084278:	220a      	movs	r2, #10
@@ -13357,7 +13359,7 @@ TwoWire& __fetch_global_Wire()
  808447c:	4620      	mov	r0, r4
  808447e:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
  8084482:	bf00      	nop
- 8084484:	08087dc4 	.word	0x08087dc4
+ 8084484:	08087dcc 	.word	0x08087dcc
  8084488:	200006d4 	.word	0x200006d4
 
 0808448c <_localeconv_r>:
@@ -14035,19 +14037,19 @@ TwoWire& __fetch_global_Wire()
  8084b60:	3301      	adds	r3, #1
  8084b62:	e6d0      	b.n	8084906 <strftime+0x2c2>
  8084b64:	fffff894 	.word	0xfffff894
- 8084b68:	08087e33 	.word	0x08087e33
- 8084b6c:	080879b8 	.word	0x080879b8
- 8084b70:	08087e24 	.word	0x08087e24
- 8084b74:	08087e2b 	.word	0x08087e2b
- 8084b78:	08087e35 	.word	0x08087e35
- 8084b7c:	08087e37 	.word	0x08087e37
- 8084b80:	08087e45 	.word	0x08087e45
- 8084b84:	08087e3b 	.word	0x08087e3b
- 8084b88:	080875a0 	.word	0x080875a0
- 8084b8c:	08087e4a 	.word	0x08087e4a
+ 8084b68:	08087e3b 	.word	0x08087e3b
+ 8084b6c:	080879c0 	.word	0x080879c0
+ 8084b70:	08087e2c 	.word	0x08087e2c
+ 8084b74:	08087e33 	.word	0x08087e33
+ 8084b78:	08087e3d 	.word	0x08087e3d
+ 8084b7c:	08087e3f 	.word	0x08087e3f
+ 8084b80:	08087e4d 	.word	0x08087e4d
+ 8084b84:	08087e43 	.word	0x08087e43
+ 8084b88:	080875a8 	.word	0x080875a8
+ 8084b8c:	08087e52 	.word	0x08087e52
  8084b90:	fffff895 	.word	0xfffff895
- 8084b94:	08087e52 	.word	0x08087e52
- 8084b98:	08087e56 	.word	0x08087e56
+ 8084b94:	08087e5a 	.word	0x08087e5a
+ 8084b98:	08087e5e 	.word	0x08087e5e
  8084b9c:	692b      	ldr	r3, [r5, #16]
  8084b9e:	3301      	adds	r3, #1
  8084ba0:	e13c      	b.n	8084e1c <strftime+0x7d8>
@@ -14336,12 +14338,12 @@ TwoWire& __fetch_global_Wire()
  8084e90:	e03f      	b.n	8084f12 <strftime+0x8ce>
  8084e92:	bf00      	nop
  8084e94:	20000014 	.word	0x20000014
- 8084e98:	08087e65 	.word	0x08087e65
- 8084e9c:	08087e5b 	.word	0x08087e5b
- 8084ea0:	08087e60 	.word	0x08087e60
- 8084ea4:	08087e45 	.word	0x08087e45
+ 8084e98:	08087e6d 	.word	0x08087e6d
+ 8084e9c:	08087e63 	.word	0x08087e63
+ 8084ea0:	08087e68 	.word	0x08087e68
+ 8084ea4:	08087e4d 	.word	0x08087e4d
  8084ea8:	fffff894 	.word	0xfffff894
- 8084eac:	08087e52 	.word	0x08087e52
+ 8084eac:	08087e5a 	.word	0x08087e5a
  8084eb0:	6a2b      	ldr	r3, [r5, #32]
  8084eb2:	2b00      	cmp	r3, #0
  8084eb4:	db65      	blt.n	8084f82 <strftime+0x93e>
@@ -14436,7 +14438,7 @@ TwoWire& __fetch_global_Wire()
  8084f9c:	4620      	mov	r0, r4
  8084f9e:	b013      	add	sp, #76	; 0x4c
  8084fa0:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
- 8084fa4:	08087e6f 	.word	0x08087e6f
+ 8084fa4:	08087e77 	.word	0x08087e77
  8084fa8:	200000b4 	.word	0x200000b4
 
 08084fac <strlen>:
@@ -14874,7 +14876,7 @@ TwoWire& __fetch_global_Wire()
  8085392:	d00a      	beq.n	80853aa <_strtod_r+0x322>
  8085394:	e03b      	b.n	808540e <_strtod_r+0x386>
  8085396:	bf00      	nop
- 8085398:	08087e7c 	.word	0x08087e7c
+ 8085398:	08087e84 	.word	0x08087e84
  808539c:	7ff00000 	.word	0x7ff00000
  80853a0:	2b69      	cmp	r3, #105	; 0x69
  80853a2:	d002      	beq.n	80853aa <_strtod_r+0x322>
@@ -15140,14 +15142,14 @@ TwoWire& __fetch_global_Wire()
  808564e:	2800      	cmp	r0, #0
  8085650:	d1b5      	bne.n	80855be <_strtod_r+0x536>
  8085652:	e017      	b.n	8085684 <_strtod_r+0x5fc>
- 8085654:	08087e90 	.word	0x08087e90
- 8085658:	08087e93 	.word	0x08087e93
- 808565c:	08087ee1 	.word	0x08087ee1
- 8085660:	08087e9c 	.word	0x08087e9c
- 8085664:	08088140 	.word	0x08088140
- 8085668:	08088208 	.word	0x08088208
+ 8085654:	08087e98 	.word	0x08087e98
+ 8085658:	08087e9b 	.word	0x08087e9b
+ 808565c:	08087ee9 	.word	0x08087ee9
+ 8085660:	08087ea4 	.word	0x08087ea4
+ 8085664:	08088148 	.word	0x08088148
+ 8085668:	08088210 	.word	0x08088210
  808566c:	7ca00000 	.word	0x7ca00000
- 8085670:	08087eb0 	.word	0x08087eb0
+ 8085670:	08087eb8 	.word	0x08087eb8
  8085674:	7ff00000 	.word	0x7ff00000
  8085678:	fff80000 	.word	0xfff80000
  808567c:	7fefffff 	.word	0x7fefffff
@@ -16002,7 +16004,7 @@ TwoWire& __fetch_global_Wire()
  8085efe:	bf00      	nop
  8085f00:	200005b8 	.word	0x200005b8
  8085f04:	200005bc 	.word	0x200005bc
- 8085f08:	08088008 	.word	0x08088008
+ 8085f08:	08088010 	.word	0x08088010
 
 08085f0c <__tzcalc_limits>:
  8085f0c:	e92d 4ff7 	stmdb	sp!, {r0, r1, r2, r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -16128,7 +16130,7 @@ TwoWire& __fetch_global_Wire()
  808604c:	2000      	movs	r0, #0
  808604e:	b003      	add	sp, #12
  8086050:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
- 8086054:	08087dc4 	.word	0x08087dc4
+ 8086054:	08087dcc 	.word	0x08087dcc
  8086058:	00015180 	.word	0x00015180
 
 0808605c <__tz_lock>:
@@ -16421,17 +16423,17 @@ TwoWire& __fetch_global_Wire()
  8086334:	b00d      	add	sp, #52	; 0x34
  8086336:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
  808633a:	bf00      	nop
- 808633c:	08088104 	.word	0x08088104
+ 808633c:	0808810c 	.word	0x0808810c
  8086340:	200006d0 	.word	0x200006d0
  8086344:	200006d8 	.word	0x200006d8
- 8086348:	08088107 	.word	0x08088107
+ 8086348:	0808810f 	.word	0x0808810f
  808634c:	200006d4 	.word	0x200006d4
  8086350:	200000b4 	.word	0x200000b4
  8086354:	200006c3 	.word	0x200006c3
- 8086358:	0808810b 	.word	0x0808810b
- 808635c:	0808812e 	.word	0x0808812e
- 8086360:	0808811a 	.word	0x0808811a
- 8086364:	0808812d 	.word	0x0808812d
+ 8086358:	08088113 	.word	0x08088113
+ 808635c:	08088136 	.word	0x08088136
+ 8086360:	08088122 	.word	0x08088122
+ 8086364:	08088135 	.word	0x08088135
  8086368:	200006b8 	.word	0x200006b8
 
 0808636c <abs>:
@@ -17683,7 +17685,7 @@ TwoWire& __fetch_global_Wire()
  8086f5c:	e7f4      	b.n	8086f48 <__pow5mult+0x7c>
  8086f5e:	4638      	mov	r0, r7
  8086f60:	e8bd 83f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
- 8086f64:	08088230 	.word	0x08088230
+ 8086f64:	08088238 	.word	0x08088238
 
 08086f68 <__lshift>:
  8086f68:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -18128,294 +18130,297 @@ TwoWire& __fetch_global_Wire()
  80874ec:	3a22 2200 734c 7641 3a22 2200 734c 6853     ":."LsAv":."LsSh
  80874fc:	7641 3a22 7400 6369 4c6b 7665 6c65 5200     Av":.tickLevel.R
  808750c:	6d65 746f 2065 6552 6573 2074 6e49 7469     emote Reset Init
- 808751c:	6169 6574 0064 6933 746f 6300 756f 646c     iated.3iot.could
- 808752c:	6e20 746f 7020 7261 6573 6a20 6f73 006e      not parse json.
- 808753c:	7265 6f72 0072 657a 6f72 664f 7366 7465     error.zeroOffset
- 808754c:	6e49 6d4d 2820 7361 7320 6f74 6572 2064     InMm (as stored 
- 808755c:	6e6f 4120 757a 6572 3a29 0020 6553 7474     on Azure): .Sett
- 808756c:	6e69 2067 657a 6f72 664f 7366 7465 6e49     ing zeroOffsetIn
- 808757c:	6d4d 0000                                   Mm..
+ 808751c:	6169 6574 0064 6c67 626f 6c61 6164 6174     iated.globaldata
+ 808752c:	6300 756f 646c 6e20 746f 7020 7261 6573     .could not parse
+ 808753c:	6a20 6f73 006e 7265 6f72 0072 657a 6f72      json.error.zero
+ 808754c:	664f 7366 7465 6e49 6d4d 2820 7361 7320     OffsetInMm (as s
+ 808755c:	6f74 6572 2064 6e6f 4120 757a 6572 3a29     tored on Azure):
+ 808756c:	0020 6553 7474 6e69 2067 657a 6f72 664f      .Setting zeroOf
+ 808757c:	7366 7465 6e49 6d4d 0000 0000               fsetInMm....
 
-08087580 <_ZTV13JsonReference>:
+08087588 <_ZTV13JsonReference>:
 	...
- 8087588:	0d4d 0808 0d4f 0808                         M...O...
+ 8087590:	0d4d 0808 0d4f 0808                         M...O...
 
-08087590 <_ZTV10JsonBuffer>:
+08087598 <_ZTV10JsonBuffer>:
 	...
- 8087598:	0d5d 0808 0d79 0808 6c25 0075 3025 7834     ]...y...%lu.%04x
- 80875a8:	5c00 2575 3430 0058 7274 6575 2500 2a2e     .\u%04X.true.%.*
- 80875b8:	0066 6625 2500 2a2e 666c 2500 666c 0000     f.%f.%.*lf.%lf..
+ 80875a0:	0d5d 0808 0d79 0808 6c25 0075 3025 7834     ]...y...%lu.%04x
+ 80875b0:	5c00 2575 3430 0058 7274 6575 2500 2a2e     .\u%04X.true.%.*
+ 80875c0:	0066 6625 2500 2a2e 666c 2500 666c 0000     f.%f.%.*lf.%lf..
 
-080875c8 <_ZTV10JsonParser>:
+080875d0 <_ZTV10JsonParser>:
 	...
- 80875d0:	0d8d 0808 0db1 0808                         ........
+ 80875d8:	0d8d 0808 0db1 0808                         ........
 
-080875d8 <_ZTV30CellularHelperRSSIQualResponse>:
+080875e0 <_ZTV30CellularHelperRSSIQualResponse>:
 	...
- 80875e0:	1a49 0808 5954 4550 555f 4b4e 4f4e 4e57     I...TYPE_UNKNOWN
- 80875f0:	5400 5059 5f45 4b4f 5400 5059 5f45 5245     .TYPE_OK.TYPE_ER
- 8087600:	4f52 0052 5954 4550 435f 4e4f 454e 5443     ROR.TYPE_CONNECT
- 8087610:	5400 5059 5f45 4f4e 4143 5252 4549 0052     .TYPE_NOCARRIER.
- 8087620:	5954 4550 4e5f 444f 4149 544c 4e4f 0045     TYPE_NODIALTONE.
- 8087630:	5954 4550 425f 5355 0059 5954 4550 4e5f     TYPE_BUSY.TYPE_N
- 8087640:	414f 534e 4557 0052 5954 4550 505f 4f52     OANSWER.TYPE_PRO
- 8087650:	504d 0054 5954 4550 505f 554c 0053 5954     MPT.TYPE_PLUS.TY
- 8087660:	4550 415f 4f42 5452 4445 7400 7079 3d65     PE_ABORTED.type=
- 8087670:	7830 7825 6300 6c65 756c 616c 2072 6572     0x%x.cellular re
- 8087680:	7073 6e6f 6573 7420 7079 3d65 7325 6c20     sponse type=%s l
- 8087690:	6e65 253d 0064 6e5c 5c00 0072 7830 3025     en=%d.\n.\r.0x%0
- 80876a0:	7832 2500 2c64 6425 6b00 7965 7420 6f6f     2x.%d,%d.key too
- 80876b0:	6c20 6e6f 2067 656b 3d79 7325 7620 6c61      long key=%s val
- 80876c0:	6575 253d 0073 4152 0054 4d55 5354 4d00     ue=%s.RAT.UMTS.M
- 80876d0:	4343 4d00 434e 4c00 4341 4300 0049 5342     CC.MNC.LAC.CI.BS
- 80876e0:	4349 4100 4652 4e43 4100 4652 4e43 445f     IC.ARFCN.ARFCN_D
- 80876f0:	4445 5200 4c58 5645 5553 0042 5f54 4441     ED.RXLEVSUB.T_AD
- 8087700:	0056 5852 454c 0056 4c44 0046 4c55 0046     V.RXLEV.DLF.ULF.
- 8087710:	5352 5043 4c20 5645 5200 4341 5300 0043     RSCP LEV.RAC.SC.
- 8087720:	4345 304e 4c20 5645 7500 6b6e 6f6e 6e77     ECN0 LEV.unknown
- 8087730:	6b20 7965 253d 2073 6176 756c 3d65 7325      key=%s value=%s
- 8087740:	4d00 4343 003a 4152 3a54 4700 4d53 0020     .MCC:.RAT:.GSM .
- 8087750:	4344 2053 3831 3030 4500 4753 204d 3039     DCS 1800.ESGM 90
- 8087760:	0030 4d55 5354 0020 4733 7520 6b6e 6f6e     0.UMTS .3G unkno
- 8087770:	6e77 4400 5343 3120 3038 2030 726f 3120     wn.DCS 1800 or 1
- 8087780:	3039 0030 4745 4d53 3920 3030 3200 2047     900.EGSM 900.2G 
- 8087790:	6e75 6e6b 776f 006e 636d 3d63 6425 202c     unknown.mcc=%d, 
- 80877a0:	6e6d 3d63 6425 202c 616c 3d63 7825 6320     mnc=%d, lac=%x c
- 80877b0:	3d69 7825 6220 6e61 3d64 7325 7220 7373     i=%x band=%s rss
- 80877c0:	3d69 6425 7200 7461 553d 544d 2053 7325     i=%d.rat=UMTS %s
- 80877d0:	6420 666c 253d 2064 6c75 3d66 6425 7200      dlf=%d ulf=%d.r
- 80877e0:	7461 473d 4d53 2520 2073 7362 6369 253d     at=GSM %s bsic=%
- 80877f0:	2078 7261 6366 3d6e 6425 7220 6c78 7665     x arfcn=%d rxlev
- 8087800:	253d 0064 6573 7672 6369 2065 7325 6e00     =%d.service %s.n
- 8087810:	6965 6867 6f62 2072 6425 2520 0073 616c     eighbor %d %s.la
- 8087820:	3d74 6625 6c20 6e6f 253d 2066 6c61 3d74     t=%f lon=%f alt=
- 8087830:	6425 7520 636e 7265 6174 6e69 7974 253d     %d uncertainty=%
- 8087840:	0064 6176 696c 3d64 6166 736c 0065 6425     d.valid=false.%d
- 8087850:	252c 2c64 2522 2278 222c 7825 2c22 6425     ,%d,"%x","%x",%d
- 8087860:	7300 6174 3d74 6425 6c20 6361 303d 2578     .stat=%d lac=0x%
- 8087870:	2078 6963 303d 2578 2078 6172 3d74 6425     x ci=0x%x rat=%d
- 8087880:	4100 2b54 4743 4d4d 0a0d 4100 4954 0d30     .AT+CGMM...ATI0.
- 8087890:	000a 5441 432b 4d47 0d52 000a 5441 432b     ..AT+CGMR...AT+C
- 80878a0:	5347 0d4e 000a 5441 432b 4d47 0d49 000a     GSN...AT+CGMI...
- 80878b0:	4343 4449 4100 2b54 4343 4449 0a0d 5300     CCID.AT+CCID...S
- 80878c0:	5241 2d41 3452 5500 4f44 4e50 4100 2b54     ARA-R4.UDOPN.AT+
- 80878d0:	4455 504f 3d4e 6425 0a0d 4300 5153 4100     UDOPN=%d...CSQ.A
- 80878e0:	2b54 5343 0d51 000a 5441 432b 504f 3d53     T+CSQ...AT+COPS=
- 80878f0:	0d30 000a 706f 7265 7461 726f 6120 726c     0...operator alr
- 8087900:	6165 7964 2520 0073 5441 432b 504f 3d53     eady %s.AT+COPS=
- 8087910:	0d32 000a 5441 432b 504f 3d53 2c34 2c32     2...AT+COPS=4,2,
- 8087920:	2522 2273 0a0d 4300 4547 0044 5441 432b     "%s"...CGED.AT+C
- 8087930:	4547 3d44 6425 0a0d 5500 4c55 434f 4100     GED=%d...UULOC.A
- 8087940:	2b54 4c55 434f 4543 4c4c 303d 0a0d 4100     T+ULOCCELL=0...A
- 8087950:	2b54 4c55 434f 323d 322c 302c 252c 2c64     T+ULOC=2,2,0,%d,
- 8087960:	3035 3030 0a0d 4100 2b54 5243 4745 323d     5000...AT+CREG=2
- 8087970:	0a0d 4300 4552 0047 5441 432b 4552 3f47     ...CREG.AT+CREG?
- 8087980:	0a0d 4100 2b54 5243 4745 303d 0a0d 4100     ...AT+CREG=0...A
- 8087990:	2b54 5055 4e49 3d47 2522 2273 0a0d 5500     T+UPING="%s"...U
- 80879a0:	4e44 5253 004e 5441 552b 4e44 5253 3d4e     DNSRN.AT+UDNSRN=
- 80879b0:	2c30 2522 2273 0a0d 2500 2e75 7525 252e     0,"%s"...%u.%u.%
- 80879c0:	2e75 7525 0a00 252b 3a73 0020               u.%u..+%s: .
+ 80875e8:	1a49 0808 5954 4550 555f 4b4e 4f4e 4e57     I...TYPE_UNKNOWN
+ 80875f8:	5400 5059 5f45 4b4f 5400 5059 5f45 5245     .TYPE_OK.TYPE_ER
+ 8087608:	4f52 0052 5954 4550 435f 4e4f 454e 5443     ROR.TYPE_CONNECT
+ 8087618:	5400 5059 5f45 4f4e 4143 5252 4549 0052     .TYPE_NOCARRIER.
+ 8087628:	5954 4550 4e5f 444f 4149 544c 4e4f 0045     TYPE_NODIALTONE.
+ 8087638:	5954 4550 425f 5355 0059 5954 4550 4e5f     TYPE_BUSY.TYPE_N
+ 8087648:	414f 534e 4557 0052 5954 4550 505f 4f52     OANSWER.TYPE_PRO
+ 8087658:	504d 0054 5954 4550 505f 554c 0053 5954     MPT.TYPE_PLUS.TY
+ 8087668:	4550 415f 4f42 5452 4445 7400 7079 3d65     PE_ABORTED.type=
+ 8087678:	7830 7825 6300 6c65 756c 616c 2072 6572     0x%x.cellular re
+ 8087688:	7073 6e6f 6573 7420 7079 3d65 7325 6c20     sponse type=%s l
+ 8087698:	6e65 253d 0064 6e5c 5c00 0072 7830 3025     en=%d.\n.\r.0x%0
+ 80876a8:	7832 2500 2c64 6425 6b00 7965 7420 6f6f     2x.%d,%d.key too
+ 80876b8:	6c20 6e6f 2067 656b 3d79 7325 7620 6c61      long key=%s val
+ 80876c8:	6575 253d 0073 4152 0054 4d55 5354 4d00     ue=%s.RAT.UMTS.M
+ 80876d8:	4343 4d00 434e 4c00 4341 4300 0049 5342     CC.MNC.LAC.CI.BS
+ 80876e8:	4349 4100 4652 4e43 4100 4652 4e43 445f     IC.ARFCN.ARFCN_D
+ 80876f8:	4445 5200 4c58 5645 5553 0042 5f54 4441     ED.RXLEVSUB.T_AD
+ 8087708:	0056 5852 454c 0056 4c44 0046 4c55 0046     V.RXLEV.DLF.ULF.
+ 8087718:	5352 5043 4c20 5645 5200 4341 5300 0043     RSCP LEV.RAC.SC.
+ 8087728:	4345 304e 4c20 5645 7500 6b6e 6f6e 6e77     ECN0 LEV.unknown
+ 8087738:	6b20 7965 253d 2073 6176 756c 3d65 7325      key=%s value=%s
+ 8087748:	4d00 4343 003a 4152 3a54 4700 4d53 0020     .MCC:.RAT:.GSM .
+ 8087758:	4344 2053 3831 3030 4500 4753 204d 3039     DCS 1800.ESGM 90
+ 8087768:	0030 4d55 5354 0020 4733 7520 6b6e 6f6e     0.UMTS .3G unkno
+ 8087778:	6e77 4400 5343 3120 3038 2030 726f 3120     wn.DCS 1800 or 1
+ 8087788:	3039 0030 4745 4d53 3920 3030 3200 2047     900.EGSM 900.2G 
+ 8087798:	6e75 6e6b 776f 006e 636d 3d63 6425 202c     unknown.mcc=%d, 
+ 80877a8:	6e6d 3d63 6425 202c 616c 3d63 7825 6320     mnc=%d, lac=%x c
+ 80877b8:	3d69 7825 6220 6e61 3d64 7325 7220 7373     i=%x band=%s rss
+ 80877c8:	3d69 6425 7200 7461 553d 544d 2053 7325     i=%d.rat=UMTS %s
+ 80877d8:	6420 666c 253d 2064 6c75 3d66 6425 7200      dlf=%d ulf=%d.r
+ 80877e8:	7461 473d 4d53 2520 2073 7362 6369 253d     at=GSM %s bsic=%
+ 80877f8:	2078 7261 6366 3d6e 6425 7220 6c78 7665     x arfcn=%d rxlev
+ 8087808:	253d 0064 6573 7672 6369 2065 7325 6e00     =%d.service %s.n
+ 8087818:	6965 6867 6f62 2072 6425 2520 0073 616c     eighbor %d %s.la
+ 8087828:	3d74 6625 6c20 6e6f 253d 2066 6c61 3d74     t=%f lon=%f alt=
+ 8087838:	6425 7520 636e 7265 6174 6e69 7974 253d     %d uncertainty=%
+ 8087848:	0064 6176 696c 3d64 6166 736c 0065 6425     d.valid=false.%d
+ 8087858:	252c 2c64 2522 2278 222c 7825 2c22 6425     ,%d,"%x","%x",%d
+ 8087868:	7300 6174 3d74 6425 6c20 6361 303d 2578     .stat=%d lac=0x%
+ 8087878:	2078 6963 303d 2578 2078 6172 3d74 6425     x ci=0x%x rat=%d
+ 8087888:	4100 2b54 4743 4d4d 0a0d 4100 4954 0d30     .AT+CGMM...ATI0.
+ 8087898:	000a 5441 432b 4d47 0d52 000a 5441 432b     ..AT+CGMR...AT+C
+ 80878a8:	5347 0d4e 000a 5441 432b 4d47 0d49 000a     GSN...AT+CGMI...
+ 80878b8:	4343 4449 4100 2b54 4343 4449 0a0d 5300     CCID.AT+CCID...S
+ 80878c8:	5241 2d41 3452 5500 4f44 4e50 4100 2b54     ARA-R4.UDOPN.AT+
+ 80878d8:	4455 504f 3d4e 6425 0a0d 4300 5153 4100     UDOPN=%d...CSQ.A
+ 80878e8:	2b54 5343 0d51 000a 5441 432b 504f 3d53     T+CSQ...AT+COPS=
+ 80878f8:	0d30 000a 706f 7265 7461 726f 6120 726c     0...operator alr
+ 8087908:	6165 7964 2520 0073 5441 432b 504f 3d53     eady %s.AT+COPS=
+ 8087918:	0d32 000a 5441 432b 504f 3d53 2c34 2c32     2...AT+COPS=4,2,
+ 8087928:	2522 2273 0a0d 4300 4547 0044 5441 432b     "%s"...CGED.AT+C
+ 8087938:	4547 3d44 6425 0a0d 5500 4c55 434f 4100     GED=%d...UULOC.A
+ 8087948:	2b54 4c55 434f 4543 4c4c 303d 0a0d 4100     T+ULOCCELL=0...A
+ 8087958:	2b54 4c55 434f 323d 322c 302c 252c 2c64     T+ULOC=2,2,0,%d,
+ 8087968:	3035 3030 0a0d 4100 2b54 5243 4745 323d     5000...AT+CREG=2
+ 8087978:	0a0d 4300 4552 0047 5441 432b 4552 3f47     ...CREG.AT+CREG?
+ 8087988:	0a0d 4100 2b54 5243 4745 303d 0a0d 4100     ...AT+CREG=0...A
+ 8087998:	2b54 5055 4e49 3d47 2522 2273 0a0d 5500     T+UPING="%s"...U
+ 80879a8:	4e44 5253 004e 5441 552b 4e44 5253 3d4e     DNSRN.AT+UDNSRN=
+ 80879b8:	2c30 2522 2273 0a0d 2500 2e75 7525 252e     0,"%s"...%u.%u.%
+ 80879c8:	2e75 7525 0a00 252b 3a73 0020               u.%u..+%s: .
 
-080879cc <_ZTV32CellularHelperPlusStringResponse>:
+080879d4 <_ZTV32CellularHelperPlusStringResponse>:
 	...
- 80879d4:	1a49 0808                                   I...
+ 80879dc:	1a49 0808                                   I...
 
-080879d8 <_ZTV8SPIClass>:
+080879e0 <_ZTV8SPIClass>:
 	...
- 80879e0:	1fcd 0808 1fcf 0808 6162 6475 5300 7265     ........baud.Ser
- 80879f0:	6169 006c 5355 5342 7265 6169 316c 7400     ial.USBSerial1.t
- 8087a00:	7079 0065 6170 6172 006d 6d63 0064 6469     ype.param.cmd.id
- 8087a10:	6800 646e 7300 7274 006d 6966 746c 6c00     .hnd.strm.filt.l
- 8087a20:	6c76 6100 6464 6148 646e 656c 0072 6572     vl.addHandler.re
- 8087a30:	6f6d 6576 6148 646e 656c 0072 6e65 6d75     moveHandler.enum
- 8087a40:	6148 646e 656c 7372 4a00 4f53 534e 7274     Handlers.JSONStr
- 8087a50:	6165 4c6d 676f 6148 646e 656c 0072 7061     eamLogHandler.ap
- 8087a60:	0070 3025 3031 2075 5d00 0020 2928 203a     p.%010u .] .(): 
- 8087a70:	2000 005b 6f63 6564 3d20 0020 6564 6174     . [.code = .deta
- 8087a80:	6c69 2073 203d 6c00 006e 6e66 6300 646f     ils = .ln.fn.cod
- 8087a90:	0065 6564 6174 6c69 6e00 6e6f 0065 7274     e.detail.none.tr
- 8087aa0:	6361 0065 6e69 6f66 7700 7261 006e 6170     ace.info.warn.pa
- 8087ab0:	696e 0063 6c61 006c 2b25 3330 3a64 3025     nic.all.%+03d:%0
- 8087ac0:	7532 2500 2d59 6d25 252d 5464 4825 253a     2u.%Y-%m-%dT%H:%
- 8087ad0:	3a4d 5325 7a25 6100 6373 6974 656d 0000     M:%S%z.asctime..
+ 80879e8:	1fcd 0808 1fcf 0808 6162 6475 5300 7265     ........baud.Ser
+ 80879f8:	6169 006c 5355 5342 7265 6169 316c 7400     ial.USBSerial1.t
+ 8087a08:	7079 0065 6170 6172 006d 6d63 0064 6469     ype.param.cmd.id
+ 8087a18:	6800 646e 7300 7274 006d 6966 746c 6c00     .hnd.strm.filt.l
+ 8087a28:	6c76 6100 6464 6148 646e 656c 0072 6572     vl.addHandler.re
+ 8087a38:	6f6d 6576 6148 646e 656c 0072 6e65 6d75     moveHandler.enum
+ 8087a48:	6148 646e 656c 7372 4a00 4f53 534e 7274     Handlers.JSONStr
+ 8087a58:	6165 4c6d 676f 6148 646e 656c 0072 7061     eamLogHandler.ap
+ 8087a68:	0070 3025 3031 2075 5d00 0020 2928 203a     p.%010u .] .(): 
+ 8087a78:	2000 005b 6f63 6564 3d20 0020 6564 6174     . [.code = .deta
+ 8087a88:	6c69 2073 203d 6c00 006e 6e66 6300 646f     ils = .ln.fn.cod
+ 8087a98:	0065 6564 6174 6c69 6e00 6e6f 0065 7274     e.detail.none.tr
+ 8087aa8:	6361 0065 6e69 6f66 7700 7261 006e 6170     ace.info.warn.pa
+ 8087ab8:	696e 0063 6c61 006c 2b25 3330 3a64 3025     nic.all.%+03d:%0
+ 8087ac8:	7532 2500 2d59 6d25 252d 5464 4825 253a     2u.%Y-%m-%dT%H:%
+ 8087ad8:	3a4d 5325 7a25 6100 6373 6974 656d 0000     M:%S%z.asctime..
 
-08087ae0 <_ZTVSt15_Sp_counted_ptrIPN8particle6detail10FutureImplIbNS1_13FutureContextEEELN9__gnu_cxx12_Lock_policyE0EE>:
+08087ae8 <_ZTVSt15_Sp_counted_ptrIPN8particle6detail10FutureImplIbNS1_13FutureContextEEELN9__gnu_cxx12_Lock_policyE0EE>:
 	...
- 8087ae8:	284d 0808 2853 0808 2897 0808 2861 0808     M(..S(...(..a(..
- 8087af8:	284f 0808                                   O(..
+ 8087af0:	284d 0808 2853 0808 2897 0808 2861 0808     M(..S(...(..a(..
+ 8087b00:	284f 0808                                   O(..
 
-08087afc <_ZTV9IPAddress>:
+08087b04 <_ZTV9IPAddress>:
 	...
- 8087b04:	2e3d 0808 2e2d 0808 2e2f 0808               =...-.../...
+ 8087b0c:	2e3d 0808 2e2d 0808 2e2f 0808               =...-.../...
 
-08087b10 <_ZTV9USBSerial>:
+08087b18 <_ZTV9USBSerial>:
 	...
- 8087b18:	2ed1 0808 2f21 0808 2f2f 0808 2365 0808     ....!/..//..e#..
- 8087b28:	2f0d 0808 2ed3 0808 2ee9 0808 2f1b 0808     ./.........../..
- 8087b38:	2eff 0808 2ecd 0808                         ........
+ 8087b20:	2ed1 0808 2f21 0808 2f2f 0808 2365 0808     ....!/..//..e#..
+ 8087b30:	2f0d 0808 2ed3 0808 2ee9 0808 2f1b 0808     ./.........../..
+ 8087b40:	2eff 0808 2ecd 0808                         ........
 
-08087b40 <_ZTVN5spark13CellularClassE>:
+08087b48 <_ZTVN5spark13CellularClassE>:
 	...
- 8087b48:	30d3 0808 30c9 0808 30bf 0808 3031 0808     .0...0...0..10..
- 8087b58:	30b3 0808 30a7 0808 309b 0808 3093 0808     .0...0...0...0..
- 8087b68:	3089 0808 307f 0808 303b 0808               .0...0..;0..
+ 8087b50:	30d3 0808 30c9 0808 30bf 0808 3031 0808     .0...0...0..10..
+ 8087b60:	30b3 0808 30a7 0808 309b 0808 3093 0808     .0...0...0...0..
+ 8087b70:	3089 0808 307f 0808 303b 0808               .0...0..;0..
 
-08087b74 <_ZTV11USARTSerial>:
+08087b7c <_ZTV11USARTSerial>:
 	...
- 8087b7c:	310d 0808 315d 0808 316b 0808 2365 0808     .1..]1..k1..e#..
- 8087b8c:	3121 0808 3143 0808 312f 0808 3157 0808     !1..C1../1..W1..
- 8087b9c:	310f 0808 3113 0808                         .1...1..
+ 8087b84:	310d 0808 315d 0808 316b 0808 2365 0808     .1..]1..k1..e#..
+ 8087b94:	3121 0808 3143 0808 312f 0808 3157 0808     !1..C1../1..W1..
+ 8087ba4:	310f 0808 3113 0808                         .1...1..
 
-08087ba4 <_ZTV7TwoWire>:
+08087bac <_ZTV7TwoWire>:
 	...
- 8087bac:	326d 0808 32b7 0808 328f 0808 326f 0808     m2...2...2..o2..
- 8087bbc:	3297 0808 329f 0808 32a7 0808 32af 0808     .2...2...2...2..
+ 8087bb4:	326d 0808 32b7 0808 328f 0808 326f 0808     m2...2...2..o2..
+ 8087bc4:	3297 0808 329f 0808 32a7 0808 32af 0808     .2...2...2...2..
 
-08087bcc <_ZTVN5spark12NetworkClassE>:
+08087bd4 <_ZTVN5spark12NetworkClassE>:
 	...
- 8087bd4:	332b 0808 3335 0808 333f 0808 3349 0808     +3..53..?3..I3..
- 8087be4:	3353 0808 335f 0808 336b 0808 3377 0808     S3.._3..k3..w3..
- 8087bf4:	337f 0808 3389 0808 3395 0808               .3...3...3..
+ 8087bdc:	332b 0808 3335 0808 333f 0808 3349 0808     +3..53..?3..I3..
+ 8087bec:	3353 0808 335f 0808 336b 0808 3377 0808     S3.._3..k3..w3..
+ 8087bfc:	337f 0808 3389 0808 3395 0808               .3...3...3..
 
-08087c00 <day_name.4723>:
- 8087c00:	7553 4d6e 6e6f 7554 5765 6465 6854 4675     SunMonTueWedThuF
- 8087c10:	6972 6153 4a74                                   riSat
+08087c08 <day_name.4723>:
+ 8087c08:	7553 4d6e 6e6f 7554 5765 6465 6854 4675     SunMonTueWedThuF
+ 8087c18:	6972 6153 4a74                                   riSat
 
-08087c15 <mon_name.4724>:
- 8087c15:	614a 466e 6265 614d 4172 7270 614d 4a79     JanFebMarAprMayJ
- 8087c25:	6e75 754a 416c 6775 6553 4f70 7463 6f4e     unJulAugSepOctNo
- 8087c35:	4476 6365 2e25 7333 2520 332e 2573 6433     vDec%.3s %.3s%3d
- 8087c45:	2520 322e 3a64 2e25 6432 253a 322e 2064      %.2d:%.2d:%.2d 
- 8087c55:	6425 000a                                   %d..
+08087c1d <mon_name.4724>:
+ 8087c1d:	614a 466e 6265 614d 4172 7270 614d 4a79     JanFebMarAprMayJ
+ 8087c2d:	6e75 754a 416c 6775 6553 4f70 7463 6f4e     unJulAugSepOctNo
+ 8087c3d:	4476 6365 2e25 7333 2520 332e 2573 6433     vDec%.3s %.3s%3d
+ 8087c4d:	2520 322e 3a64 2e25 6432 253a 322e 2064      %.2d:%.2d:%.2d 
+ 8087c5d:	6425 000a                                   %d..
 
-08087c59 <_ctype_>:
- 8087c59:	2000 2020 2020 2020 2020 2828 2828 2028     .         ((((( 
- 8087c69:	2020 2020 2020 2020 2020 2020 2020 2020                     
- 8087c79:	8820 1010 1010 1010 1010 1010 1010 1010      ...............
- 8087c89:	0410 0404 0404 0404 0404 1004 1010 1010     ................
- 8087c99:	1010 4141 4141 4141 0101 0101 0101 0101     ..AAAAAA........
- 8087ca9:	0101 0101 0101 0101 0101 0101 1010 1010     ................
- 8087cb9:	1010 4242 4242 4242 0202 0202 0202 0202     ..BBBBBB........
- 8087cc9:	0202 0202 0202 0202 0202 0202 1010 1010     ................
- 8087cd9:	0020 0000 0000 0000 0000 0000 0000 0000      ...............
-	...
-
-08087d5c <__sf_fake_stdin>:
+08087c61 <_ctype_>:
+ 8087c61:	2000 2020 2020 2020 2020 2828 2828 2028     .         ((((( 
+ 8087c71:	2020 2020 2020 2020 2020 2020 2020 2020                     
+ 8087c81:	8820 1010 1010 1010 1010 1010 1010 1010      ...............
+ 8087c91:	0410 0404 0404 0404 0404 1004 1010 1010     ................
+ 8087ca1:	1010 4141 4141 4141 0101 0101 0101 0101     ..AAAAAA........
+ 8087cb1:	0101 0101 0101 0101 0101 0101 1010 1010     ................
+ 8087cc1:	1010 4242 4242 4242 0202 0202 0202 0202     ..BBBBBB........
+ 8087cd1:	0202 0202 0202 0202 0202 0202 1010 1010     ................
+ 8087ce1:	0020 0000 0000 0000 0000 0000 0000 0000      ...............
 	...
 
-08087d7c <__sf_fake_stdout>:
+08087d64 <__sf_fake_stdin>:
 	...
 
-08087d9c <__sf_fake_stderr>:
+08087d84 <__sf_fake_stdout>:
 	...
- 8087dbc:	4f50 4953 0058 002e                         POSIX...
 
-08087dc4 <__month_lengths>:
- 8087dc4:	001f 0000 001c 0000 001f 0000 001e 0000     ................
- 8087dd4:	001f 0000 001e 0000 001f 0000 001f 0000     ................
- 8087de4:	001e 0000 001f 0000 001e 0000 001f 0000     ................
- 8087df4:	001f 0000 001d 0000 001f 0000 001e 0000     ................
- 8087e04:	001f 0000 001e 0000 001f 0000 001f 0000     ................
- 8087e14:	001e 0000 001f 0000 001e 0000 001f 0000     ................
- 8087e24:	7325 2e25 642a 2500 2573 2e30 642a 2b00     %s%.*d.%s%0.*d.+
- 8087e34:	2d00 2500 6432 2500 322e 2f64 2e25 6432     .-.%2d.%.2d/%.2d
- 8087e44:	252f 322e 0064 2d59 6d25 252d 0064 2a2e     /%.2d.Y-%m-%d..*
- 8087e54:	0075 2e25 6433 2500 6c6c 0064 2e25 6432     u.%.3d.%lld.%.2d
- 8087e64:	253a 322e 3a64 2e25 6432 2500 302b 6c33     :%.2d:%.2d.%+03l
- 8087e74:	2564 322e 646c 0000                         d%.2ld..
+08087da4 <__sf_fake_stderr>:
+	...
+ 8087dc4:	4f50 4953 0058 002e                         POSIX...
 
-08087e7c <fpi.5342>:
- 8087e7c:	0035 0000 fbce ffff 03cb 0000 0001 0000     5...............
- 8087e8c:	0000 0000 666e 6900 696e 7974 0000 0000     ....nf.inity....
+08087dcc <__month_lengths>:
+ 8087dcc:	001f 0000 001c 0000 001f 0000 001e 0000     ................
+ 8087ddc:	001f 0000 001e 0000 001f 0000 001f 0000     ................
+ 8087dec:	001e 0000 001f 0000 001e 0000 001f 0000     ................
+ 8087dfc:	001f 0000 001d 0000 001f 0000 001e 0000     ................
+ 8087e0c:	001f 0000 001e 0000 001f 0000 001f 0000     ................
+ 8087e1c:	001e 0000 001f 0000 001e 0000 001f 0000     ................
+ 8087e2c:	7325 2e25 642a 2500 2573 2e30 642a 2b00     %s%.*d.%s%0.*d.+
+ 8087e3c:	2d00 2500 6432 2500 322e 2f64 2e25 6432     .-.%2d.%.2d/%.2d
+ 8087e4c:	252f 322e 0064 2d59 6d25 252d 0064 2a2e     /%.2d.Y-%m-%d..*
+ 8087e5c:	0075 2e25 6433 2500 6c6c 0064 2e25 6432     u.%.3d.%lld.%.2d
+ 8087e6c:	253a 322e 3a64 2e25 6432 2500 302b 6c33     :%.2d:%.2d.%+03l
+ 8087e7c:	2564 322e 646c 0000                         d%.2ld..
 
-08087e9c <fpinan.5378>:
- 8087e9c:	0034 0000 fbce ffff 03cb 0000 0001 0000     4...............
- 8087eac:	0000 0000                                   ....
+08087e84 <fpi.5342>:
+ 8087e84:	0035 0000 fbce ffff 03cb 0000 0001 0000     5...............
+ 8087e94:	0000 0000 666e 6900 696e 7974 0000 0000     ....nf.inity....
 
-08087eb0 <tinytens>:
- 8087eb0:	89bc 97d8 d2b2 3c9c a733 d5a8 f623 3949     .......<3...#.I9
- 8087ec0:	a73d 44f4 0ffd 32a5 979d cf8c ba08 255b     =..D...2......[%
- 8087ed0:	6f43 64ac 0628 1168 434c 545f 4d49 0045     Co.d(.h.LC_TIME.
- 8087ee0:	614a 006e 6546 0062 614d 0072 7041 0072     Jan.Feb.Mar.Apr.
- 8087ef0:	614d 0079 754a 006e 754a 006c 7541 0067     May.Jun.Jul.Aug.
- 8087f00:	6553 0070 634f 0074 6f4e 0076 6544 0063     Sep.Oct.Nov.Dec.
- 8087f10:	614a 756e 7261 0079 6546 7262 6175 7972     January.February
- 8087f20:	4d00 7261 6863 4100 7270 6c69 4a00 6e75     .March.April.Jun
- 8087f30:	0065 754a 796c 4100 6775 7375 0074 6553     e.July.August.Se
- 8087f40:	7470 6d65 6562 0072 634f 6f74 6562 0072     ptember.October.
- 8087f50:	6f4e 6576 626d 7265 4400 6365 6d65 6562     November.Decembe
- 8087f60:	0072 7553 006e 6f4d 006e 7554 0065 6557     r.Sun.Mon.Tue.We
- 8087f70:	0064 6854 0075 7246 0069 6153 0074 7553     d.Thu.Fri.Sat.Su
- 8087f80:	646e 7961 4d00 6e6f 6164 0079 7554 7365     nday.Monday.Tues
- 8087f90:	6164 0079 6557 6e64 7365 6164 0079 6854     day.Wednesday.Th
- 8087fa0:	7275 6473 7961 4600 6972 6164 0079 6153     ursday.Friday.Sa
- 8087fb0:	7574 6472 7961 2500 3a48 4d25 253a 0053     turday.%H:%M:%S.
- 8087fc0:	6d25 252f 2f64 7925 2500 2061 6225 2520     %m/%d/%y.%a %b %
- 8087fd0:	2065 4825 253a 3a4d 5325 2520 0059 4d41     e %H:%M:%S %Y.AM
- 8087fe0:	5000 004d 6125 2520 2062 6525 2520 3a48     .PM.%a %b %e %H:
- 8087ff0:	4d25 253a 2053 5a25 2520 0059 4925 253a     %M:%S %Z %Y.%I:%
- 8088000:	3a4d 5325 2520 0070                         M:%S %p.
+08087ea4 <fpinan.5378>:
+ 8087ea4:	0034 0000 fbce ffff 03cb 0000 0001 0000     4...............
+ 8087eb4:	0000 0000                                   ....
 
-08088008 <_C_time_locale>:
- 8088008:	7ee0 0808 7ee4 0808 7ee8 0808 7eec 0808     .~...~...~...~..
- 8088018:	7ef0 0808 7ef4 0808 7ef8 0808 7efc 0808     .~...~...~...~..
- 8088028:	7f00 0808 7f04 0808 7f08 0808 7f0c 0808     ................
- 8088038:	7f10 0808 7f18 0808 7f21 0808 7f27 0808     ........!...'...
- 8088048:	7ef0 0808 7f2d 0808 7f32 0808 7f37 0808     .~..-...2...7...
- 8088058:	7f3e 0808 7f48 0808 7f50 0808 7f59 0808     >...H...P...Y...
- 8088068:	7f62 0808 7f66 0808 7f6a 0808 7f6e 0808     b...f...j...n...
- 8088078:	7f72 0808 7f76 0808 7f7a 0808 7f7e 0808     r...v...z...~...
- 8088088:	7f85 0808 7f8c 0808 7f94 0808 7f9e 0808     ................
- 8088098:	7fa7 0808 7fae 0808 7fb7 0808 7fc0 0808     ................
- 80880a8:	7fc9 0808 7fde 0808 7fe1 0808 7fe4 0808     ................
- 80880b8:	7f10 0808 7f18 0808 7f21 0808 7f27 0808     ........!...'...
- 80880c8:	7ef0 0808 7f2d 0808 7f32 0808 7f37 0808     .~..-...2...7...
- 80880d8:	7f3e 0808 7f48 0808 7f50 0808 7f59 0808     >...H...P...Y...
- 80880e8:	7a0b 0808 7ffc 0808 79b8 0808 79b8 0808     .z.......y...y..
- 80880f8:	79b8 0808 79b8 0808 79b8 0808 5a54 4700     .y...y...y..TZ.G
- 8088108:	544d 2500 3031 5e5b 2d30 2c39 2d2b 255d     MT.%10[^0-9,+-]%
- 8088118:	006e 254d 7568 6e25 252e 7568 6e25 252e     n.M%hu%n.%hu%n.%
- 8088128:	7568 6e25 2f00 6825 2575 3a6e 6825 2575     hu%n./%hu%n:%hu%
- 8088138:	3a6e 6825 2575 006e                         n:%hu%n.
+08087eb8 <tinytens>:
+ 8087eb8:	89bc 97d8 d2b2 3c9c a733 d5a8 f623 3949     .......<3...#.I9
+ 8087ec8:	a73d 44f4 0ffd 32a5 979d cf8c ba08 255b     =..D...2......[%
+ 8087ed8:	6f43 64ac 0628 1168 434c 545f 4d49 0045     Co.d(.h.LC_TIME.
+ 8087ee8:	614a 006e 6546 0062 614d 0072 7041 0072     Jan.Feb.Mar.Apr.
+ 8087ef8:	614d 0079 754a 006e 754a 006c 7541 0067     May.Jun.Jul.Aug.
+ 8087f08:	6553 0070 634f 0074 6f4e 0076 6544 0063     Sep.Oct.Nov.Dec.
+ 8087f18:	614a 756e 7261 0079 6546 7262 6175 7972     January.February
+ 8087f28:	4d00 7261 6863 4100 7270 6c69 4a00 6e75     .March.April.Jun
+ 8087f38:	0065 754a 796c 4100 6775 7375 0074 6553     e.July.August.Se
+ 8087f48:	7470 6d65 6562 0072 634f 6f74 6562 0072     ptember.October.
+ 8087f58:	6f4e 6576 626d 7265 4400 6365 6d65 6562     November.Decembe
+ 8087f68:	0072 7553 006e 6f4d 006e 7554 0065 6557     r.Sun.Mon.Tue.We
+ 8087f78:	0064 6854 0075 7246 0069 6153 0074 7553     d.Thu.Fri.Sat.Su
+ 8087f88:	646e 7961 4d00 6e6f 6164 0079 7554 7365     nday.Monday.Tues
+ 8087f98:	6164 0079 6557 6e64 7365 6164 0079 6854     day.Wednesday.Th
+ 8087fa8:	7275 6473 7961 4600 6972 6164 0079 6153     ursday.Friday.Sa
+ 8087fb8:	7574 6472 7961 2500 3a48 4d25 253a 0053     turday.%H:%M:%S.
+ 8087fc8:	6d25 252f 2f64 7925 2500 2061 6225 2520     %m/%d/%y.%a %b %
+ 8087fd8:	2065 4825 253a 3a4d 5325 2520 0059 4d41     e %H:%M:%S %Y.AM
+ 8087fe8:	5000 004d 6125 2520 2062 6525 2520 3a48     .PM.%a %b %e %H:
+ 8087ff8:	4d25 253a 2053 5a25 2520 0059 4925 253a     %M:%S %Z %Y.%I:%
+ 8088008:	3a4d 5325 2520 0070                         M:%S %p.
 
-08088140 <__mprec_tens>:
- 8088140:	0000 0000 0000 3ff0 0000 0000 0000 4024     .......?......$@
- 8088150:	0000 0000 0000 4059 0000 0000 4000 408f     ......Y@.....@.@
- 8088160:	0000 0000 8800 40c3 0000 0000 6a00 40f8     .......@.....j.@
- 8088170:	0000 0000 8480 412e 0000 0000 12d0 4163     .......A......cA
- 8088180:	0000 0000 d784 4197 0000 0000 cd65 41cd     .......A....e..A
- 8088190:	0000 2000 a05f 4202 0000 e800 4876 4237     ... _..B....vH7B
- 80881a0:	0000 a200 1a94 426d 0000 e540 309c 42a2     ......mB..@..0.B
- 80881b0:	0000 1e90 bcc4 42d6 0000 2634 6bf5 430c     .......B..4&.k.C
- 80881c0:	8000 37e0 c379 4341 a000 85d8 3457 4376     ...7y.AC....W4vC
- 80881d0:	c800 674e c16d 43ab 3d00 6091 58e4 43e1     ..Ngm..C.=.`.X.C
- 80881e0:	8c40 78b5 af1d 4415 ef50 d6e2 1ae4 444b     @..x...DP.....KD
- 80881f0:	d592 064d f0cf 4480 4af6 c7e1 2d02 44b5     ..M....D.J...-.D
- 8088200:	9db4 79d9 7843 44ea                         ...yCx.D
+08088010 <_C_time_locale>:
+ 8088010:	7ee8 0808 7eec 0808 7ef0 0808 7ef4 0808     .~...~...~...~..
+ 8088020:	7ef8 0808 7efc 0808 7f00 0808 7f04 0808     .~...~..........
+ 8088030:	7f08 0808 7f0c 0808 7f10 0808 7f14 0808     ................
+ 8088040:	7f18 0808 7f20 0808 7f29 0808 7f2f 0808     .... ...).../...
+ 8088050:	7ef8 0808 7f35 0808 7f3a 0808 7f3f 0808     .~..5...:...?...
+ 8088060:	7f46 0808 7f50 0808 7f58 0808 7f61 0808     F...P...X...a...
+ 8088070:	7f6a 0808 7f6e 0808 7f72 0808 7f76 0808     j...n...r...v...
+ 8088080:	7f7a 0808 7f7e 0808 7f82 0808 7f86 0808     z...~...........
+ 8088090:	7f8d 0808 7f94 0808 7f9c 0808 7fa6 0808     ................
+ 80880a0:	7faf 0808 7fb6 0808 7fbf 0808 7fc8 0808     ................
+ 80880b0:	7fd1 0808 7fe6 0808 7fe9 0808 7fec 0808     ................
+ 80880c0:	7f18 0808 7f20 0808 7f29 0808 7f2f 0808     .... ...).../...
+ 80880d0:	7ef8 0808 7f35 0808 7f3a 0808 7f3f 0808     .~..5...:...?...
+ 80880e0:	7f46 0808 7f50 0808 7f58 0808 7f61 0808     F...P...X...a...
+ 80880f0:	7a13 0808 8004 0808 79c0 0808 79c0 0808     .z.......y...y..
+ 8088100:	79c0 0808 79c0 0808 79c0 0808 5a54 4700     .y...y...y..TZ.G
+ 8088110:	544d 2500 3031 5e5b 2d30 2c39 2d2b 255d     MT.%10[^0-9,+-]%
+ 8088120:	006e 254d 7568 6e25 252e 7568 6e25 252e     n.M%hu%n.%hu%n.%
+ 8088130:	7568 6e25 2f00 6825 2575 3a6e 6825 2575     hu%n./%hu%n:%hu%
+ 8088140:	3a6e 6825 2575 006e                         n:%hu%n.
 
-08088208 <__mprec_bigtens>:
- 8088208:	8000 37e0 c379 4341 6e17 b505 b8b5 4693     ...7y.AC.n.....F
- 8088218:	f9f5 e93f 4f03 4d38 1d32 f930 7748 5a82     ..?..O8M2.0.Hw.Z
- 8088228:	bf3c 7f73 4fdd 7515                         <.s..O.u
+08088148 <__mprec_tens>:
+ 8088148:	0000 0000 0000 3ff0 0000 0000 0000 4024     .......?......$@
+ 8088158:	0000 0000 0000 4059 0000 0000 4000 408f     ......Y@.....@.@
+ 8088168:	0000 0000 8800 40c3 0000 0000 6a00 40f8     .......@.....j.@
+ 8088178:	0000 0000 8480 412e 0000 0000 12d0 4163     .......A......cA
+ 8088188:	0000 0000 d784 4197 0000 0000 cd65 41cd     .......A....e..A
+ 8088198:	0000 2000 a05f 4202 0000 e800 4876 4237     ... _..B....vH7B
+ 80881a8:	0000 a200 1a94 426d 0000 e540 309c 42a2     ......mB..@..0.B
+ 80881b8:	0000 1e90 bcc4 42d6 0000 2634 6bf5 430c     .......B..4&.k.C
+ 80881c8:	8000 37e0 c379 4341 a000 85d8 3457 4376     ...7y.AC....W4vC
+ 80881d8:	c800 674e c16d 43ab 3d00 6091 58e4 43e1     ..Ngm..C.=.`.X.C
+ 80881e8:	8c40 78b5 af1d 4415 ef50 d6e2 1ae4 444b     @..x...DP.....KD
+ 80881f8:	d592 064d f0cf 4480 4af6 c7e1 2d02 44b5     ..M....D.J...-.D
+ 8088208:	9db4 79d9 7843 44ea                         ...yCx.D
 
-08088230 <p05.5385>:
- 8088230:	0005 0000 0019 0000 007d 0000               ........}...
+08088210 <__mprec_bigtens>:
+ 8088210:	8000 37e0 c379 4341 6e17 b505 b8b5 4693     ...7y.AC.n.....F
+ 8088220:	f9f5 e93f 4f03 4d38 1d32 f930 7748 5a82     ..?..O8M2.0.Hw.Z
+ 8088230:	bf3c 7f73 4fdd 7515                         <.s..O.u
 
-0808823c <link_const_variable_data_end>:
- 808823c:	08080ad1 	.word	0x08080ad1
- 8088240:	0808157b 	.word	0x0808157b
- 8088244:	0808167f 	.word	0x0808167f
- 8088248:	08081783 	.word	0x08081783
- 808824c:	08081ad1 	.word	0x08081ad1
- 8088250:	0808201d 	.word	0x0808201d
- 8088254:	080824a9 	.word	0x080824a9
- 8088258:	08082689 	.word	0x08082689
- 808825c:	080826e1 	.word	0x080826e1
- 8088260:	080830dd 	.word	0x080830dd
- 8088264:	080833e1 	.word	0x080833e1
- 8088268:	08083491 	.word	0x08083491
- 808826c:	080834ed 	.word	0x080834ed
- 8088270:	08083571 	.word	0x08083571
- 8088274:	080835f5 	.word	0x080835f5
- 8088278:	080836b9 	.word	0x080836b9
- 808827c:	0808377d 	.word	0x0808377d
+08088238 <p05.5385>:
+ 8088238:	0005 0000 0019 0000 007d 0000               ........}...
+
+08088244 <link_const_variable_data_end>:
+ 8088244:	08080ad1 	.word	0x08080ad1
+ 8088248:	0808157b 	.word	0x0808157b
+ 808824c:	0808167f 	.word	0x0808167f
+ 8088250:	08081783 	.word	0x08081783
+ 8088254:	08081ad1 	.word	0x08081ad1
+ 8088258:	0808201d 	.word	0x0808201d
+ 808825c:	080824a9 	.word	0x080824a9
+ 8088260:	08082689 	.word	0x08082689
+ 8088264:	080826e1 	.word	0x080826e1
+ 8088268:	080830dd 	.word	0x080830dd
+ 808826c:	080833e1 	.word	0x080833e1
+ 8088270:	08083491 	.word	0x08083491
+ 8088274:	080834ed 	.word	0x080834ed
+ 8088278:	08083571 	.word	0x08083571
+ 808827c:	080835f5 	.word	0x080835f5
+ 8088280:	080836b9 	.word	0x080836b9
+ 8088284:	0808377d 	.word	0x0808377d
+
+08088288 <link_constructors_end>:
+	...
