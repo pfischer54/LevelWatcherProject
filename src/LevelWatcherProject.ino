@@ -45,6 +45,7 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
+
 //STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8935....7338
 STARTUP(cellular_credentials_set("mokanix", "", "", NULL));  // SIM 8944....2714
 //STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444 ending 0953
