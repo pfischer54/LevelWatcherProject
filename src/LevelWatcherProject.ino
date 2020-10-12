@@ -17,8 +17,9 @@ const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 60 * 60 * 1000;      //60*60*1000;
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
 const unsigned int ZEROING_LOOP_DELAY = 5000;       //Use shortish dealy while executing zeroing function
 const unsigned int STARTUP_LOOP_DELAY = 10000;      //Use shortish dealy while waiting for startup handler to return and complete startup process
-const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average;
-const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average;
+// Two averaging buckets are provided, short and long averaging
+const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average for long term average;
+const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average for short term average;
 const double FOUR_MA_OFFSET_IN_BITS = 6430;         //3840.0;  //3840 for 120 Ohm, 6400 for 200 Ohm
 const double MAX_16_BIT_ANALOGUE_BIT_VALUE = 32154; // 19200.0;  //19200 for 120 Ohm, 32000 for 200 Ohm-- see ndc datasheet on ADS1015
 const double SENSOR_FULL_RANGE_IN_MM = 2000.0;
@@ -30,8 +31,9 @@ unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; //Loop delay default
 int levelSensor = A0;                               //  Analogue input channel
 int zeroVolt = A1;
 int zeroVoltSample = 0;
-int waterLevelSample = 0;
+int waterLevelSampleReading = 0;
 int sample = 1;
+// Two averaging buckets are provided, short and long averaging
 RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
 RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
 String data = String(80);
@@ -46,8 +48,8 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
-//STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
+STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
 //STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
 int setZero(String command)
@@ -198,16 +200,16 @@ void loop()
 
     //  System.sleep(10);
     //  delay(8000);
-    waterLevelSample = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
-    if (waterLevelSample > 1 and waterLevelSample <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
+    waterLevelSampleReading = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
+    if (waterLevelSampleReading > 1 and waterLevelSampleReading <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
     {
         //add sample if not an outlier
         //sometimes you get a duff reading, usually 0.  As we are 4-20mA must be greater than ...
-        waterLevelInMm = (waterLevelSample - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
+        waterLevelInMm = (waterLevelSampleReading - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
         longAveragingArray.addValue(waterLevelInMm);
         shortAveragingArray.addValue(waterLevelInMm);
     }
-    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSample) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
+    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSampleReading) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
 
     if (sample == LONG_SAMPLE_SIZE)
     {
@@ -233,7 +235,7 @@ void loop()
     data = String("{") +
            String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
            String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
-           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSample) + String("\",") +
+           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSampleReading) + String("\",") +
            String("\"LsMm\":") + String("\"") + String::format("%4.1f", waterLevelInMm) + String("\",") +
            String("\"LsAv\":") + String("\"") + String::format("%4.1f", longAveragingArray.getAverage()) + String("\",") +
            String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
