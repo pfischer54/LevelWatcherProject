@@ -3,14 +3,14 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "h:/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
+#line 1 "c:/Users/P/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
 //Version info
+//master branch
 //Includes sartup call to get and set zero offset in mm.
 // This is done by publishing a startup event which triggers a function call to the device that includes
 //the zero offest as a parameter in the function call.
 //TODO how to make this device specific so that the function is only called on the device that is starting up?
 
-// xxx 2
 // This #include statement was automatically added by the Particle IDE.
 #include <RunningAverage.h>
 #include <CellularHelper.h>
@@ -27,7 +27,7 @@ void blinkLong(int times);
 void blinkShort(int times);
 void setup();
 void loop();
-#line 14 "h:/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
+#line 14 "c:/Users/P/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
 const unsigned long REBOOT_INTERVAL_IN_MS = 14*24*3600*1000;  // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 60*60*1000; //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
@@ -62,9 +62,9 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8953
-STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
-//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8935....7338
+STARTUP(cellular_credentials_set("mokanix", "", "", NULL));  // SIM 8944....2714
+//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444 ending 0953
 
 
 int setZero(String command)
