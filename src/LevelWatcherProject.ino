@@ -29,7 +29,7 @@ unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; //Loop delay default
 int levelSensor = A0;                               //  Analogue input channel
 int zeroVolt = A1;
 int zeroVoltSample = 0;
-int waterLevelSample = 0;
+int waterLevelSampleReading = 0;
 int sample = 1;
 RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
 RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
@@ -198,16 +198,16 @@ void loop()
 
     //  System.sleep(10);
     //  delay(8000);
-    waterLevelSample = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
-    if (waterLevelSample > 1 and waterLevelSample <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
+    waterLevelSampleReading = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
+    if (waterLevelSampleReading > 1 and waterLevelSampleReading <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
     {
         //add sample if not an outlier
         //sometimes you get a duff reading, usually 0.  As we are 4-20mA must be greater than ...
-        waterLevelInMm = (waterLevelSample - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
+        waterLevelInMm = (waterLevelSampleReading - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
         longAveragingArray.addValue(waterLevelInMm);
         shortAveragingArray.addValue(waterLevelInMm);
     }
-    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSample) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
+    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSampleReading) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
 
     if (sample == LONG_SAMPLE_SIZE)
     {
@@ -233,7 +233,7 @@ void loop()
     data = String("{") +
            String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
            String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
-           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSample) + String("\",") +
+           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSampleReading) + String("\",") +
            String("\"LsMm\":") + String("\"") + String::format("%4.1f", waterLevelInMm) + String("\",") +
            String("\"LsAv\":") + String("\"") + String::format("%4.1f", longAveragingArray.getAverage()) + String("\",") +
            String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
