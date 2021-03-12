@@ -49,7 +49,7 @@ JsonParserStatic<256, 20> parser;
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
 //STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
-STARTUP(cellular_credentials_set("mokanix", "", "", NULL));
+STARTUP(cellular_credentials_set("luner", "", "", NULL));
 //STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
 int setZero(String command)
@@ -214,7 +214,7 @@ void loop()
     if (sample == LONG_SAMPLE_SIZE)
     {
         sample = -1; //  Hit the buffers no need to count anymore
-        if (zeroingInProgress)
+        if (zeroingInProgress)  //This is true if a cloud call has been made to set zero
         {
 
             zeroOffsetInMm = longAveragingArray.getAverage();
@@ -253,5 +253,5 @@ void loop()
     if (zeroingInProgress)
         delay(ZEROING_LOOP_DELAY); //Use shorter delay when averaging for zero...
     else
-        delay(loopDelay); //10 min: 600000, 1 min: 60000, 10 sec: 10000,
+        delay(loopDelay); //10 min: 600,000 1 min: 60,000 10 sec: 10,000
 }
