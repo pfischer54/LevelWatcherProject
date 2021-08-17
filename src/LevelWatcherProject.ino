@@ -1,6 +1,6 @@
 //Version info
 
-//This is branch V2 ...
+//This is branch V2 ... Working reference branch.
 //Includes startup call to get and set zero offset in mm.
 // This is done by publishing a startup event which triggers a function call to the device that includes
 //the zero offest as a parameter in the function call.
