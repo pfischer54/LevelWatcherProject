@@ -1,6 +1,7 @@
 //Version info
-//master branch.  This is WIP branch.
-//Includes sartup call to get and set zero offset in mm.
+
+//This is branch V2 ... Working reference branch. Only apply bug fixes etc to this branch.
+//Includes startup call to get and set zero offset in mm.
 // This is done by publishing a startup event which triggers a function call to the device that includes
 //the zero offest as a parameter in the function call.
 //TODO how to make this device specific so that the function is only called on the device that is starting up?
@@ -14,13 +15,21 @@
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 60 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
-const unsigned int ZEROING_LOOP_DELAY = 5000;       //Use shortish dealy while executing zeroing function
-const unsigned int STARTUP_LOOP_DELAY = 10000;      //Use shortish dealy while waiting for startup handler to return and complete startup process
-const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average;
-const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average;
+const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
+const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
+// Two averaging buckets are provided, short and long averaging
+const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average for long term average;
+const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average for short term average;
 const double FOUR_MA_OFFSET_IN_BITS = 6430;         //3840.0;  //3840 for 120 Ohm, 6400 for 200 Ohm
 const double MAX_16_BIT_ANALOGUE_BIT_VALUE = 32154; // 19200.0;  //19200 for 120 Ohm, 32000 for 200 Ohm-- see ndc datasheet on ADS1015
 const double SENSOR_FULL_RANGE_IN_MM = 2000.0;
+
+//LEDs timings etc
+const int LONG_BLINK_MS = 600;
+const int SHORT_BLINK_MS = 200;
+const int BLINK_OFF_DELAY_MS = 200;
+const int STARTUP_BLINK_FREQUENCY = 4;
+const int NORMAL_LOOP_BLINK_FREQUENCY = 1;
 
 unsigned long rebootSync = 0;
 bool resetFlag = false;
@@ -31,6 +40,7 @@ int zeroVolt = A1;
 int zeroVoltSample = 0;
 int waterLevelSampleReading = 0;
 int sample = 1;
+// Two averaging buckets are provided, short and long averaging
 RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
 RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
 String data = String(80);
@@ -44,11 +54,13 @@ bool zeroingInProgress = false;
 bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
-//STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
+//Cellular constants
+String apn = "luner";
 
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL));  //globalM2M SIM starting 8935....7338
-STARTUP(cellular_credentials_set("mokanix", "", "", NULL)); // SIM 8944....2714
-//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444 ending 0953
+//STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
+STARTUP(cellular_credentials_set(apn, "", "", NULL));
+//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
 int setZero(String command)
 {
@@ -117,14 +129,14 @@ void blink(unsigned long onTime)
     delay(onTime);
     // Then we'll turn it off...
     digitalWrite(onboardLed, LOW);
-    delay(200);
+    delay(BLINK_OFF_DELAY_MS);
 }
 
 void blinkLong(int times)
 {
     for (int i = 0; i < times; i++)
     {
-        blink(600);
+        blink(LONG_BLINK_MS);
     }
 }
 
@@ -132,7 +144,7 @@ void blinkShort(int times)
 {
     for (int i = 0; i < times; i++)
     {
-        blink(200);
+        blink(SHORT_BLINK_MS);
     }
 }
 
@@ -189,12 +201,12 @@ void loop()
 
     if (!startupCompleted)
     {
-        blinkShort(4);             // Let know i'm waiting...
+        blinkShort(STARTUP_BLINK_FREQUENCY);             // Let know i'm waiting...
         delay(STARTUP_LOOP_DELAY); //Wait a bit to  let syseem run ok
         return;
     }
 
-    blinkShort(1); //Signal normal running loop
+    blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
 
     //  System.sleep(10);
     //  delay(8000);
@@ -211,8 +223,8 @@ void loop()
 
     if (sample == LONG_SAMPLE_SIZE)
     {
-        sample = -1; //  Hit the buffers no need to count anymore
-        if (zeroingInProgress)
+        sample = -1;           //  Hit the buffers no need to count anymore
+        if (zeroingInProgress) //This is true if a cloud call has been made to set zero
         {
 
             zeroOffsetInMm = longAveragingArray.getAverage();
@@ -251,5 +263,5 @@ void loop()
     if (zeroingInProgress)
         delay(ZEROING_LOOP_DELAY); //Use shorter delay when averaging for zero...
     else
-        delay(loopDelay); //10 min: 600000, 1 min: 60000, 10 sec: 10000,
+        delay(loopDelay); //10 min: 600,000 1 min: 60,000 10 sec: 10,000
 }
