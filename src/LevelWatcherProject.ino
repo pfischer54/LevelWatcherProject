@@ -201,8 +201,8 @@ void loop()
 
     if (!startupCompleted)
     {
-        blinkShort(STARTUP_BLINK_FREQUENCY);             // Let know i'm waiting...
-        delay(STARTUP_LOOP_DELAY); //Wait a bit to  let syseem run ok
+        blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
+        delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let syseem run ok
         return;
     }
 
