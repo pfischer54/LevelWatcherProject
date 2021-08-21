@@ -55,10 +55,11 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //Cellular constants
-String apn = "luner";
+//String apn = "luner";
+String apn = "3iot.com";
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
 //STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
