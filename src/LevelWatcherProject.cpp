@@ -6,7 +6,7 @@
 #line 1 "c:/Users/P/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
 //Version info
 
-//Switched to branch V2 ...
+//This is branch V2 ... Working reference branch. Only apply bug fixes etc to this branch.
 //Includes startup call to get and set zero offset in mm.
 // This is done by publishing a startup event which triggers a function call to the device that includes
 //the zero offest as a parameter in the function call.
@@ -32,8 +32,8 @@ void loop();
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 60 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
-const unsigned int ZEROING_LOOP_DELAY = 5000;       //Use shortish dealy while executing zeroing function
-const unsigned int STARTUP_LOOP_DELAY = 10000;      //Use shortish dealy while waiting for startup handler to return and complete startup process
+const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
+const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
 // Two averaging buckets are provided, short and long averaging
 const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average for long term average;
 const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average for short term average;
@@ -230,8 +230,8 @@ void loop()
 
     if (sample == LONG_SAMPLE_SIZE)
     {
-        sample = -1; //  Hit the buffers no need to count anymore
-        if (zeroingInProgress)  //This is true if a cloud call has been made to set zero
+        sample = -1;           //  Hit the buffers no need to count anymore
+        if (zeroingInProgress) //This is true if a cloud call has been made to set zero
         {
 
             zeroOffsetInMm = longAveragingArray.getAverage();
