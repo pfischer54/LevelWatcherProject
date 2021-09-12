@@ -74,7 +74,7 @@ void startupHandler(const char *event, const char *data)
     }
     else
     {
-        Serial.printlnf("error", "could not parse json");
+        Serial.printlnf("error: could not parse json");
     }
     Serial.printlnf("zeroOffsetInMm (as stored on Azure): " + String::format("%4.1f", zeroOffsetInMm));
     zeroData = String("{") +
