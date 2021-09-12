@@ -261,9 +261,9 @@ class JsonParserStatic : public JsonParser {
 	...
 
 08080120 <_Z7setZero6String>:
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 8953
-STARTUP(cellular_credentials_set("luner", "", "", NULL));
-//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
+STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
+//STARTUP(cellular_credentials_set("luner", "", "", NULL));
+
 
 int setZero(String command)
 {
@@ -1541,7 +1541,7 @@ JsonParserStatic<256, 20> parser;
  8080b92:	4628      	mov	r0, r5
  8080b94:	4911      	ldr	r1, [pc, #68]	; (8080bdc <_GLOBAL__sub_I_rebootSync+0xe8>)
  8080b96:	f002 fd77 	bl	8083688 <__aeabi_atexit>
-STARTUP(cellular_credentials_set("luner", "", "", NULL));
+STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
  8080b9a:	4a11      	ldr	r2, [pc, #68]	; (8080be0 <_GLOBAL__sub_I_rebootSync+0xec>)
  8080b9c:	2300      	movs	r3, #0
  8080b9e:	4611      	mov	r1, r2
@@ -1549,7 +1549,7 @@ STARTUP(cellular_credentials_set("luner", "", "", NULL));
 }
  8080ba2:	b002      	add	sp, #8
  8080ba4:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
-STARTUP(cellular_credentials_set("luner", "", "", NULL));
+STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
  8080ba8:	f001 b8b4 	b.w	8081d14 <cellular_credentials_set>
  8080bac:	200001ec 	.word	0x200001ec
  8080bb0:	20000208 	.word	0x20000208
@@ -1711,8 +1711,8 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
  8080d32:	bf00      	nop
  8080d34:	20000230 	.word	0x20000230
  8080d38:	200004e8 	.word	0x200004e8
- 8080d3c:	0808631c 	.word	0x0808631c
- 8080d40:	080862ee 	.word	0x080862ee
+ 8080d3c:	0808631b 	.word	0x0808631b
+ 8080d40:	080862ed 	.word	0x080862ed
  8080d44:	0808623c 	.word	0x0808623c
  8080d48:	0808618d 	.word	0x0808618d
  8080d4c:	08086242 	.word	0x08086242
@@ -1720,10 +1720,10 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
  8080d54:	0808619e 	.word	0x0808619e
  8080d58:	200004d4 	.word	0x200004d4
  8080d5c:	200001ec 	.word	0x200001ec
- 8080d60:	08086314 	.word	0x08086314
+ 8080d60:	08086313 	.word	0x08086313
  8080d64:	200004c0 	.word	0x200004c0
- 8080d68:	080862d3 	.word	0x080862d3
- 8080d6c:	080862e8 	.word	0x080862e8
+ 8080d68:	080862d2 	.word	0x080862d2
+ 8080d6c:	080862e7 	.word	0x080862e7
 
 08080d70 <_ZN13JsonReferenceD1Ev>:
 JsonReference::JsonReference(const JsonParser *parser) : parser(parser), token(0) {
@@ -13413,13 +13413,13 @@ TwoWire& __fetch_global_Wire()
  8086298:	6175 3d6c 6425 2200 734c 6942 7374 3a22     ual=%d."LsBits":
  80862a8:	2200 734c 6d4d 3a22 2200 734c 7641 3a22     ."LsMm":."LsAv":
  80862b8:	2200 734c 6853 7641 3a22 7400 6369 4c6b     ."LsShAv":.tickL
- 80862c8:	7665 6c65 6c00 6e75 7265 6300 756f 646c     evel.luner.could
- 80862d8:	6e20 746f 7020 7261 6573 6a20 6f73 006e      not parse json.
- 80862e8:	7265 6f72 0072 657a 6f72 664f 7366 7465     error.zeroOffset
- 80862f8:	6e49 6d4d 2820 7361 7320 6f74 6572 2064     InMm (as stored 
- 8086308:	6e6f 4120 757a 6572 3a29 0020 6553 7474     on Azure): .Sett
- 8086318:	6e69 2067 657a 6f72 664f 7366 7465 6e49     ing zeroOffsetIn
- 8086328:	6d4d 0000                                   Mm..
+ 80862c8:	7665 6c65 3300 6f69 0074 6f63 6c75 2064     evel.3iot.could 
+ 80862d8:	6f6e 2074 6170 7372 2065 736a 6e6f 6500     not parse json.e
+ 80862e8:	7272 726f 7a00 7265 4f6f 6666 6573 4974     rror.zeroOffsetI
+ 80862f8:	4d6e 206d 6128 2073 7473 726f 6465 6f20     nMm (as stored o
+ 8086308:	206e 7a41 7275 2965 203a 5300 7465 6974     n Azure): .Setti
+ 8086318:	676e 7a20 7265 4f6f 6666 6573 4974 4d6e     ng zeroOffsetInM
+ 8086328:	006d 0000                                   m...
 
 0808632c <_ZTV16JsonParserStaticILj256ELj20EE>:
 	...
