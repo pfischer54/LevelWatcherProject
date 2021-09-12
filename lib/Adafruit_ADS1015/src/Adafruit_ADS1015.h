@@ -17,6 +17,10 @@
     v1.1  - Added ADS1115 support - W. Earl
 */
 /**************************************************************************/
+//ARDUINO test added by pjf
+#ifndef ARDUINO
+#define ARDUINO 0
+#endif
 
 #if ARDUINO >= 100
  #include "Arduino.h"

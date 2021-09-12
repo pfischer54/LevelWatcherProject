@@ -18,7 +18,7 @@ const unsigned int REBOOT_DELAY_IN_MS = 15000;
 const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
 const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
 // Two averaging buckets are provided, short and long averaging
-const int LONG_SAMPLE_SIZE = 24;                    // number of measurements to average for long term average;
+const int LONG_SAMPLE_SIZE = 4;                    // number of measurements to average for long term average;
 const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average for short term average;
 const double FOUR_MA_OFFSET_IN_BITS = 6430;         //3840.0;  //3840 for 120 Ohm, 6400 for 200 Ohm
 const double MAX_16_BIT_ANALOGUE_BIT_VALUE = 32154; // 19200.0;  //19200 for 120 Ohm, 32000 for 200 Ohm-- see ndc datasheet on ADS1015
@@ -28,8 +28,8 @@ const double SENSOR_FULL_RANGE_IN_MM = 2000.0;
 const int LONG_BLINK_MS = 600;
 const int SHORT_BLINK_MS = 200;
 const int BLINK_OFF_DELAY_MS = 200;
-const int STARTUP_BLINK_FREQUENCY = 4;
-const int NORMAL_LOOP_BLINK_FREQUENCY = 1;
+const int STARTUP_BLINK_FREQUENCY = 6;
+const int NORMAL_LOOP_BLINK_FREQUENCY = 4;
 
 unsigned long rebootSync = 0;
 bool resetFlag = false;
@@ -55,8 +55,8 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //Cellular constants
-//String apn = "luner";
-String apn = "3iot.com";
+String apn = "luner";
+//String apn = "3iot.com";
 
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
 //STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
@@ -85,7 +85,7 @@ void startupHandler(const char *event, const char *data)
     }
     else
     {
-        Serial.printlnf("error", "could not parse json");
+        Serial.printlnf("error: could not parse json");
     }
     Serial.printlnf("zeroOffsetInMm (as stored on Azure): " + String::format("%4.1f", zeroOffsetInMm));
     zeroData = String("{") +
