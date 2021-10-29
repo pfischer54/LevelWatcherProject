@@ -3,6 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#My folders
+[Ss]ensors
+[Cc]ables
+
+#particle
+target/
+
 # User-specific files
 *.rsuser
 *.suo
