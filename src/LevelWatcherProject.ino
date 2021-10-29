@@ -37,7 +37,7 @@ int sample = 1;
 RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
 RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
 String data = String(80);
-String zeroData = String(80);
+String zeroData = String(80); //test comment
 String loopDelayData = String(80);
 double waterLevelInMm;
 double zeroOffsetInMm = 0.0; //zeroing offset
