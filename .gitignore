@@ -3,11 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-#My folders
+# My folders
 [Ss]ensors
 [Cc]ables
 
-#particle
+# particle
 target/
 
 # User-specific files

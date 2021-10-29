@@ -3,7 +3,7 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/Users/P/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
+#line 1 "c:/Users/pfisc/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
 //Version info
 
 //This is branch V2 ... Working reference branch. Only apply bug fixes etc to this branch.
@@ -28,9 +28,9 @@ void blinkLong(int times);
 void blinkShort(int times);
 void setup();
 void loop();
-#line 15 "c:/Users/P/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
+#line 15 "c:/Users/pfisc/OneDrive/Development/Particle/projects/LevelWatcherProject/src/LevelWatcherProject.ino"
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
-const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 60 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
+const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 2 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
 const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
 const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
@@ -64,9 +64,10 @@ bool zeroingInProgress = false;
 bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
+
 //STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
-//STARTUP(cellular_credentials_set("luner", "", "", NULL));
+//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM  89353
+STARTUP(cellular_credentials_set("luner", "", "", NULL));
 
 
 int setZero(String command)

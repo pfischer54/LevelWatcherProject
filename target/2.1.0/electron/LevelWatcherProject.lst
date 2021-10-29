@@ -29,13 +29,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_macro  0002bf2e  00000000  00000000  001a5914  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   00035a25  00000000  00000000  001d1842  2**0
+ 13 .debug_line   00035a2a  00000000  00000000  001d1842  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    000b990b  00000000  00000000  00207267  2**0
+ 14 .debug_str    000b990b  00000000  00000000  0020726c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_frame  00006de4  00000000  00000000  002c0b74  2**2
+ 15 .debug_frame  00006de4  00000000  00000000  002c0b78  2**2
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_loc    00020da0  00000000  00000000  002c7958  2**0
+ 16 .debug_loc    00020da0  00000000  00000000  002c795c  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -261,42 +261,24 @@ class JsonParserStatic : public JsonParser {
 	...
 
 08080120 <_Z7setZero6String>:
-STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
-//STARTUP(cellular_credentials_set("luner", "", "", NULL));
-
-
-int setZero(String command)
-{
  8080120:	b507      	push	{r0, r1, r2, lr}
-    Serial.printlnf("Set Zero Function called from cloud");
  8080122:	f002 ff93 	bl	808304c <_Z16_fetch_usbserialv>
  8080126:	490b      	ldr	r1, [pc, #44]	; (8080154 <_Z7setZero6String+0x34>)
  8080128:	f7ff ffeb 	bl	8080102 <_ZN5Print8printlnfEPKcz>
-    zeroOffsetInMm = 0.0; //Reset zero offset to allow re-calculation
  808012c:	2200      	movs	r2, #0
  808012e:	2300      	movs	r3, #0
  8080130:	4909      	ldr	r1, [pc, #36]	; (8080158 <_Z7setZero6String+0x38>)
-    longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
  8080132:	480a      	ldr	r0, [pc, #40]	; (808015c <_Z7setZero6String+0x3c>)
-    zeroOffsetInMm = 0.0; //Reset zero offset to allow re-calculation
  8080134:	e9c1 2300 	strd	r2, r3, [r1]
-    longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
  8080138:	2118      	movs	r1, #24
  808013a:	9100      	str	r1, [sp, #0]
  808013c:	f001 fabb 	bl	80816b6 <_ZN14RunningAverage9fillValueEdh>
-    zeroingInProgress = true;
  8080140:	2301      	movs	r3, #1
-    sample = 1;
-    return 0;
-}
  8080142:	2000      	movs	r0, #0
-    zeroingInProgress = true;
  8080144:	4a06      	ldr	r2, [pc, #24]	; (8080160 <_Z7setZero6String+0x40>)
  8080146:	7013      	strb	r3, [r2, #0]
-    sample = 1;
  8080148:	4a06      	ldr	r2, [pc, #24]	; (8080164 <_Z7setZero6String+0x44>)
  808014a:	6013      	str	r3, [r2, #0]
-}
  808014c:	b003      	add	sp, #12
  808014e:	f85d fb04 	ldr.w	pc, [sp], #4
  8080152:	bf00      	nop
@@ -307,18 +289,10 @@ int setZero(String command)
  8080164:	20000008 	.word	0x20000008
 
 08080168 <_Z18cloudResetFunction6String>:
-    Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
-    return 0;
-}
-
-int cloudResetFunction(String command)
-{
  8080168:	b508      	push	{r3, lr}
-    Serial.printlnf("Restart triggered");
  808016a:	f002 ff6f 	bl	808304c <_Z16_fetch_usbserialv>
  808016e:	4906      	ldr	r1, [pc, #24]	; (8080188 <_Z18cloudResetFunction6String+0x20>)
  8080170:	f7ff ffc7 	bl	8080102 <_ZN5Print8printlnfEPKcz>
-    resetFlag = true;
  8080174:	2201      	movs	r2, #1
  8080176:	4b05      	ldr	r3, [pc, #20]	; (808018c <_Z18cloudResetFunction6String+0x24>)
  8080178:	701a      	strb	r2, [r3, #0]
@@ -329,11 +303,8 @@ extern "C" {
 
 inline system_tick_t millis(void) { return HAL_Timer_Get_Milli_Seconds(); }
  808017a:	f001 fcf7 	bl	8081b6c <HAL_Timer_Get_Milli_Seconds>
-    rebootSync = millis();
  808017e:	4b04      	ldr	r3, [pc, #16]	; (8080190 <_Z18cloudResetFunction6String+0x28>)
  8080180:	6018      	str	r0, [r3, #0]
-    return 0;
-}
  8080182:	2000      	movs	r0, #0
  8080184:	bd08      	pop	{r3, pc}
  8080186:	bf00      	nop
@@ -342,91 +313,54 @@ inline system_tick_t millis(void) { return HAL_Timer_Get_Milli_Seconds(); }
  8080190:	2000049c 	.word	0x2000049c
 
 08080194 <_Z5blinkm>:
-    blinkLong(3);
-    blinkShort(3);
-}
-
-void blink(unsigned long onTime)
-{
  8080194:	b538      	push	{r3, r4, r5, lr}
  8080196:	4604      	mov	r4, r0
-    digitalWrite(onboardLed, HIGH);
  8080198:	4d08      	ldr	r5, [pc, #32]	; (80801bc <_Z5blinkm+0x28>)
  808019a:	2101      	movs	r1, #1
  808019c:	8828      	ldrh	r0, [r5, #0]
  808019e:	f003 f9f8 	bl	8083592 <digitalWrite>
-    // We'll leave it on for 1 second...
-    delay(onTime);
  80801a2:	4620      	mov	r0, r4
  80801a4:	f002 faf4 	bl	8082790 <delay>
-    // Then we'll turn it off...
-    digitalWrite(onboardLed, LOW);
  80801a8:	8828      	ldrh	r0, [r5, #0]
  80801aa:	2100      	movs	r1, #0
  80801ac:	f003 f9f1 	bl	8083592 <digitalWrite>
-    delay(200);
-}
  80801b0:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
-    delay(200);
  80801b4:	20c8      	movs	r0, #200	; 0xc8
  80801b6:	f002 baeb 	b.w	8082790 <delay>
  80801ba:	bf00      	nop
  80801bc:	20000004 	.word	0x20000004
 
 080801c0 <_Z9blinkLongi>:
-
-void blinkLong(int times)
-{
  80801c0:	b538      	push	{r3, r4, r5, lr}
  80801c2:	4605      	mov	r5, r0
-    for (int i = 0; i < times; i++)
  80801c4:	2400      	movs	r4, #0
  80801c6:	42ac      	cmp	r4, r5
  80801c8:	da05      	bge.n	80801d6 <_Z9blinkLongi+0x16>
-    {
-        blink(600);
  80801ca:	f44f 7016 	mov.w	r0, #600	; 0x258
  80801ce:	f7ff ffe1 	bl	8080194 <_Z5blinkm>
-    for (int i = 0; i < times; i++)
  80801d2:	3401      	adds	r4, #1
  80801d4:	e7f7      	b.n	80801c6 <_Z9blinkLongi+0x6>
-    }
-}
  80801d6:	bd38      	pop	{r3, r4, r5, pc}
 
 080801d8 <_Z10blinkShorti>:
-
-void blinkShort(int times)
-{
  80801d8:	b538      	push	{r3, r4, r5, lr}
  80801da:	4605      	mov	r5, r0
-    for (int i = 0; i < times; i++)
  80801dc:	2400      	movs	r4, #0
  80801de:	42ac      	cmp	r4, r5
  80801e0:	da04      	bge.n	80801ec <_Z10blinkShorti+0x14>
-    {
-        blink(200);
  80801e2:	20c8      	movs	r0, #200	; 0xc8
  80801e4:	f7ff ffd6 	bl	8080194 <_Z5blinkm>
-    for (int i = 0; i < times; i++)
  80801e8:	3401      	adds	r4, #1
  80801ea:	e7f8      	b.n	80801de <_Z10blinkShorti+0x6>
-    }
-}
  80801ec:	bd38      	pop	{r3, r4, r5, pc}
 
 080801ee <_Z3sosv>:
-{
  80801ee:	b508      	push	{r3, lr}
-    blinkShort(3);
  80801f0:	2003      	movs	r0, #3
  80801f2:	f7ff fff1 	bl	80801d8 <_Z10blinkShorti>
-    blinkLong(3);
  80801f6:	2003      	movs	r0, #3
  80801f8:	f7ff ffe2 	bl	80801c0 <_Z9blinkLongi>
-}
  80801fc:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
-    blinkShort(3);
  8080200:	2003      	movs	r0, #3
  8080202:	f7ff bfe9 	b.w	80801d8 <_Z10blinkShorti>
 
@@ -472,18 +406,13 @@ void blinkShort(int times)
 	...
 
 08080234 <_Z12setLoopDelay6String>:
-{
  8080234:	b570      	push	{r4, r5, r6, lr}
  8080236:	b09a      	sub	sp, #104	; 0x68
-    loopDelay = atol(delay);
  8080238:	6800      	ldr	r0, [r0, #0]
  808023a:	f003 ffc3 	bl	80841c4 <atol>
  808023e:	4d38      	ldr	r5, [pc, #224]	; (8080320 <_Z12setLoopDelay6String+0xec>)
-    Serial.printlnf("Loop Delay updated to: " + String::format("%u", loopDelay));
  8080240:	4e38      	ldr	r6, [pc, #224]	; (8080324 <_Z12setLoopDelay6String+0xf0>)
-    loopDelay = atol(delay);
  8080242:	6028      	str	r0, [r5, #0]
-    Serial.printlnf("Loop Delay updated to: " + String::format("%u", loopDelay));
  8080244:	f002 ff02 	bl	808304c <_Z16_fetch_usbserialv>
 
 class StringSumHelper : public String
@@ -510,7 +439,6 @@ public:
 class StringSumHelper : public String
  8080272:	a816      	add	r0, sp, #88	; 0x58
  8080274:	f001 ff80 	bl	8082178 <_ZN6StringD1Ev>
-    loopDelayData = String("{") +
  8080278:	492c      	ldr	r1, [pc, #176]	; (808032c <_Z12setLoopDelay6String+0xf8>)
  808027a:	a802      	add	r0, sp, #8
  808027c:	f001 ffc6 	bl	808220c <_ZN6StringC1EPKc>
@@ -518,7 +446,6 @@ class StringSumHelper : public String
  8080280:	a902      	add	r1, sp, #8
  8080282:	a80a      	add	r0, sp, #40	; 0x28
  8080284:	f002 f801 	bl	808228a <_ZN6StringC1ERKS_>
-                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay) +
  8080288:	4929      	ldr	r1, [pc, #164]	; (8080330 <_Z12setLoopDelay6String+0xfc>)
  808028a:	a806      	add	r0, sp, #24
  808028c:	f001 ffbe 	bl	808220c <_ZN6StringC1EPKc>
@@ -541,7 +468,6 @@ class StringSumHelper : public String
  80802b8:	4620      	mov	r0, r4
  80802ba:	f002 f850 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  80802be:	4604      	mov	r4, r0
-                    String("\"}");
  80802c0:	491d      	ldr	r1, [pc, #116]	; (8080338 <_Z12setLoopDelay6String+0x104>)
  80802c2:	a816      	add	r0, sp, #88	; 0x58
  80802c4:	f001 ffa2 	bl	808220c <_ZN6StringC1EPKc>
@@ -554,7 +480,6 @@ class StringSumHelper : public String
  80802d6:	f001 ffc9 	bl	808226c <_ZN6StringaSERKS_>
  80802da:	a816      	add	r0, sp, #88	; 0x58
  80802dc:	f001 ff4c 	bl	8082178 <_ZN6StringD1Ev>
-                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay) +
  80802e0:	a812      	add	r0, sp, #72	; 0x48
  80802e2:	f001 ff49 	bl	8082178 <_ZN6StringD1Ev>
  80802e6:	a80e      	add	r0, sp, #56	; 0x38
@@ -564,7 +489,6 @@ class StringSumHelper : public String
 class StringSumHelper : public String
  80802f2:	a80a      	add	r0, sp, #40	; 0x28
  80802f4:	f001 ff40 	bl	8082178 <_ZN6StringD1Ev>
-    loopDelayData = String("{") +
  80802f8:	a802      	add	r0, sp, #8
  80802fa:	f001 ff3d 	bl	8082178 <_ZN6StringD1Ev>
 inline particle::Flags<TagT, ValueT>::Flags(Flag<TagT, ValueT> flag) :
@@ -595,7 +519,6 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
       ~__shared_ptr() = default;
  8080314:	a817      	add	r0, sp, #92	; 0x5c
  8080316:	f7ff ff76 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-}
  808031a:	2000      	movs	r0, #0
  808031c:	b01a      	add	sp, #104	; 0x68
  808031e:	bd70      	pop	{r4, r5, r6, pc}
@@ -611,12 +534,7 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
  8080344:	08086199 	.word	0x08086199
 
 08080348 <setup>:
-
-void setup()
-{
  8080348:	e92d 437f 	stmdb	sp!, {r0, r1, r2, r3, r4, r5, r6, r8, r9, lr}
-    //
-    Serial.printlnf("Startup: Running Setup");
  808034c:	f002 fe7e 	bl	808304c <_Z16_fetch_usbserialv>
  8080350:	492d      	ldr	r1, [pc, #180]	; (8080408 <setup+0xc0>)
  8080352:	f7ff fed6 	bl	8080102 <_ZN5Print8printlnfEPKcz>
@@ -666,12 +584,6 @@ void setup()
  808039a:	e9cd 4400 	strd	r4, r4, [sp]
  808039e:	4823      	ldr	r0, [pc, #140]	; (808042c <setup+0xe4>)
  80803a0:	f001 fdda 	bl	8081f58 <spark_subscribe>
-    Particle.function("SetZero", setZero);
-
-    // Subscribe to the webhook response event
-    Particle.subscribe("hook-response/startup", startupHandler, MY_DEVICES);
-
-    longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);   // Clear out averaging array
  80803a4:	f04f 0800 	mov.w	r8, #0
  80803a8:	f04f 0900 	mov.w	r9, #0
  80803ac:	2318      	movs	r3, #24
@@ -680,29 +592,20 @@ void setup()
  80803b2:	481f      	ldr	r0, [pc, #124]	; (8080430 <setup+0xe8>)
  80803b4:	464b      	mov	r3, r9
  80803b6:	f001 f97e 	bl	80816b6 <_ZN14RunningAverage9fillValueEdh>
-    shortAveragingArray.fillValue(0.0, SHORT_SAMPLE_SIZE); // Clear out averaging array
  80803ba:	2303      	movs	r3, #3
  80803bc:	4642      	mov	r2, r8
  80803be:	9300      	str	r3, [sp, #0]
  80803c0:	481c      	ldr	r0, [pc, #112]	; (8080434 <setup+0xec>)
  80803c2:	464b      	mov	r3, r9
  80803c4:	f001 f977 	bl	80816b6 <_ZN14RunningAverage9fillValueEdh>
-    pinMode(onboardLed, OUTPUT);                           //Setup activity led so we can blink it to show we're rolling...
  80803c8:	4b1b      	ldr	r3, [pc, #108]	; (8080438 <setup+0xf0>)
-    //   setADCSampleTime(ADC_SampleTime_3Cycles);
-    //set ADC gain  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit=0.125mV
-    //Setup ADC
-    ads.setGain(GAIN_TWO); //GAIN_ONE for ...
  80803ca:	4d1c      	ldr	r5, [pc, #112]	; (808043c <setup+0xf4>)
-    pinMode(onboardLed, OUTPUT);                           //Setup activity led so we can blink it to show we're rolling...
  80803cc:	8818      	ldrh	r0, [r3, #0]
  80803ce:	4631      	mov	r1, r6
  80803d0:	f003 f8ce 	bl	8083570 <pinMode>
-    ads.setGain(GAIN_TWO); //GAIN_ONE for ...
  80803d4:	f44f 6180 	mov.w	r1, #1024	; 0x400
  80803d8:	4628      	mov	r0, r5
  80803da:	f001 f9d6 	bl	808178a <_ZN16Adafruit_ADS10157setGainE9adsGain_t>
-    ads.begin();
  80803de:	4628      	mov	r0, r5
  80803e0:	f001 f9cc 	bl	808177c <_ZN16Adafruit_ADS10155beginEv>
  80803e4:	4b16      	ldr	r3, [pc, #88]	; (8080440 <setup+0xf8>)
@@ -716,8 +619,6 @@ void setup()
  80803f6:	f002 fbfd 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  80803fa:	a803      	add	r0, sp, #12
  80803fc:	f7ff ff03 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-    Particle.publish("startup", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.
-}
  8080400:	b004      	add	sp, #16
  8080402:	e8bd 8370 	ldmia.w	sp!, {r4, r5, r6, r8, r9, pc}
  8080406:	bf00      	nop
@@ -739,22 +640,12 @@ void setup()
  8080444:	080861f9 	.word	0x080861f9
 
 08080448 <loop>:
-//
-// Main loop
-//
-void loop()
-{
  8080448:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
  808044c:	b0f8      	sub	sp, #480	; 0x1e0
  808044e:	f001 fb8d 	bl	8081b6c <HAL_Timer_Get_Milli_Seconds>
-    if ((millis() >= REBOOT_INTERVAL_IN_MS))
  8080452:	4b27      	ldr	r3, [pc, #156]	; (80804f0 <loop+0xa8>)
  8080454:	4298      	cmp	r0, r3
  8080456:	d911      	bls.n	808047c <loop+0x34>
-    {
-        //Reboot regularly to freshen up
-        // do things here  before reset and then push the button
-        sos();
  8080458:	f7ff fec9 	bl	80801ee <_Z3sosv>
  808045c:	4b25      	ldr	r3, [pc, #148]	; (80804f4 <loop+0xac>)
  808045e:	4a26      	ldr	r2, [pc, #152]	; (80804f8 <loop+0xb0>)
@@ -766,12 +657,7 @@ void loop()
  808046e:	f002 fbc1 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  8080472:	a86c      	add	r0, sp, #432	; 0x1b0
  8080474:	f7ff fec7 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-        Particle.publish("Debug", "Reboot intiated", 300, PRIVATE);
-        System.reset();
  8080478:	f001 fe0c 	bl	8082094 <_ZN11SystemClass5resetEv>
-    }
-
-    if ((resetFlag) && (millis() - rebootSync >= REBOOT_DELAY_IN_MS))
  808047c:	4b20      	ldr	r3, [pc, #128]	; (8080500 <loop+0xb8>)
  808047e:	781b      	ldrb	r3, [r3, #0]
  8080480:	b1d3      	cbz	r3, 80804b8 <loop+0x70>
@@ -782,9 +668,6 @@ void loop()
  808048c:	f643 2397 	movw	r3, #14999	; 0x3a97
  8080490:	4298      	cmp	r0, r3
  8080492:	d911      	bls.n	80804b8 <loop+0x70>
-    {
-        // do things here  before reset and then push the button
-        sos();
  8080494:	f7ff feab 	bl	80801ee <_Z3sosv>
  8080498:	4b16      	ldr	r3, [pc, #88]	; (80804f4 <loop+0xac>)
  808049a:	4a1b      	ldr	r2, [pc, #108]	; (8080508 <loop+0xc0>)
@@ -796,38 +679,18 @@ void loop()
  80804aa:	f002 fba3 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  80804ae:	a86c      	add	r0, sp, #432	; 0x1b0
  80804b0:	f7ff fea9 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-        Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
-        System.reset();
  80804b4:	f001 fdee 	bl	8082094 <_ZN11SystemClass5resetEv>
-    }
-
-    time_t time = Time.now();
  80804b8:	f002 f94f 	bl	808275a <_ZN9TimeClass3nowEv>
-
-    CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
  80804bc:	4913      	ldr	r1, [pc, #76]	; (808050c <loop+0xc4>)
-    time_t time = Time.now();
  80804be:	4604      	mov	r4, r0
-    CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
  80804c0:	a86b      	add	r0, sp, #428	; 0x1ac
  80804c2:	f001 faa9 	bl	8081a18 <_ZNK19CellularHelperClass11getRSSIQualEv>
-
-    if (!startupCompleted)
  80804c6:	4b12      	ldr	r3, [pc, #72]	; (8080510 <loop+0xc8>)
  80804c8:	781b      	ldrb	r3, [r3, #0]
  80804ca:	bb2b      	cbnz	r3, 8080518 <loop+0xd0>
-    {
-        blinkShort(4);             // Let know i'm waiting...
  80804cc:	2004      	movs	r0, #4
  80804ce:	f7ff fe83 	bl	80801d8 <_Z10blinkShorti>
-        delay(STARTUP_LOOP_DELAY); //Wait a bit to  let syseem run ok
  80804d2:	f242 7010 	movw	r0, #10000	; 0x2710
-
-    // Wait nn seconds
-    if (zeroingInProgress)
-        delay(ZEROING_LOOP_DELAY); //Use shorter delay when averaging for zero...
-    else
-        delay(loopDelay); //10 min: 600,000 1 min: 60,000 10 sec: 10,000
  80804d6:	f002 f95b 	bl	8082790 <delay>
  * Things that return a + response and a string use this.
  *
@@ -841,7 +704,6 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  80804e0:	f001 fe4a 	bl	8082178 <_ZN6StringD1Ev>
  80804e4:	a86e      	add	r0, sp, #440	; 0x1b8
  80804e6:	f001 fe47 	bl	8082178 <_ZN6StringD1Ev>
-}
  80804ea:	b078      	add	sp, #480	; 0x1e0
  80804ec:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
  80804f0:	481907ff 	.word	0x481907ff
@@ -854,23 +716,17 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  808050c:	200004f1 	.word	0x200004f1
  8080510:	200004c0 	.word	0x200004c0
  8080514:	0808645c 	.word	0x0808645c
-    blinkShort(1); //Signal normal running loop
  8080518:	2001      	movs	r0, #1
  808051a:	f7ff fe5d 	bl	80801d8 <_Z10blinkShorti>
-    waterLevelSampleReading = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
  808051e:	2100      	movs	r1, #0
  8080520:	48bb      	ldr	r0, [pc, #748]	; (8080810 <loop+0x3c8>)
  8080522:	f001 f934 	bl	808178e <_ZN16Adafruit_ADS101519readADC_SingleEndedEh>
  8080526:	4abb      	ldr	r2, [pc, #748]	; (8080814 <loop+0x3cc>)
-    if (waterLevelSampleReading > 1 and waterLevelSampleReading <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
  8080528:	1e83      	subs	r3, r0, #2
-    waterLevelSampleReading = ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
  808052a:	6010      	str	r0, [r2, #0]
-    if (waterLevelSampleReading > 1 and waterLevelSampleReading <= MAX_16_BIT_ANALOGUE_BIT_VALUE)
  808052c:	f647 5298 	movw	r2, #32152	; 0x7d98
  8080530:	4293      	cmp	r3, r2
  8080532:	d81d      	bhi.n	8080570 <loop+0x128>
-        waterLevelInMm = (waterLevelSampleReading - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
  8080534:	f003 fa02 	bl	808393c <__aeabi_i2d>
  8080538:	a3b1      	add	r3, pc, #708	; (adr r3, 8080800 <loop+0x3b8>)
  808053a:	e9d3 2300 	ldrd	r2, r3, [r3]
@@ -884,17 +740,12 @@ class CellularHelperPlusStringResponse : public CellularHelperCommonResponse {
  8080554:	f003 f8a4 	bl	80836a0 <__aeabi_dsub>
  8080558:	4602      	mov	r2, r0
  808055a:	460b      	mov	r3, r1
-        longAveragingArray.addValue(waterLevelInMm);
  808055c:	48b0      	ldr	r0, [pc, #704]	; (8080820 <loop+0x3d8>)
-        waterLevelInMm = (waterLevelSampleReading - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
  808055e:	e9c5 2300 	strd	r2, r3, [r5]
-        longAveragingArray.addValue(waterLevelInMm);
  8080562:	f001 f868 	bl	8081636 <_ZN14RunningAverage8addValueEd>
-        shortAveragingArray.addValue(waterLevelInMm);
  8080566:	e9d5 2300 	ldrd	r2, r3, [r5]
  808056a:	48ae      	ldr	r0, [pc, #696]	; (8080824 <loop+0x3dc>)
  808056c:	f001 f863 	bl	8081636 <_ZN14RunningAverage8addValueEd>
-    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSampleReading) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
  8080570:	f002 fd6c 	bl	808304c <_Z16_fetch_usbserialv>
  8080574:	4dac      	ldr	r5, [pc, #688]	; (8080828 <loop+0x3e0>)
  8080576:	4606      	mov	r6, r0
@@ -971,45 +822,34 @@ class StringSumHelper : public String
  808062c:	f001 fda4 	bl	8082178 <_ZN6StringD1Ev>
  8080630:	a853      	add	r0, sp, #332	; 0x14c
  8080632:	f001 fda1 	bl	8082178 <_ZN6StringD1Ev>
-    if (sample == LONG_SAMPLE_SIZE)
  8080636:	f8d5 8000 	ldr.w	r8, [r5]
  808063a:	f1b8 0f18 	cmp.w	r8, #24
  808063e:	f040 808b 	bne.w	8080758 <loop+0x310>
-        sample = -1;           //  Hit the buffers no need to count anymore
  8080642:	f04f 33ff 	mov.w	r3, #4294967295
-        if (zeroingInProgress) //This is true if a cloud call has been made to set zero
  8080646:	4f7d      	ldr	r7, [pc, #500]	; (808083c <loop+0x3f4>)
-        sample = -1;           //  Hit the buffers no need to count anymore
  8080648:	602b      	str	r3, [r5, #0]
-        if (zeroingInProgress) //This is true if a cloud call has been made to set zero
  808064a:	783b      	ldrb	r3, [r7, #0]
  808064c:	2b00      	cmp	r3, #0
  808064e:	f000 8083 	beq.w	8080758 <loop+0x310>
-            zeroOffsetInMm = longAveragingArray.getAverage();
  8080652:	4873      	ldr	r0, [pc, #460]	; (8080820 <loop+0x3d8>)
  8080654:	f001 f81f 	bl	8081696 <_ZN14RunningAverage10getAverageEv>
  8080658:	4e6f      	ldr	r6, [pc, #444]	; (8080818 <loop+0x3d0>)
  808065a:	e9c6 0100 	strd	r0, r1, [r6]
-            longAveragingArray.clear();
  808065e:	4870      	ldr	r0, [pc, #448]	; (8080820 <loop+0x3d8>)
  8080660:	f000 ffc8 	bl	80815f4 <_ZN14RunningAverage5clearEv>
-            longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
  8080664:	2200      	movs	r2, #0
  8080666:	2300      	movs	r3, #0
  8080668:	486d      	ldr	r0, [pc, #436]	; (8080820 <loop+0x3d8>)
  808066a:	f8cd 8000 	str.w	r8, [sp]
  808066e:	f001 f822 	bl	80816b6 <_ZN14RunningAverage9fillValueEdh>
-            shortAveragingArray.clear();
  8080672:	486c      	ldr	r0, [pc, #432]	; (8080824 <loop+0x3dc>)
  8080674:	f000 ffbe 	bl	80815f4 <_ZN14RunningAverage5clearEv>
-            shortAveragingArray.fillValue(0.0, SHORT_SAMPLE_SIZE);
  8080678:	2303      	movs	r3, #3
  808067a:	2200      	movs	r2, #0
  808067c:	4869      	ldr	r0, [pc, #420]	; (8080824 <loop+0x3dc>)
  808067e:	9300      	str	r3, [sp, #0]
  8080680:	2300      	movs	r3, #0
  8080682:	f001 f818 	bl	80816b6 <_ZN14RunningAverage9fillValueEdh>
-            zeroData = String("{") +
  8080686:	496e      	ldr	r1, [pc, #440]	; (8080840 <loop+0x3f8>)
  8080688:	a853      	add	r0, sp, #332	; 0x14c
  808068a:	f001 fdbf 	bl	808220c <_ZN6StringC1EPKc>
@@ -1017,7 +857,6 @@ class StringSumHelper : public String
  808068e:	a953      	add	r1, sp, #332	; 0x14c
  8080690:	a85b      	add	r0, sp, #364	; 0x16c
  8080692:	f001 fdfa 	bl	808228a <_ZN6StringC1ERKS_>
-                       String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
  8080696:	496b      	ldr	r1, [pc, #428]	; (8080844 <loop+0x3fc>)
  8080698:	a857      	add	r0, sp, #348	; 0x15c
  808069a:	f001 fdb7 	bl	808220c <_ZN6StringC1EPKc>
@@ -1040,7 +879,6 @@ class StringSumHelper : public String
  80806c8:	a963      	add	r1, sp, #396	; 0x18c
  80806ca:	f001 fe48 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  80806ce:	4605      	mov	r5, r0
-                       String("\"}");
  80806d0:	495e      	ldr	r1, [pc, #376]	; (808084c <loop+0x404>)
  80806d2:	a867      	add	r0, sp, #412	; 0x19c
  80806d4:	f001 fd9a 	bl	808220c <_ZN6StringC1EPKc>
@@ -1053,7 +891,6 @@ class StringSumHelper : public String
  80806e6:	f001 fdc1 	bl	808226c <_ZN6StringaSERKS_>
  80806ea:	a867      	add	r0, sp, #412	; 0x19c
  80806ec:	f001 fd44 	bl	8082178 <_ZN6StringD1Ev>
-                       String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
  80806f0:	a863      	add	r0, sp, #396	; 0x18c
  80806f2:	f001 fd41 	bl	8082178 <_ZN6StringD1Ev>
  80806f6:	a85f      	add	r0, sp, #380	; 0x17c
@@ -1063,7 +900,6 @@ class StringSumHelper : public String
 class StringSumHelper : public String
  8080702:	a85b      	add	r0, sp, #364	; 0x16c
  8080704:	f001 fd38 	bl	8082178 <_ZN6StringD1Ev>
-            zeroData = String("{") +
  8080708:	a853      	add	r0, sp, #332	; 0x14c
  808070a:	f001 fd35 	bl	8082178 <_ZN6StringD1Ev>
  808070e:	4b51      	ldr	r3, [pc, #324]	; (8080854 <loop+0x40c>)
@@ -1076,7 +912,6 @@ class StringSumHelper : public String
  8080720:	f002 fa68 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  8080724:	a868      	add	r0, sp, #416	; 0x1a0
  8080726:	f7ff fd6e 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-            Serial.printlnf("New zeroOffset (saved to cloud): " + zeroData);
  808072a:	f002 fc8f 	bl	808304c <_Z16_fetch_usbserialv>
 	StringSumHelper(const char *p) : String(p) {}
  808072e:	494b      	ldr	r1, [pc, #300]	; (808085c <loop+0x414>)
@@ -1092,13 +927,10 @@ class StringSumHelper : public String
 class StringSumHelper : public String
  8080748:	a867      	add	r0, sp, #412	; 0x19c
  808074a:	f001 fd15 	bl	8082178 <_ZN6StringD1Ev>
-            blinkLong(5); // Signal zeroing complete.
  808074e:	2005      	movs	r0, #5
  8080750:	f7ff fd36 	bl	80801c0 <_Z9blinkLongi>
-            zeroingInProgress = false;
  8080754:	2300      	movs	r3, #0
  8080756:	703b      	strb	r3, [r7, #0]
-    data = String("{") +
  8080758:	4939      	ldr	r1, [pc, #228]	; (8080840 <loop+0x3f8>)
  808075a:	a803      	add	r0, sp, #12
  808075c:	f001 fd56 	bl	808220c <_ZN6StringC1EPKc>
@@ -1106,7 +938,6 @@ class StringSumHelper : public String
  8080760:	a903      	add	r1, sp, #12
  8080762:	a80b      	add	r0, sp, #44	; 0x2c
  8080764:	f001 fd91 	bl	808228a <_ZN6StringC1ERKS_>
-           String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
  8080768:	493d      	ldr	r1, [pc, #244]	; (8080860 <loop+0x418>)
  808076a:	a807      	add	r0, sp, #28
  808076c:	f001 fd4e 	bl	808220c <_ZN6StringC1EPKc>
@@ -1140,7 +971,6 @@ class StringSumHelper : public String
  80807b2:	a917      	add	r1, sp, #92	; 0x5c
  80807b4:	f001 fdd3 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  80807b8:	4604      	mov	r4, r0
-           String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
  80807ba:	492d      	ldr	r1, [pc, #180]	; (8080870 <loop+0x428>)
  80807bc:	a81b      	add	r0, sp, #108	; 0x6c
  80807be:	f001 fd25 	bl	808220c <_ZN6StringC1EPKc>
@@ -1203,7 +1033,6 @@ class StringSumHelper : public String
  808087e:	a927      	add	r1, sp, #156	; 0x9c
  8080880:	f001 fd6d 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  8080884:	4604      	mov	r4, r0
-           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSampleReading) + String("\",") +
  8080886:	4988      	ldr	r1, [pc, #544]	; (8080aa8 <loop+0x660>)
  8080888:	a82b      	add	r0, sp, #172	; 0xac
  808088a:	f001 fcbf 	bl	808220c <_ZN6StringC1EPKc>
@@ -1234,7 +1063,6 @@ class StringSumHelper : public String
  80808ca:	a937      	add	r1, sp, #220	; 0xdc
  80808cc:	f001 fd47 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  80808d0:	4604      	mov	r4, r0
-           String("\"LsMm\":") + String("\"") + String::format("%4.1f", waterLevelInMm) + String("\",") +
  80808d2:	497a      	ldr	r1, [pc, #488]	; (8080abc <loop+0x674>)
  80808d4:	a83b      	add	r0, sp, #236	; 0xec
  80808d6:	f001 fc99 	bl	808220c <_ZN6StringC1EPKc>
@@ -1265,7 +1093,6 @@ class StringSumHelper : public String
  8080918:	a947      	add	r1, sp, #284	; 0x11c
  808091a:	f001 fd20 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  808091e:	4604      	mov	r4, r0
-           String("\"LsAv\":") + String("\"") + String::format("%4.1f", longAveragingArray.getAverage()) + String("\",") +
  8080920:	4969      	ldr	r1, [pc, #420]	; (8080ac8 <loop+0x680>)
  8080922:	a84b      	add	r0, sp, #300	; 0x12c
  8080924:	f001 fc72 	bl	808220c <_ZN6StringC1EPKc>
@@ -1298,7 +1125,6 @@ class StringSumHelper : public String
  808096a:	a957      	add	r1, sp, #348	; 0x15c
  808096c:	f001 fcf7 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  8080970:	4604      	mov	r4, r0
-           String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
  8080972:	4957      	ldr	r1, [pc, #348]	; (8080ad0 <loop+0x688>)
  8080974:	a85b      	add	r0, sp, #364	; 0x16c
  8080976:	f001 fc49 	bl	808220c <_ZN6StringC1EPKc>
@@ -1324,7 +1150,6 @@ class StringSumHelper : public String
  80809aa:	a963      	add	r1, sp, #396	; 0x18c
  80809ac:	f001 fcd7 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  80809b0:	4604      	mov	r4, r0
-           String("\"}");
  80809b2:	4949      	ldr	r1, [pc, #292]	; (8080ad8 <loop+0x690>)
  80809b4:	a867      	add	r0, sp, #412	; 0x19c
  80809b6:	f001 fc29 	bl	808220c <_ZN6StringC1EPKc>
@@ -1337,14 +1162,12 @@ class StringSumHelper : public String
  80809c8:	f001 fc50 	bl	808226c <_ZN6StringaSERKS_>
  80809cc:	a867      	add	r0, sp, #412	; 0x19c
  80809ce:	f001 fbd3 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
  80809d2:	a863      	add	r0, sp, #396	; 0x18c
  80809d4:	f001 fbd0 	bl	8082178 <_ZN6StringD1Ev>
  80809d8:	a85f      	add	r0, sp, #380	; 0x17c
  80809da:	f001 fbcd 	bl	8082178 <_ZN6StringD1Ev>
  80809de:	a85b      	add	r0, sp, #364	; 0x16c
  80809e0:	f001 fbca 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"LsAv\":") + String("\"") + String::format("%4.1f", longAveragingArray.getAverage()) + String("\",") +
  80809e4:	a857      	add	r0, sp, #348	; 0x15c
  80809e6:	f001 fbc7 	bl	8082178 <_ZN6StringD1Ev>
  80809ea:	a853      	add	r0, sp, #332	; 0x14c
@@ -1353,7 +1176,6 @@ class StringSumHelper : public String
  80809f2:	f001 fbc1 	bl	8082178 <_ZN6StringD1Ev>
  80809f6:	a84b      	add	r0, sp, #300	; 0x12c
  80809f8:	f001 fbbe 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"LsMm\":") + String("\"") + String::format("%4.1f", waterLevelInMm) + String("\",") +
  80809fc:	a847      	add	r0, sp, #284	; 0x11c
  80809fe:	f001 fbbb 	bl	8082178 <_ZN6StringD1Ev>
  8080a02:	a843      	add	r0, sp, #268	; 0x10c
@@ -1362,7 +1184,6 @@ class StringSumHelper : public String
  8080a0a:	f001 fbb5 	bl	8082178 <_ZN6StringD1Ev>
  8080a0e:	a83b      	add	r0, sp, #236	; 0xec
  8080a10:	f001 fbb2 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSampleReading) + String("\",") +
  8080a14:	a837      	add	r0, sp, #220	; 0xdc
  8080a16:	f001 fbaf 	bl	8082178 <_ZN6StringD1Ev>
  8080a1a:	a833      	add	r0, sp, #204	; 0xcc
@@ -1371,7 +1192,6 @@ class StringSumHelper : public String
  8080a22:	f001 fba9 	bl	8082178 <_ZN6StringD1Ev>
  8080a26:	a82b      	add	r0, sp, #172	; 0xac
  8080a28:	f001 fba6 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
  8080a2c:	a827      	add	r0, sp, #156	; 0x9c
  8080a2e:	f001 fba3 	bl	8082178 <_ZN6StringD1Ev>
  8080a32:	a823      	add	r0, sp, #140	; 0x8c
@@ -1380,7 +1200,6 @@ class StringSumHelper : public String
  8080a3a:	f001 fb9d 	bl	8082178 <_ZN6StringD1Ev>
  8080a3e:	a81b      	add	r0, sp, #108	; 0x6c
  8080a40:	f001 fb9a 	bl	8082178 <_ZN6StringD1Ev>
-           String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
  8080a44:	a817      	add	r0, sp, #92	; 0x5c
  8080a46:	f001 fb97 	bl	8082178 <_ZN6StringD1Ev>
  8080a4a:	a813      	add	r0, sp, #76	; 0x4c
@@ -1392,7 +1211,6 @@ class StringSumHelper : public String
 class StringSumHelper : public String
  8080a5c:	a80b      	add	r0, sp, #44	; 0x2c
  8080a5e:	f001 fb8b 	bl	8082178 <_ZN6StringD1Ev>
-    data = String("{") +
  8080a62:	a803      	add	r0, sp, #12
  8080a64:	f001 fb88 	bl	8082178 <_ZN6StringD1Ev>
         spark_cloud_flag_connect();
@@ -1408,22 +1226,17 @@ class StringSumHelper : public String
  8080a7e:	f002 f8b9 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  8080a82:	a868      	add	r0, sp, #416	; 0x1a0
  8080a84:	f7ff fbbf 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-    if (sample > 0)
  8080a88:	4a17      	ldr	r2, [pc, #92]	; (8080ae8 <loop+0x6a0>)
  8080a8a:	6813      	ldr	r3, [r2, #0]
  8080a8c:	2b00      	cmp	r3, #0
-        ++sample; //Increase sample count if on initial fill
  8080a8e:	bfc4      	itt	gt
  8080a90:	3301      	addgt	r3, #1
  8080a92:	6013      	strgt	r3, [r2, #0]
-    if (zeroingInProgress)
  8080a94:	4b15      	ldr	r3, [pc, #84]	; (8080aec <loop+0x6a4>)
  8080a96:	781b      	ldrb	r3, [r3, #0]
  8080a98:	b113      	cbz	r3, 8080aa0 <loop+0x658>
-        delay(ZEROING_LOOP_DELAY); //Use shorter delay when averaging for zero...
  8080a9a:	f241 3088 	movw	r0, #5000	; 0x1388
  8080a9e:	e51a      	b.n	80804d6 <loop+0x8e>
-        delay(loopDelay); //10 min: 600,000 1 min: 60,000 10 sec: 10,000
  8080aa0:	4b13      	ldr	r3, [pc, #76]	; (8080af0 <loop+0x6a8>)
  8080aa2:	6818      	ldr	r0, [r3, #0]
  8080aa4:	e517      	b.n	80804d6 <loop+0x8e>
@@ -1452,67 +1265,49 @@ class StringSumHelper : public String
         val_(val) {
  8080af4:	2201      	movs	r2, #1
  8080af6:	4b2d      	ldr	r3, [pc, #180]	; (8080bac <_GLOBAL__sub_I_rebootSync+0xb8>)
-}
  8080af8:	b573      	push	{r0, r1, r4, r5, r6, lr}
-RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
  8080afa:	4d2d      	ldr	r5, [pc, #180]	; (8080bb0 <_GLOBAL__sub_I_rebootSync+0xbc>)
  8080afc:	701a      	strb	r2, [r3, #0]
-Adafruit_ADS1115 ads;
  8080afe:	2148      	movs	r1, #72	; 0x48
  8080b00:	482c      	ldr	r0, [pc, #176]	; (8080bb4 <_GLOBAL__sub_I_rebootSync+0xc0>)
-RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
  8080b02:	4c2d      	ldr	r4, [pc, #180]	; (8080bb8 <_GLOBAL__sub_I_rebootSync+0xc4>)
-Adafruit_ADS1115 ads;
  8080b04:	f000 fe33 	bl	808176e <_ZN16Adafruit_ADS1115C1Eh>
-RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
  8080b08:	4e2c      	ldr	r6, [pc, #176]	; (8080bbc <_GLOBAL__sub_I_rebootSync+0xc8>)
  8080b0a:	2118      	movs	r1, #24
  8080b0c:	4628      	mov	r0, r5
  8080b0e:	f000 fd85 	bl	808161c <_ZN14RunningAverageC1Eh>
  8080b12:	4628      	mov	r0, r5
-RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
  8080b14:	4d2a      	ldr	r5, [pc, #168]	; (8080bc0 <_GLOBAL__sub_I_rebootSync+0xcc>)
-RunningAverage longAveragingArray(LONG_SAMPLE_SIZE);   //averaging bucket
  8080b16:	4622      	mov	r2, r4
  8080b18:	4631      	mov	r1, r6
  8080b1a:	f002 fdb1 	bl	8083680 <__aeabi_atexit>
-RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
  8080b1e:	2103      	movs	r1, #3
  8080b20:	4628      	mov	r0, r5
  8080b22:	f000 fd7b 	bl	808161c <_ZN14RunningAverageC1Eh>
  8080b26:	4631      	mov	r1, r6
-String data = String(80);
  8080b28:	4e26      	ldr	r6, [pc, #152]	; (8080bc4 <_GLOBAL__sub_I_rebootSync+0xd0>)
-RunningAverage shortAveragingArray(SHORT_SAMPLE_SIZE); //averaging bucket
  8080b2a:	4622      	mov	r2, r4
  8080b2c:	4628      	mov	r0, r5
  8080b2e:	f002 fda7 	bl	8083680 <__aeabi_atexit>
-String data = String(80);
  8080b32:	4d25      	ldr	r5, [pc, #148]	; (8080bc8 <_GLOBAL__sub_I_rebootSync+0xd4>)
  8080b34:	220a      	movs	r2, #10
  8080b36:	2150      	movs	r1, #80	; 0x50
  8080b38:	4630      	mov	r0, r6
  8080b3a:	f001 fbca 	bl	80822d2 <_ZN6StringC1Eih>
  8080b3e:	4630      	mov	r0, r6
-String zeroData = String(80);
  8080b40:	4e22      	ldr	r6, [pc, #136]	; (8080bcc <_GLOBAL__sub_I_rebootSync+0xd8>)
-String data = String(80);
  8080b42:	4622      	mov	r2, r4
  8080b44:	4629      	mov	r1, r5
  8080b46:	f002 fd9b 	bl	8083680 <__aeabi_atexit>
-String zeroData = String(80);
  8080b4a:	220a      	movs	r2, #10
  8080b4c:	2150      	movs	r1, #80	; 0x50
  8080b4e:	4630      	mov	r0, r6
  8080b50:	f001 fbbf 	bl	80822d2 <_ZN6StringC1Eih>
  8080b54:	4630      	mov	r0, r6
-String loopDelayData = String(80);
  8080b56:	4e1e      	ldr	r6, [pc, #120]	; (8080bd0 <_GLOBAL__sub_I_rebootSync+0xdc>)
-String zeroData = String(80);
  8080b58:	4622      	mov	r2, r4
  8080b5a:	4629      	mov	r1, r5
  8080b5c:	f002 fd90 	bl	8083680 <__aeabi_atexit>
-String loopDelayData = String(80);
  8080b60:	220a      	movs	r2, #10
  8080b62:	2150      	movs	r1, #80	; 0x50
  8080b64:	4630      	mov	r0, r6
@@ -1535,21 +1330,17 @@ public:
  8080b86:	4628      	mov	r0, r5
  8080b88:	f000 f960 	bl	8080e4c <_ZN10JsonParserC1EPcjPN21JsonParserGeneratorRK9jsmntok_tEj>
  8080b8c:	4b12      	ldr	r3, [pc, #72]	; (8080bd8 <_GLOBAL__sub_I_rebootSync+0xe4>)
-JsonParserStatic<256, 20> parser;
  8080b8e:	4622      	mov	r2, r4
  8080b90:	602b      	str	r3, [r5, #0]
  8080b92:	4628      	mov	r0, r5
  8080b94:	4911      	ldr	r1, [pc, #68]	; (8080bdc <_GLOBAL__sub_I_rebootSync+0xe8>)
  8080b96:	f002 fd73 	bl	8083680 <__aeabi_atexit>
-STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
  8080b9a:	4a11      	ldr	r2, [pc, #68]	; (8080be0 <_GLOBAL__sub_I_rebootSync+0xec>)
  8080b9c:	2300      	movs	r3, #0
  8080b9e:	4611      	mov	r1, r2
  8080ba0:	4810      	ldr	r0, [pc, #64]	; (8080be4 <_GLOBAL__sub_I_rebootSync+0xf0>)
-}
  8080ba2:	b002      	add	sp, #8
  8080ba4:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
-STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
  8080ba8:	f001 b8b0 	b.w	8081d0c <cellular_credentials_set>
  8080bac:	200001ec 	.word	0x200001ec
  8080bb0:	20000208 	.word	0x20000208
@@ -1568,11 +1359,9 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM startin
  8080be4:	080862c5 	.word	0x080862c5
 
 08080be8 <_Z14startupHandlerPKcS0_>:
-{
  8080be8:	b530      	push	{r4, r5, lr}
  8080bea:	460c      	mov	r4, r1
  8080bec:	b09b      	sub	sp, #108	; 0x6c
-    parser.clear();
  8080bee:	4850      	ldr	r0, [pc, #320]	; (8080d30 <_Z14startupHandlerPKcS0_+0x148>)
  8080bf0:	f000 f928 	bl	8080e44 <_ZN10JsonBuffer5clearEv>
 	bool addString(const char *data) { return addData(data, strlen(data)); }
@@ -1582,13 +1371,11 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM startin
  8080bfc:	4602      	mov	r2, r0
  8080bfe:	484c      	ldr	r0, [pc, #304]	; (8080d30 <_Z14startupHandlerPKcS0_+0x148>)
  8080c00:	f000 f903 	bl	8080e0a <_ZN10JsonBuffer7addDataEPKcj>
-    if (parser.parse())
  8080c04:	484a      	ldr	r0, [pc, #296]	; (8080d30 <_Z14startupHandlerPKcS0_+0x148>)
  8080c06:	f000 fc9f 	bl	8081548 <_ZN10JsonParser5parseEv>
  8080c0a:	4d4a      	ldr	r5, [pc, #296]	; (8080d34 <_Z14startupHandlerPKcS0_+0x14c>)
  8080c0c:	2800      	cmp	r0, #0
  8080c0e:	f000 8089 	beq.w	8080d24 <_Z14startupHandlerPKcS0_+0x13c>
-        zeroOffsetInMm = parser.getReference().key("zeroOffsetInMm").valueFloat();
  8080c12:	4947      	ldr	r1, [pc, #284]	; (8080d30 <_Z14startupHandlerPKcS0_+0x148>)
  8080c14:	a812      	add	r0, sp, #72	; 0x48
  8080c16:	f000 f929 	bl	8080e6c <_ZNK10JsonParser12getReferenceEv>
@@ -1605,7 +1392,6 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM startin
  8080c36:	f000 f897 	bl	8080d68 <_ZN13JsonReferenceD1Ev>
  8080c3a:	a812      	add	r0, sp, #72	; 0x48
  8080c3c:	f000 f894 	bl	8080d68 <_ZN13JsonReferenceD1Ev>
-    Serial.printlnf("zeroOffsetInMm (as stored on Azure): " + String::format("%4.1f", zeroOffsetInMm));
  8080c40:	f002 fa04 	bl	808304c <_Z16_fetch_usbserialv>
 	StringSumHelper(const char *p) : String(p) {}
  8080c44:	493d      	ldr	r1, [pc, #244]	; (8080d3c <_Z14startupHandlerPKcS0_+0x154>)
@@ -1627,7 +1413,6 @@ STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM startin
 class StringSumHelper : public String
  8080c70:	a816      	add	r0, sp, #88	; 0x58
  8080c72:	f001 fa81 	bl	8082178 <_ZN6StringD1Ev>
-    zeroData = String("{") +
  8080c76:	4933      	ldr	r1, [pc, #204]	; (8080d44 <_Z14startupHandlerPKcS0_+0x15c>)
  8080c78:	a802      	add	r0, sp, #8
  8080c7a:	f001 fac7 	bl	808220c <_ZN6StringC1EPKc>
@@ -1635,7 +1420,6 @@ class StringSumHelper : public String
  8080c7e:	a902      	add	r1, sp, #8
  8080c80:	a80a      	add	r0, sp, #40	; 0x28
  8080c82:	f001 fb02 	bl	808228a <_ZN6StringC1ERKS_>
-               String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
  8080c86:	4930      	ldr	r1, [pc, #192]	; (8080d48 <_Z14startupHandlerPKcS0_+0x160>)
  8080c88:	a806      	add	r0, sp, #24
  8080c8a:	f001 fabf 	bl	808220c <_ZN6StringC1EPKc>
@@ -1658,7 +1442,6 @@ class StringSumHelper : public String
  8080cb8:	4620      	mov	r0, r4
  8080cba:	f001 fb50 	bl	808235e <_ZplRK15StringSumHelperRK6String>
  8080cbe:	4604      	mov	r4, r0
-               String("\"}");
  8080cc0:	4923      	ldr	r1, [pc, #140]	; (8080d50 <_Z14startupHandlerPKcS0_+0x168>)
  8080cc2:	a816      	add	r0, sp, #88	; 0x58
  8080cc4:	f001 faa2 	bl	808220c <_ZN6StringC1EPKc>
@@ -1671,7 +1454,6 @@ class StringSumHelper : public String
  8080cd6:	f001 fac9 	bl	808226c <_ZN6StringaSERKS_>
  8080cda:	a816      	add	r0, sp, #88	; 0x58
  8080cdc:	f001 fa4c 	bl	8082178 <_ZN6StringD1Ev>
-               String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
  8080ce0:	a812      	add	r0, sp, #72	; 0x48
  8080ce2:	f001 fa49 	bl	8082178 <_ZN6StringD1Ev>
  8080ce6:	a80e      	add	r0, sp, #56	; 0x38
@@ -1681,7 +1463,6 @@ class StringSumHelper : public String
 class StringSumHelper : public String
  8080cf2:	a80a      	add	r0, sp, #40	; 0x28
  8080cf4:	f001 fa40 	bl	8082178 <_ZN6StringD1Ev>
-    zeroData = String("{") +
  8080cf8:	a802      	add	r0, sp, #8
  8080cfa:	f001 fa3d 	bl	8082178 <_ZN6StringD1Ev>
 inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
@@ -1695,22 +1476,19 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
  8080d10:	f001 ff70 	bl	8082bf4 <_ZN10CloudClass13publish_eventEPKcS1_iN8particle5FlagsI15PublishFlagTypehEE>
  8080d14:	a817      	add	r0, sp, #92	; 0x5c
  8080d16:	f7ff fa76 	bl	8080206 <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
-    startupCompleted = true; //We can now run loop
  8080d1a:	2201      	movs	r2, #1
  8080d1c:	4b10      	ldr	r3, [pc, #64]	; (8080d60 <_Z14startupHandlerPKcS0_+0x178>)
  8080d1e:	701a      	strb	r2, [r3, #0]
-}
  8080d20:	b01b      	add	sp, #108	; 0x6c
  8080d22:	bd30      	pop	{r4, r5, pc}
-        Serial.printlnf("error: could not parse json");
  8080d24:	f002 f992 	bl	808304c <_Z16_fetch_usbserialv>
  8080d28:	490e      	ldr	r1, [pc, #56]	; (8080d64 <_Z14startupHandlerPKcS0_+0x17c>)
  8080d2a:	f7ff f9ea 	bl	8080102 <_ZN5Print8printlnfEPKcz>
  8080d2e:	e787      	b.n	8080c40 <_Z14startupHandlerPKcS0_+0x58>
  8080d30:	20000230 	.word	0x20000230
  8080d34:	200004e8 	.word	0x200004e8
- 8080d38:	08086314 	.word	0x08086314
- 8080d3c:	080862e6 	.word	0x080862e6
+ 8080d38:	08086315 	.word	0x08086315
+ 8080d3c:	080862e7 	.word	0x080862e7
  8080d40:	08086234 	.word	0x08086234
  8080d44:	08086185 	.word	0x08086185
  8080d48:	0808623a 	.word	0x0808623a
@@ -1718,9 +1496,9 @@ inline particle::Flags<TagT, ValueT>::Flags(ValueT val) :
  8080d50:	08086196 	.word	0x08086196
  8080d54:	200004d4 	.word	0x200004d4
  8080d58:	200001ec 	.word	0x200001ec
- 8080d5c:	0808630c 	.word	0x0808630c
+ 8080d5c:	0808630d 	.word	0x0808630d
  8080d60:	200004c0 	.word	0x200004c0
- 8080d64:	080862ca 	.word	0x080862ca
+ 8080d64:	080862cb 	.word	0x080862cb
 
 08080d68 <_ZN13JsonReferenceD1Ev>:
 JsonReference::JsonReference(const JsonParser *parser) : parser(parser), token(0) {
@@ -13410,13 +13188,13 @@ TwoWire& __fetch_global_Wire()
  8086290:	6175 3d6c 6425 2200 734c 6942 7374 3a22     ual=%d."LsBits":
  80862a0:	2200 734c 6d4d 3a22 2200 734c 7641 3a22     ."LsMm":."LsAv":
  80862b0:	2200 734c 6853 7641 3a22 7400 6369 4c6b     ."LsShAv":.tickL
- 80862c0:	7665 6c65 3300 6f69 0074 7265 6f72 3a72     evel.3iot.error:
- 80862d0:	6320 756f 646c 6e20 746f 7020 7261 6573      could not parse
- 80862e0:	6a20 6f73 006e 657a 6f72 664f 7366 7465      json.zeroOffset
- 80862f0:	6e49 6d4d 2820 7361 7320 6f74 6572 2064     InMm (as stored 
- 8086300:	6e6f 4120 757a 6572 3a29 0020 6553 7474     on Azure): .Sett
- 8086310:	6e69 2067 657a 6f72 664f 7366 7465 6e49     ing zeroOffsetIn
- 8086320:	6d4d 0000                                   Mm..
+ 80862c0:	7665 6c65 6c00 6e75 7265 6500 7272 726f     evel.luner.error
+ 80862d0:	203a 6f63 6c75 2064 6f6e 2074 6170 7372     : could not pars
+ 80862e0:	2065 736a 6e6f 7a00 7265 4f6f 6666 6573     e json.zeroOffse
+ 80862f0:	4974 4d6e 206d 6128 2073 7473 726f 6465     tInMm (as stored
+ 8086300:	6f20 206e 7a41 7275 2965 203a 5300 7465      on Azure): .Set
+ 8086310:	6974 676e 7a20 7265 4f6f 6666 6573 4974     ting zeroOffsetI
+ 8086320:	4d6e 006d                                   nMm.
 
 08086324 <_ZTV16JsonParserStaticILj256ELj20EE>:
 	...
