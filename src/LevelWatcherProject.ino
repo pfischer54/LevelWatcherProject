@@ -202,6 +202,7 @@ void loop()
 
     if (!startupCompleted)
     {
+        // TODO:  add loop count and re-start if waiting too long as we missed the event.
         blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
         delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let syseem run ok
         return;
