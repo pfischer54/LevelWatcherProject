@@ -10,7 +10,7 @@
 
 # particle
 target/
-*.cpp
+
 
 # User-specific files
 *.rsuser

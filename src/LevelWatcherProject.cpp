@@ -1,6 +1,8 @@
+#include "Particle.h"
+
 //Version info
 
-//This is branch master ... WIP
+//This is branch "master" ... and is WIP
 //Includes startup call to get and set zero offset in mm.
 // This is done by publishing a startup event which triggers a function call to the device that includes
 //the zero offest as a parameter in the function call.
@@ -11,6 +13,17 @@
 #include <CellularHelper.h>
 #include <Adafruit_ADS1015.h>
 #include "JsonParserGeneratorRK.h"
+
+int setZero(String command);
+void startupHandler(const char *event, const char *data);
+int setLoopDelay(String delay);
+int cloudResetFunction(String command);
+void sos();
+void blink(unsigned long onTime);
+void blinkLong(int times);
+void blinkShort(int times);
+void setup();
+void loop();
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 5 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
@@ -55,17 +68,19 @@ bool startupCompleted = false;
 JsonParserStatic<256, 20> parser;
 
 //Cellular constants
-String apn = "luner";
-//String apn = "3iot.com";
+//String apn = "luner";
+String apn = "3iot.com";  //globalM2M
 
-//STARTUP(cellular_credentials_set("giffgaff.com", "giffgaff", "", NULL));
-//STARTUP(cellular_credentials_set("3iot", "", "", NULL)); //globalM2M SIM starting 89353
+//DEBUG ON
+// Use primary serial over USB interface for logging output
+SerialLogHandler logHandler;
+SYSTEM_THREAD(ENABLED);
+
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
-//STARTUP(cellular_credentials_set("globaldata", "", "", NULL));  //globalM2M SIM starting 89234 or 89444
 
 int setZero(String command)
 {
-    Serial.printlnf("Set Zero Function called from cloud");
+    Log.info("Set Zero Function called from cloud");
     zeroOffsetInMm = 0.0; //Reset zero offset to allow re-calculation
     longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
     zeroingInProgress = true;
@@ -85,9 +100,9 @@ void startupHandler(const char *event, const char *data)
     }
     else
     {
-        Serial.printlnf("error: could not parse json");
+        Log.info("error: could not parse json");
     }
-    Serial.printlnf("zeroOffsetInMm (as stored on Azure): " + String::format("%4.1f", zeroOffsetInMm));
+    Log.info("zeroOffsetInMm (as stored on Azure): " + String::format("%4.1f", zeroOffsetInMm));
     zeroData = String("{") +
                String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
                String("\"}");
@@ -100,7 +115,7 @@ int setLoopDelay(String delay)
 //Set loop delay in seconds
 {
     loopDelay = atol(delay);
-    Serial.printlnf("Loop Delay updated to: " + String::format("%u", loopDelay));
+    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay));
     loopDelayData = String("{") +
                     String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay) +
                     String("\"}");
@@ -110,7 +125,7 @@ int setLoopDelay(String delay)
 
 int cloudResetFunction(String command)
 {
-    Serial.printlnf("Restart triggered");
+    Log.info("Restart triggered");
     resetFlag = true;
     rebootSync = millis();
     return 0;
@@ -152,7 +167,11 @@ void blinkShort(int times)
 void setup()
 {
     //
-    Serial.printlnf("Startup: Running Setup");
+    //DEBUG
+    // Wait for a USB serial connection for up to 15 seconds
+    waitFor(Serial.isConnected, 15000);
+    delay(1000);
+    Log.info("Startup: Running Setup");
 
     Particle.keepAlive(30); //Needed for 3rd party SIMS
 
@@ -221,7 +240,7 @@ void loop()
         longAveragingArray.addValue(waterLevelInMm);
         shortAveragingArray.addValue(waterLevelInMm);
     }
-    Serial.printlnf(String::format("%i", sample) + ", " + String::format("%u", waterLevelSampleReading) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
+    Log.info(String::format("%i", sample) + ", " + String::format("%u", waterLevelSampleReading) + ", " + String::format("%4.1f", waterLevelInMm) + ", " + String::format("%4.1f", longAveragingArray.getAverage()) + ", " + String::format("%4.1f", shortAveragingArray.getAverage()));
 
     if (sample == LONG_SAMPLE_SIZE)
     {
@@ -238,7 +257,7 @@ void loop()
                        String("\"ZeroOffsetInMm\":") + String("\"") + String::format("%4.1f", zeroOffsetInMm) +
                        String("\"}");
             Particle.publish("saveZero", zeroData, 600, PRIVATE);
-            Serial.printlnf("New zeroOffset (saved to cloud): " + zeroData);
+            Log.info("New zeroOffset (saved to cloud): " + zeroData);
             blinkLong(5); // Signal zeroing complete.
             zeroingInProgress = false;
         }
@@ -246,6 +265,7 @@ void loop()
     // Trigger the integration
     data = String("{") +
            String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
+           String("\"SensorId\":") + String("\"") + String("LS") + String("\",") +
            String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
            String("\"LsBits\":") + String("\"") + String::format("%u", waterLevelSampleReading) + String("\",") +
            String("\"LsMm\":") + String("\"") + String::format("%4.1f", waterLevelInMm) + String("\",") +
@@ -253,10 +273,10 @@ void loop()
            String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
            String("\"}");
     Particle.connect();                                // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
-    Particle.publish("tickLevel", data, 600, PRIVATE); //TTL set to 3600s (may not yet be implemented)
-                                                       //Serial.printlnf(data);
-                                                       //  Serial.printlnf(String::format("%f", waterLevelInMm));
-                                                       //  Serial.printlnf(data);
+    Particle.publish("tickLevel2", data, 600, PRIVATE); //TTL set to 3600s (may not yet be implemented)
+                                                       //Log.info(data);
+                                                       //  Log.info(String::format("%f", waterLevelInMm));
+                                                       //  Log.info(data);
 
     if (sample > 0)
         ++sample; //Increase sample count if on initial fill
