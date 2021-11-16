@@ -83,7 +83,7 @@ int setZero(String command)
     Log.info("Set Zero Function called from cloud");
     zeroOffsetInMm = 0.0; //Reset zero offset to allow re-calculation
     longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
-    zeroingInProgress = true;
+    zeroingInProgress = true; 
     sample = 1;
     return 0;
 }
@@ -181,7 +181,7 @@ void setup()
     Particle.function("SetZero", setZero);
 
     // Subscribe to the webhook response event
-    Particle.subscribe("hook-response/startup", startupHandler, MY_DEVICES);
+    Particle.subscribe(System.deviceID() + "/hook-response/Startup2/", startupHandler);
 
     longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);   // Clear out averaging array
     shortAveragingArray.fillValue(0.0, SHORT_SAMPLE_SIZE); // Clear out averaging array
@@ -191,7 +191,7 @@ void setup()
     //Setup ADC
     ads.setGain(GAIN_TWO); //GAIN_ONE for ...
     ads.begin();
-    Particle.publish("startup", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.
+    Particle.publish("Startup2", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.
 }
 //
 // Main loop
@@ -273,11 +273,12 @@ void loop()
            String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
            String("\"}");
     Particle.connect();                                // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
-    Particle.publish("tickLevel2", data, 600, PRIVATE); //TTL set to 3600s (may not yet be implemented)
+    Particle.publish("TickLevel2", data, 600, PRIVATE); //TTL set to 3600s (may not yet be implemented)
                                                        //Log.info(data);
                                                        //  Log.info(String::format("%f", waterLevelInMm));
                                                        //  Log.info(data);
 
+   
     if (sample > 0)
         ++sample; //Increase sample count if on initial fill
 
