@@ -1,5 +1,3 @@
-#include "Particle.h"
-
 //Version info
 
 //This is branch "master" ... and is WIP
@@ -8,13 +6,14 @@
 //the zero offest as a parameter in the function call.
 //TODO how to make this device specific so that the function is only called on the device that is starting up?
 
-// This #include statement was automatically added by the Particle IDE.
+#include "Particle.h"
+#include "LevelWatcher.h"
+#include "LevelMeasurement.h"
 #include <RunningAverage.h>
 #include <CellularHelper.h>
-#include <Adafruit_ADS1015.h>
 #include "JsonParserGeneratorRK.h"
 
-int setZero(String command);
+int setAndSaveZero(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay);
 int cloudResetFunction(String command);
@@ -24,25 +23,6 @@ void blinkLong(int times);
 void blinkShort(int times);
 void setup();
 void loop();
-
-const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
-const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 5 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
-const unsigned int REBOOT_DELAY_IN_MS = 15000;
-const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
-const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
-// Two averaging buckets are provided, short and long averaging
-const int LONG_SAMPLE_SIZE = 4;                    // number of measurements to average for long term average;
-const int SHORT_SAMPLE_SIZE = 3;                    // number of measurements to average for short term average;
-const double FOUR_MA_OFFSET_IN_BITS = 6430;         //3840.0;  //3840 for 120 Ohm, 6400 for 200 Ohm
-const double MAX_16_BIT_ANALOGUE_BIT_VALUE = 32154; // 19200.0;  //19200 for 120 Ohm, 32000 for 200 Ohm-- see ndc datasheet on ADS1015
-const double SENSOR_FULL_RANGE_IN_MM = 2000.0;
-
-//LEDs timings etc
-const int LONG_BLINK_MS = 600;
-const int SHORT_BLINK_MS = 200;
-const int BLINK_OFF_DELAY_MS = 200;
-const int STARTUP_BLINK_FREQUENCY = 6;
-const int NORMAL_LOOP_BLINK_FREQUENCY = 4;
 
 unsigned long rebootSync = 0;
 bool resetFlag = false;
@@ -61,7 +41,6 @@ String zeroData = String(80);
 String loopDelayData = String(80);
 double waterLevelInMm;
 double zeroOffsetInMm = 0.0; //zeroing offset
-int onboardLed = D7;         // Instead of writing D7 over and over again, we'll write led2
 // This one is the little blue LED on your board. On the Photon it is next to D7, and on the Core it is next to the USB jack.
 bool zeroingInProgress = false;
 bool startupCompleted = false;
@@ -69,7 +48,10 @@ JsonParserStatic<256, 20> parser;
 
 //Cellular constants
 //String apn = "luner";
-String apn = "3iot.com";  //globalM2M
+String apn = "3iot.com"; //globalM2M
+
+//Objects etc
+LevelMeasurement lm[1];
 
 //DEBUG ON
 // Use primary serial over USB interface for logging output
@@ -78,12 +60,12 @@ SYSTEM_THREAD(ENABLED);
 
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
-int setZero(String command)
+int setAndSaveZero(String command)
 {
     Log.info("Set Zero Function called from cloud");
     zeroOffsetInMm = 0.0; //Reset zero offset to allow re-calculation
     longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
-    zeroingInProgress = true; 
+    zeroingInProgress = true;
     sample = 1;
     return 0;
 }
@@ -131,39 +113,6 @@ int cloudResetFunction(String command)
     return 0;
 }
 
-void sos()
-{
-    blinkShort(3);
-    blinkLong(3);
-    blinkShort(3);
-}
-
-void blink(unsigned long onTime)
-{
-    digitalWrite(onboardLed, HIGH);
-    // We'll leave it on for 1 second...
-    delay(onTime);
-    // Then we'll turn it off...
-    digitalWrite(onboardLed, LOW);
-    delay(BLINK_OFF_DELAY_MS);
-}
-
-void blinkLong(int times)
-{
-    for (int i = 0; i < times; i++)
-    {
-        blink(LONG_BLINK_MS);
-    }
-}
-
-void blinkShort(int times)
-{
-    for (int i = 0; i < times; i++)
-    {
-        blink(SHORT_BLINK_MS);
-    }
-}
-
 void setup()
 {
     //
@@ -178,14 +127,14 @@ void setup()
     //Register functions to control the electron
     Particle.function("CloudResetFunction", cloudResetFunction);
     Particle.function("SetLoopDelay", setLoopDelay);
-    Particle.function("SetZero", setZero);
+    Particle.function("SetAndSaveZero", setAndSaveZero);
 
     // Subscribe to the webhook response event
     Particle.subscribe(System.deviceID() + "/hook-response/Startup2/", startupHandler);
 
     longAveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);   // Clear out averaging array
     shortAveragingArray.fillValue(0.0, SHORT_SAMPLE_SIZE); // Clear out averaging array
-    pinMode(onboardLed, OUTPUT);                           //Setup activity led so we can blink it to show we're rolling...
+    pinMode(ONBOARDLED, OUTPUT);                           //Setup activity led so we can blink it to show we're rolling...
     //   setADCSampleTime(ADC_SampleTime_3Cycles);
     //set ADC gain  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit=0.125mV
     //Setup ADC
@@ -272,13 +221,12 @@ void loop()
            String("\"LsAv\":") + String("\"") + String::format("%4.1f", longAveragingArray.getAverage()) + String("\",") +
            String("\"LsShAv\":") + String("\"") + String::format("%4.1f", shortAveragingArray.getAverage()) +
            String("\"}");
-    Particle.connect();                                // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
+    Particle.connect();                                 // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
     Particle.publish("TickLevel2", data, 600, PRIVATE); //TTL set to 3600s (may not yet be implemented)
-                                                       //Log.info(data);
-                                                       //  Log.info(String::format("%f", waterLevelInMm));
-                                                       //  Log.info(data);
+                                                        //Log.info(data);
+                                                        //  Log.info(String::format("%f", waterLevelInMm));
+                                                        //  Log.info(data);
 
-   
     if (sample > 0)
         ++sample; //Increase sample count if on initial fill
 
