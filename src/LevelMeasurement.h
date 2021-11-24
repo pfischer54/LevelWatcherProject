@@ -1,3 +1,6 @@
+#ifndef LEVELMEASUREMENT_H
+#define LEVELMEASUREMENT_H
+
 #include "Particle.h"
 #include <RunningAverage.h>
 #include <CellularHelper.h>
@@ -17,30 +20,33 @@ class LevelMeasurement
 {
 
 public:
+String sensorId;
 bool zeroingInProgress;
-void measureLevel(String sensorId);
-void configureSensor(String sensorId, uint sensorType);
-void updateAndSaveZero(String sensorId);
-void readAndSetZeroAtStartup(String sensorId);
+void configureSensor(uint sensorType);
+void updateAndSaveZero(void);
+void readAndSetZeroAtStartup(void);
+
+LevelMeasurement() {}
+LevelMeasurement(String sid);
+void measureLevel(  Adafruit_ADS1115 ads, const char* sensorId);
 
 private:
-Adafruit_ADS1115 ads;
 int levelSensor = A0;                               //  Analogue input channel
 int zeroVolt = A1;
 int zeroVoltSample = 0;
 int waterLevelSampleReading = 0;
-int sample = 1;
 // Two averaging buckets are provided, short and long averaging
 RunningAverage longAveragingArray = RunningAverage(LONG_SAMPLE_SIZE);   //averaging bucket
 RunningAverage shortAveragingArray = RunningAverage(SHORT_SAMPLE_SIZE); //averaging bucket
 String data = String(80);
 String zeroData = String(80);
 
-double waterLevelInMm;
+
+double waterLevel;
 double zeroOffsetInMm = 0.0; //zeroing offset
 int onboardLed = D7;         // Instead of writing D7 over and over again, we'll write led2
 // This one is the little blue LED on your board. On the Photon it is next to D7, and on the Core it is next to the USB jack.
 
-JsonParserStatic<256, 20> parser;
-
 };
+
+#endif

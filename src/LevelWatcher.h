@@ -1,7 +1,10 @@
-
+#ifndef LEVELWATCHER_H
+#define LEVELWATCHER_H 
 #define ONBOARDLED D7
 
 const unsigned int NUMBER_OF_SENSORS = 1;  //number of sensors to scan
+
+#define SENSOR_0 "LS";
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 5 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
@@ -16,5 +19,10 @@ const int BLINK_OFF_DELAY_MS = 200;
 const int STARTUP_BLINK_FREQUENCY = 6;
 const int NORMAL_LOOP_BLINK_FREQUENCY = 4;
 
+extern JsonParserStatic<256, 20> parser;
+extern  LevelMeasurement lm[1];
+extern sample;
+
+#endif
 
 

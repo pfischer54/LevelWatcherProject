@@ -1,5 +1,8 @@
 #include "Particle.h"
+#include "JsonParserGeneratorRK.h"
+#include "LevelMeasurement.h"
 #include "LevelWatcher.h"
+#include "UtilityFunctions.h"
 
 int onboardLed = D7;         // Instead of writing D7 over and over again, we'll write led2
 
@@ -36,3 +39,33 @@ void sos()
     blinkLong(3);
     blinkShort(3);
 }
+
+void initalizeAdc( Adafruit_ADS1115 ads)
+{
+      //   setADCSampleTime(ADC_SampleTime_3Cycles);
+    //set ADC gain  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit=0.125mV
+    //Setup ADC
+  
+
+    ads.setGain(GAIN_TWO); //GAIN_ONE for ...
+    ads.begin();
+ 
+}
+uint8_t getSensorIndex(String sensorId)
+{}
+
+bool zeroingInProgress()
+{
+    return true;
+}
+
+int parseValue(char* data)
+{
+  parser.clear();
+    parser.addString(data);
+    if (parser.parse())
+    
+        return parser.getReference().key("zeroOffsetInMm").valueFloat();
+    else
+    return -1;
+    }

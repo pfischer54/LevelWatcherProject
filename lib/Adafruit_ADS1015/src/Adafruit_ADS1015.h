@@ -1,3 +1,6 @@
+#ifndef ADAFRUIT_ADS1015_H
+#define ADAFRUIT_ADS1015_H
+//above added by pjf 
 /**************************************************************************/
 /*!
     @file     Adafruit_ADS1015.h
@@ -152,3 +155,4 @@ class Adafruit_ADS1115 : public Adafruit_ADS1015
 
  private:
 };
+#endif
