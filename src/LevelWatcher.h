@@ -2,7 +2,7 @@
 #define LEVELWATCHER_H 
 #define ONBOARDLED D7
 
-const unsigned int NUMBER_OF_SENSORS = 1;  //number of sensors to scan
+const int NUMBER_OF_SENSORS = 1;  //number of sensors to scan
 
 #define SENSOR_0 "LS";
 
@@ -20,8 +20,8 @@ const int STARTUP_BLINK_FREQUENCY = 6;
 const int NORMAL_LOOP_BLINK_FREQUENCY = 4;
 
 extern JsonParserStatic<256, 20> parser;
-extern  LevelMeasurement lm[1];
-extern sample;
+//extern  LevelMeasurement lm[1];
+extern int sample;
 
 #endif
 

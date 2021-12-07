@@ -24,6 +24,7 @@ void LevelMeasurement::measureLevel( Adafruit_ADS1115 ads, const char* sensorId)
     {
         //add sample if not an outlier
         //sometimes you get a duff reading, usually 0.  As we are 4-20mA must be greater than ...
+        //The following now calculated clientside:
         //waterLevel = (waterLevelSampleReading - FOUR_MA_OFFSET_IN_BITS) * (SENSOR_FULL_RANGE_IN_MM / (MAX_16_BIT_ANALOGUE_BIT_VALUE - FOUR_MA_OFFSET_IN_BITS)) - zeroOffsetInMm;
         longAveragingArray.addValue(waterLevelSampleReading);
         shortAveragingArray.addValue(waterLevelSampleReading);

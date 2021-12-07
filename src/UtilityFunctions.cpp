@@ -52,7 +52,9 @@ void initalizeAdc( Adafruit_ADS1115 ads)
  
 }
 uint8_t getSensorIndex(String sensorId)
-{}
+{
+    return 0; //xxx
+}
 
 bool zeroingInProgress()
 {
@@ -65,7 +67,7 @@ int parseValue(char* data)
     parser.addString(data);
     if (parser.parse())
     
-        return parser.getReference().key("zeroOffsetInMm").valueFloat();
+        return parser.getReference().key("zeroOffset").valueFloat();
     else
     return -1;
     }

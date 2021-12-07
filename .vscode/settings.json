@@ -5,6 +5,7 @@
     "files.associations": {
         "*.ino": "cpp"
     },
-    "particle.firmwareVersion": "2.1.0",
-    "particle.targetPlatform": "electron"
+    "particle.firmwareVersion": "3.1.0",
+    "particle.targetPlatform": "electron",
+    "particle.targetDevice": "LevelWatcher2"
 }

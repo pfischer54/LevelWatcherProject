@@ -15,12 +15,13 @@
 #include <CellularHelper.h>
 #include <Adafruit_ADS1015.h>
 
-int setAndSaveZero(String command);
+int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay);
 int cloudResetFunction(String command);
 String loopDelayData;
 int sample = 1;
+LevelMeasurement lm[1];
 
 void setup();
 void loop();
@@ -47,12 +48,12 @@ SYSTEM_THREAD(ENABLED);
 
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
-int setAndSaveZero(char *command)
+int measureZeroOffset(String command)
 {
-    int i = -1;
+    int i;
     Log.info("Set Zero Function called from cloud");
-    i = parseValue(command);
-    if (i > -1)
+    i = atoi(command);
+    if ((i > -1)|| (i <= NUMBER_OF_SENSORS ))
         lm[i].zeroingInProgress = true;
     return 0;
 }
@@ -97,13 +98,12 @@ void setup()
     //Register functions to control the electron
     Particle.function("CloudResetFunction", cloudResetFunction);
     Particle.function("SetLoopDelay", setLoopDelay);
-    Particle.function("SetAndSaveZero", setAndSaveZero);
+    Particle.function("SetAndSaveZero", measureZeroOffset);
 
     // Intialize sensor objects
 
     //Objects etc
-    LevelMeasurement lm[1];
-    lm[0] = LevelMeasurement("LS");
+      lm[0].sensorId = "LS";
 
     //Initialize interface circuits
     initalizeAdc(ads);
@@ -130,13 +130,11 @@ void loop()
 
     if ((resetFlag) && (millis() - rebootSync >= REBOOT_DELAY_IN_MS))
     {
-        // do things here  before reset and then push the button
+        // do things here  before reset and then push the butt                                                                                                                                              on
         sos();
         Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
         System.reset();
     }
-
-    time_t time = Time.now();
 
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
