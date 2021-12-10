@@ -53,15 +53,18 @@ int measureZeroOffset(String command)
     int i;
     Log.info("Set Zero Function called from cloud");
     i = atoi(command);
-    if ((i > -1)|| (i <= NUMBER_OF_SENSORS ))
+    if ((i > -1)|| (i < NUMBER_OF_SENSORS ))
+    {
         lm[i].zeroingInProgress = true;
+        sample = 1;  //Reset sample count
+    }
     return 0;
 }
 
 void startupHandler(const char *event, const char *data)
 {
-
     startupCompleted = true; //We can now run loop
+      Particle.publish(System.deviceID() + " initialized", NULL,  600, PRIVATE);
 }
 
 int setLoopDelay(String delay)
@@ -109,10 +112,10 @@ void setup()
     initalizeAdc(ads);
 
     // Subscribe to the webhook response event
-    Particle.subscribe(System.deviceID() + "/hook-response/Startup2/", startupHandler);
+    Particle.subscribe(System.deviceID() + "/hook-response/Initialize/", startupHandler);  
 
-    pinMode(ONBOARDLED, OUTPUT);                      //Setup activity led so we can blink it to show we're rolling...
-    Particle.publish("Startup2", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.
+    pinMode(STATUSLED, OUTPUT);                      //Setup activity led so we can blink it to show we're rolling...
+    Particle.publish("Initialize", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.  Chaqnged name so as to not trigger LV3.
 }
 //
 // Main loop
@@ -145,7 +148,10 @@ void loop()
         delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let syseem run ok
         return;
     }
-    blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
+    if (zeroingInProgress())
+        blinkShort(ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY); //Signal zeroing running loop
+    else
+        blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
 
     //  System.sleep(10);
     //  delay(8000);

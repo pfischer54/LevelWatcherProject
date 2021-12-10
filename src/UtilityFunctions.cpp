@@ -4,16 +4,13 @@
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
 
-int onboardLed = D7;         // Instead of writing D7 over and over again, we'll write led2
-
-
 void blink(unsigned long onTime)
 {
-    digitalWrite(onboardLed, HIGH);
+    digitalWrite(STATUSLED, HIGH);
     // We'll leave it on for 1 second...
     delay(onTime);
     // Then we'll turn it off...
-    digitalWrite(onboardLed, LOW);
+    digitalWrite(STATUSLED, LOW);
     delay(BLINK_OFF_DELAY_MS);
 }
 
@@ -40,16 +37,14 @@ void sos()
     blinkShort(3);
 }
 
-void initalizeAdc( Adafruit_ADS1115 ads)
+void initalizeAdc(Adafruit_ADS1115 ads)
 {
-      //   setADCSampleTime(ADC_SampleTime_3Cycles);
+    //   setADCSampleTime(ADC_SampleTime_3Cycles);
     //set ADC gain  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit=0.125mV
     //Setup ADC
-  
 
     ads.setGain(GAIN_TWO); //GAIN_ONE for ...
     ads.begin();
- 
 }
 uint8_t getSensorIndex(String sensorId)
 {
@@ -58,16 +53,25 @@ uint8_t getSensorIndex(String sensorId)
 
 bool zeroingInProgress()
 {
-    return true;
+    int i;
+    
+    //Checks if zeroing completed for every device.
+
+    for (i = 0; i < NUMBER_OF_SENSORS; i++)
+    {
+        if (lm[i].zeroingInProgress == true)
+            return true;
+      }
+            return false;
 }
 
-int parseValue(char* data)
-{
-  parser.clear();
-    parser.addString(data);
-    if (parser.parse())
-    
-        return parser.getReference().key("zeroOffset").valueFloat();
-    else
-    return -1;
+    int parseValue(char *data)
+    {
+        parser.clear();
+        parser.addString(data);
+        if (parser.parse())
+
+            return parser.getReference().key("zeroOffset").valueFloat();
+        else
+            return -1;
     }
