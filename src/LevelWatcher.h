@@ -4,6 +4,8 @@
 
 const int NUMBER_OF_SENSORS = 1;  //number of sensors to scan
 
+//Sensor types enum
+
 #define SENSOR_0 "LS";
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
@@ -22,7 +24,7 @@ const int ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY = 2;
 const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
 extern JsonParserStatic<256, 20> parser;
-extern  LevelMeasurement lm[1];
+//xxxextern  LevelMeasurement lm[1];
 extern int sample;
 
 #endif

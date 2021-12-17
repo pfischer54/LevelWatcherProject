@@ -37,29 +37,20 @@ void sos()
     blinkShort(3);
 }
 
-void initalizeAdc(Adafruit_ADS1115 ads)
-{
-    //   setADCSampleTime(ADC_SampleTime_3Cycles);
-    //set ADC gain  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit=0.125mV
-    //Setup ADC
-
-    ads.setGain(GAIN_TWO); //GAIN_ONE for ...
-    ads.begin();
-}
 uint8_t getSensorIndex(String sensorId)
 {
     return 0; //xxx
 }
 
-bool zeroingInProgress()
+bool isAnyZeroingInProgress(LevelMeasurement * lm[])
 {
     int i;
     
-    //Checks if zeroing completed for every device.
+    //Checks if zeroing is going on  for any device.
 
     for (i = 0; i < NUMBER_OF_SENSORS; i++)
     {
-        if (lm[i].zeroingInProgress == true)
+        if (lm[i]->isZeroingInProgress() == true)
             return true;
       }
             return false;
