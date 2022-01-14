@@ -20,7 +20,6 @@ LevelMeasurement(String sid);
 
 bool isZeroingInProgress(void);
 void setZeroingInProgress(void);
-
 virtual void measureLevel(void) = 0;
 
 //xxx interfaceType;
@@ -28,6 +27,7 @@ virtual void measureLevel(void) = 0;
 
 protected:
 String sensorId;
+int sample;
 bool zeroingInProgress;
 int waterLevelSampleReading;
 

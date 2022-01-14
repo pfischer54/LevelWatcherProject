@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement_4to20mA.h"
+#include "LevelMeasurement_RS485.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
 #include <RunningAverage.h>
@@ -25,7 +26,6 @@ void setup();
 void loop();
 
 String loopDelayData;
-int sample = 1;
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay);
@@ -36,7 +36,9 @@ bool startupCompleted = false;
 
 //Define sensor interfaces and objects
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
-LevelMeasurement *lm[1] = {&lm0};
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS");
+LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS");
+LevelMeasurement *lm[2] = {&lm0, &lm1};  //xxx
 
 //Interaface objects
 JsonParserStatic<256, 20> parser;
@@ -108,11 +110,10 @@ void loop()
      CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
     lm[0]->measureLevel();
+       lm[1]->measureLevel();
+       //xxxlm[2]->measureLevel();
 
-    if (sample > 0)
-        ++sample; //Increase sample count if on initial fill
-
-    // Wait nn seconds until all/any zeroing completed
+     // Wait nn seconds until all/any zeroing completed
     if (isAnyZeroingInProgress(lm))
     {
         blinkShort(ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY); //Signal zeroing running loop
@@ -134,7 +135,6 @@ int measureZeroOffset(String command)
     if ((i > -1) || (i < NUMBER_OF_SENSORS))
     {
         lm[i]->setZeroingInProgress();
-        sample = 1; //Reset sample count
     }
     return 0;
 }

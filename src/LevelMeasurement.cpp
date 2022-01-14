@@ -2,11 +2,12 @@
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_4to20mA.h"
+#include "LevelMeasurement_RS485.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
 #include <RunningAverage.h>
 #include <CellularHelper.h>
-#include <Adafruit_ADS1015.h>
+
 
 
 LevelMeasurement::LevelMeasurement()
@@ -28,4 +29,5 @@ bool LevelMeasurement::isZeroingInProgress(void)
 void LevelMeasurement::setZeroingInProgress(void)
 {
  zeroingInProgress = true;
+       sample = 1;  //Reset sample count for this sensor
 }

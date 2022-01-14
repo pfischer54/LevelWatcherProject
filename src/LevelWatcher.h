@@ -2,11 +2,13 @@
 #define LEVELWATCHER_H 
 #define STATUSLED D2 //D0, D1 used fro I2C,  D6 and D7 used for debugger
 
-const int NUMBER_OF_SENSORS = 1;  //number of sensors to scan
+const int NUMBER_OF_SENSORS = 2;  //number of sensors to scan
 
 //Sensor types enum
 
 #define SENSOR_0 "LS";
+#define SENSOR_1 "MS";
+#define SENSOR_2 "TS";
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 1 * 60 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
@@ -25,7 +27,7 @@ const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
 extern JsonParserStatic<256, 20> parser;
 //xxxextern  LevelMeasurement lm[1];
-extern int sample;
+//xxxextern int sample;
 
 #endif
 

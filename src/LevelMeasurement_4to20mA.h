@@ -24,6 +24,7 @@ LevelMeasurement_4to20mA(String sid);
 
 void measureLevel(void);
 void initializeInterfaceAndSensor(void);
+void publishLevel(int reading);
 
 struct adcConfiguration
 {
