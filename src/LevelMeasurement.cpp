@@ -43,7 +43,7 @@ void LevelMeasurement::publishLevel(int reading)
         if (zeroingInProgress) //This is true if a cloud call has been made to set zero
         {
           blinkLong(ZEROING_COMPLETED_BLINK_FREQUENCY); // Signal zeroing complete.
-          Particle.publish(System.deviceID() + " zeroing completed", NULL, 600, PRIVATE);
+          Particle.publish(System.deviceID() + " zeroing completed for "  + String("\"") + sensorId + String("\""), NULL, 600, PRIVATE);
             zeroingInProgress = false;
         }
     }

@@ -23,14 +23,13 @@ LevelMeasurement_4to20mA();
 LevelMeasurement_4to20mA(String sid);
 
 void measureLevel(void);
-void initializeInterfaceAndSensor(void);
 
-struct adcConfiguration
+/* struct adcConfiguration
 {
 int channelNumber;  //adc channel number;
 int adcAddress;  //addressof I2C device
 int adcChannel;  //  adc channel number for this sensor
-};
+}; */
 
 
 private:

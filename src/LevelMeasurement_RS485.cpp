@@ -73,7 +73,7 @@ void LevelMeasurement_RS485::measureLevel()
     int j, result;
     int rs485Data[10];
 
-    waterLevelSampleReading = 0; //ads.readADC_SingleEnded(0); //FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
+    waterLevelSampleReading = 0; 
     result = node.readHoldingRegisters(0x0, 1);
 
     Serial.println("");

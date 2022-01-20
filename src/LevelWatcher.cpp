@@ -30,14 +30,19 @@ int cloudResetFunction(String command);
 void setup();
 void loop();
 
-String loopDelayData;
+//forward declarations
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay);
+
+//globals
+String loopDelayData;
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; //Loop delay default
-int startupCompleted = 0;
+int startupLoopsCompleted = 0;
+int innerLoopDelayCount = 0;
+int innterLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT;
 
 //Define sensor interfaces and objects and initialize sensor interfaces
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
@@ -89,9 +94,9 @@ void setup()
 //
 void loop()
 {
-    if ((millis() >= REBOOT_INTERVAL_IN_MS)  || (startupCompleted > STARTUP_LOOPS))
+    if ((millis() >= REBOOT_INTERVAL_IN_MS)  || (startupLoopsCompleted > STARTUP_LOOPS))
     {
-        //Reboot regularly to freshen up
+        //Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
         // do things here  before reset and then push the button
         sos();
         Particle.publish("Debug", "Reboot intiated", 300, PRIVATE);
@@ -102,25 +107,29 @@ void loop()
     {
         // do things here  before reset and then push the button                                                                                                                                              on
         sos();
+        
         Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
         System.reset();
     }
 
-    if (startupCompleted < STARTUP_LOOPS && startupCompleted > 0)
+    if (startupLoopsCompleted < STARTUP_LOOPS && startupLoopsCompleted > 0)
     //Keep waiting
     {
         blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
-        delay(STARTUP_LOOP_DELAY);      
-             //Wait a bit to  let syseem run ok
-             startupCompleted++;
+        delay(STARTUP_LOOP_DELAY); //Wait a bit to  let system run 
+             startupLoopsCompleted++;
         return;
     }
  
      CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
+if (innerLoopDelayCount >= innterLoopDelayCountDefault)
+{
     lm[0]->measureLevel();
     lm[1]->measureLevel();
        //xxxlm[2]->measureLevel();
+       innerLoopDelayCount = 1; //reset loop count
+}
 
      // Wait nn seconds until all/any zeroing completed
     if (isAnyZeroingInProgress(lm))
@@ -131,7 +140,8 @@ void loop()
     else
     {
         blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
-        delay(loopDelay);                        //10 min: 600,000 1 min: 60,000 10 sec: 10,000
+        delay(loopDelay);                        //10s by default
+        innerLoopDelayCount++;  //inc inner loop count
     }
 }
 
@@ -139,28 +149,28 @@ int measureZeroOffset(String command)
 {
     int i;
     Log.info("ZeroingInProgress Function called from cloud");
-    Particle.publish(System.deviceID() + " ZeroingInProgress for device " + command, NULL, 600, PRIVATE);
-    i = atoi(command);
+     i = atoi(command);
     if ((i > -1) && (i < NUMBER_OF_SENSORS))
     {
-        lm[i]->setZeroingInProgress();
+    Particle.publish(System.deviceID() + " ZeroingInProgress for sensor " + lm[i]->sensorId, NULL, 600, PRIVATE);
+           lm[i]->setZeroingInProgress();
     }
     return 0;
 }
 
 void startupHandler(const char *event, const char *data)
 {
-    startupCompleted = -1 ; //We can now run loop
+    startupLoopsCompleted = -1 ; //We can now run loop
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
 int setLoopDelay(String delay)
-//Set loop delay in seconds
+//Set loop delay count (default is n * 10s inner loop)
 {
-    loopDelay = atol(delay);
-    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay));
+    innterLoopDelayCountDefault = atol(delay);
+    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay * innterLoopDelayCountDefault));
     loopDelayData = String("{") +
-                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay) +
+                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay * innterLoopDelayCountDefault) +
                     String("\"}");
     Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
     return 0;
