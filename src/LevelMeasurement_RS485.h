@@ -3,9 +3,11 @@
 
 #include "Particle.h"
 #include "LevelMeasurement.h"
+#include "ModbusMaster.h"
 #include <RunningAverage.h>
 #include <CellularHelper.h>
 #include "JsonParserGeneratorRK.h"
+#include "ModbusMaster.h"
 #include <vector>
 
 
@@ -16,6 +18,7 @@ class LevelMeasurement_RS485: public LevelMeasurement
 public:
 LevelMeasurement_RS485();
 LevelMeasurement_RS485(String sid);
+LevelMeasurement_RS485(String sid, int addr);
 
 void measureLevel(void);
 void initializeInterfaceAndSensor(void);
@@ -31,7 +34,8 @@ int adcChannel;  //  adc channel number for this sensor
 
 private:
 
-String data = String(80);
+int nodeAddr = 1;  //slave node address, defaults to 1.
+ModbusMaster node;
 
 };
 

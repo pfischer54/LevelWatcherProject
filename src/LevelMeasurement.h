@@ -20,7 +20,10 @@ LevelMeasurement(String sid);
 
 bool isZeroingInProgress(void);
 void setZeroingInProgress(void);
+void publishLevel(int);
+
 virtual void measureLevel(void) = 0;
+
 
 //xxx interfaceType;
 //xxx int adcChannel;  //  adc channel number for this sensor
@@ -30,9 +33,9 @@ String sensorId;
 int sample;
 bool zeroingInProgress;
 int waterLevelSampleReading;
+String data = String(80);
 
 private:
-String data = String(80);
 };
 
 #endif

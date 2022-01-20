@@ -16,6 +16,11 @@
 #include <CellularHelper.h>
 #include <Adafruit_ADS1015.h>
 
+// This turns off optimization for this file which makes it easier to debug.
+// Otherwise you can't break on some lines, and some local variables won't
+// be available.
+#pragma GCC optimize ("O0")
+
 //forward declarations
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
@@ -32,13 +37,14 @@ int setLoopDelay(String delay);
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; //Loop delay default
-bool startupCompleted = false;
+int startupCompleted = 0;
 
-//Define sensor interfaces and objects
+//Define sensor interfaces and objects and initialize sensor interfaces
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
 LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS");
-LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS");
+//xxxLevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS");
 LevelMeasurement *lm[2] = {&lm0, &lm1};  //xxx
+//xxxLevelMeasurement *lm[1] = {&lm0};  //xxx
 
 //Interaface objects
 JsonParserStatic<256, 20> parser;
@@ -50,7 +56,9 @@ String apn = "3iot.com"; //globalM2M
 //DEBUG ON
 // Use primary serial over USB interface for logging output
 SerialLogHandler logHandler;
-SYSTEM_THREAD(ENABLED);
+//xxx SYSTEM_THREAD(ENABLED);
+SYSTEM_MODE(AUTOMATIC); //Used for debug? 
+
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
 void setup()
@@ -61,6 +69,7 @@ void setup()
     waitFor(Serial.isConnected, 15000);
     delay(1000);
     Log.info("Startup: Running Setup");
+	Serial.begin(9600);
 
     Particle.keepAlive(30); //Needed for 3rd party SIMS
 
@@ -68,9 +77,6 @@ void setup()
     Particle.function("CloudResetFunction", cloudResetFunction);
     Particle.function("SetLoopDelay", setLoopDelay);
     Particle.function("SetAndSaveZero", measureZeroOffset);
-
-    // Intialize sensor objects
-    //xxx lm[0] = &lm0;
 
     // Subscribe to the webhook response event
     Particle.subscribe(System.deviceID() + "/hook-response/Initialize/", startupHandler);
@@ -83,7 +89,7 @@ void setup()
 //
 void loop()
 {
-    if ((millis() >= REBOOT_INTERVAL_IN_MS))
+    if ((millis() >= REBOOT_INTERVAL_IN_MS)  || (startupCompleted > STARTUP_LOOPS))
     {
         //Reboot regularly to freshen up
         // do things here  before reset and then push the button
@@ -94,23 +100,26 @@ void loop()
 
     if ((resetFlag) && (millis() - rebootSync >= REBOOT_DELAY_IN_MS))
     {
-        // do things here  before reset and then push the butt                                                                                                                                              on
+        // do things here  before reset and then push the button                                                                                                                                              on
         sos();
         Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
         System.reset();
     }
 
-    if (!startupCompleted)
+    if (startupCompleted < STARTUP_LOOPS && startupCompleted > 0)
+    //Keep waiting
     {
         blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
-        delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let syseem run ok
+        delay(STARTUP_LOOP_DELAY);      
+             //Wait a bit to  let syseem run ok
+             startupCompleted++;
         return;
     }
-
+ 
      CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
     lm[0]->measureLevel();
-       lm[1]->measureLevel();
+    lm[1]->measureLevel();
        //xxxlm[2]->measureLevel();
 
      // Wait nn seconds until all/any zeroing completed
@@ -132,7 +141,7 @@ int measureZeroOffset(String command)
     Log.info("ZeroingInProgress Function called from cloud");
     Particle.publish(System.deviceID() + " ZeroingInProgress for device " + command, NULL, 600, PRIVATE);
     i = atoi(command);
-    if ((i > -1) || (i < NUMBER_OF_SENSORS))
+    if ((i > -1) && (i < NUMBER_OF_SENSORS))
     {
         lm[i]->setZeroingInProgress();
     }
@@ -141,7 +150,7 @@ int measureZeroOffset(String command)
 
 void startupHandler(const char *event, const char *data)
 {
-    startupCompleted = true; //We can now run loop
+    startupCompleted = -1 ; //We can now run loop
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
