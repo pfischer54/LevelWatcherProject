@@ -48,11 +48,13 @@ void LevelMeasurement::publishLevel(int reading)
         }
     }
     // Trigger the integration
-     time_t time = Time.now();
+     //xxxtime_t time = Time.now();
         CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
         //TODO:
+        //xxxString("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
+        //Use System.millis() as a rowkey.  It is 64bit and will not rollover.
     data = String("{") +
-           String("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
+           String("\"DT\":") + String("\"") +  String::format("%u", System.millis()) + String("\",") +
            String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
            String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
            String("\"LsBits\":") + String("\"") + String::format("%u", reading) + String("\",") +

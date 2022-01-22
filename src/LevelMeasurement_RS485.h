@@ -21,7 +21,6 @@ LevelMeasurement_RS485(String sid);
 LevelMeasurement_RS485(String sid, int addr);
 
 void measureLevel(void);
-void publishLevel(int reading);
 
 /* struct rs485Configuration
 {

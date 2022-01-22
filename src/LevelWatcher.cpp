@@ -19,7 +19,7 @@
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't
 // be available.
-#pragma GCC optimize ("O0")
+#pragma GCC optimize("O0")
 
 //forward declarations
 int measureZeroOffset(String command);
@@ -48,7 +48,7 @@ int innterLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT;
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
 LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS");
 //xxxLevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS");
-LevelMeasurement *lm[2] = {&lm0, &lm1};  //xxx
+LevelMeasurement *lm[2] = {&lm0, &lm1}; //xxx
 //xxxLevelMeasurement *lm[1] = {&lm0};  //xxx
 
 //Interaface objects
@@ -62,7 +62,7 @@ String apn = "3iot.com"; //globalM2M
 // Use primary serial over USB interface for logging output
 SerialLogHandler logHandler;
 //xxx SYSTEM_THREAD(ENABLED);
-SYSTEM_MODE(AUTOMATIC); //Used for debug? 
+SYSTEM_MODE(AUTOMATIC); //Used for debug?
 
 STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
@@ -74,7 +74,7 @@ void setup()
     waitFor(Serial.isConnected, 15000);
     delay(1000);
     Log.info("Startup: Running Setup");
-	Serial.begin(9600);
+    Serial.begin(9600);
 
     Particle.keepAlive(30); //Needed for 3rd party SIMS
 
@@ -94,7 +94,7 @@ void setup()
 //
 void loop()
 {
-    if ((millis() >= REBOOT_INTERVAL_IN_MS)  || (startupLoopsCompleted > STARTUP_LOOPS))
+    if ((millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
         //Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
         // do things here  before reset and then push the button
@@ -107,7 +107,7 @@ void loop()
     {
         // do things here  before reset and then push the button                                                                                                                                              on
         sos();
-        
+
         Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
         System.reset();
     }
@@ -116,22 +116,22 @@ void loop()
     //Keep waiting
     {
         blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
-        delay(STARTUP_LOOP_DELAY); //Wait a bit to  let system run 
-             startupLoopsCompleted++;
+        delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let system run
+        startupLoopsCompleted++;
         return;
     }
- 
-     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
-if (innerLoopDelayCount >= innterLoopDelayCountDefault)
-{
-    lm[0]->measureLevel();
-    lm[1]->measureLevel();
-       //xxxlm[2]->measureLevel();
-       innerLoopDelayCount = 1; //reset loop count
-}
+    CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
-     // Wait nn seconds until all/any zeroing completed
+    if (innerLoopDelayCount >= innterLoopDelayCountDefault)
+    {
+        lm[0]->measureLevel();
+        lm[1]->measureLevel();
+        //xxxlm[2]->measureLevel();
+        innerLoopDelayCount = 0; //reset loop count
+    }
+
+    // Wait nn seconds until all/any zeroing completed
     if (isAnyZeroingInProgress(lm))
     {
         blinkShort(ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY); //Signal zeroing running loop
@@ -141,7 +141,7 @@ if (innerLoopDelayCount >= innterLoopDelayCountDefault)
     {
         blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
         delay(loopDelay);                        //10s by default
-        innerLoopDelayCount++;  //inc inner loop count
+        innerLoopDelayCount++;                   //inc inner loop count
     }
 }
 
@@ -149,18 +149,18 @@ int measureZeroOffset(String command)
 {
     int i;
     Log.info("ZeroingInProgress Function called from cloud");
-     i = atoi(command);
+    i = atoi(command);
     if ((i > -1) && (i < NUMBER_OF_SENSORS))
     {
-    Particle.publish(System.deviceID() + " ZeroingInProgress for sensor " + lm[i]->sensorId, NULL, 600, PRIVATE);
-           lm[i]->setZeroingInProgress();
+        Particle.publish(System.deviceID() + " ZeroingInProgress for sensor " + lm[i]->sensorId, NULL, 600, PRIVATE);
+        lm[i]->setZeroingInProgress();
     }
     return 0;
 }
 
 void startupHandler(const char *event, const char *data)
 {
-    startupLoopsCompleted = -1 ; //We can now run loop
+    startupLoopsCompleted = -1; //We can now run loop
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 

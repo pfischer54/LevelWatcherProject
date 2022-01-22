@@ -785,7 +785,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction) {
 	if (MBUseEnablePin == 1) {  //Switch RS485 driver back to receiving mode.
 		digitalWrite(MBTXEnablePin, LOW);  
 	}
-		delay (1000ms);  // wait a bit...pjf - this seems to be required by the temp sensor.
+		delay (10ms);  // wait a bit...pjf - this seems to be required by the temp sensor.
 	// loop until we run out of time or bytes, or an error occurs
 	u32StartTime = millis();
 	while (u8BytesLeft && !u8MBStatus) {
