@@ -111,6 +111,17 @@ ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave) {
 	_u8MBSlave = u8MBSlave;
 }
 
+void ModbusMaster::SetNodeAddr(uint8_t u8MBSlave) {
+	_u8MBSlave = u8MBSlave;
+}
+
+void ModbusMaster::flushReadBuffer()
+{
+		while (MBSerial.available()) { //Empty the receive buffer before beginning.
+		MBSerial.read();
+	}
+
+}
 
 /**
 Initialize class object.
@@ -785,7 +796,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction) {
 	if (MBUseEnablePin == 1) {  //Switch RS485 driver back to receiving mode.
 		digitalWrite(MBTXEnablePin, LOW);  
 	}
-		delay (10ms);  // wait a bit...pjf - this seems to be required by the temp sensor.
+		delay (10ms);  // wait a bit...pjf - this seems to be required by the temp sensor.  TODO: Make this variable?
 	// loop until we run out of time or bytes, or an error occurs
 	u32StartTime = millis();
 	while (u8BytesLeft && !u8MBStatus) {

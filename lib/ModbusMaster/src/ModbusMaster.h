@@ -94,6 +94,8 @@ public:
 	void begin();
 	void begin(uint16_t);
 	void idle(void (*)());
+	void flushReadBuffer();  //pjf
+	void SetNodeAddr(uint8_t);  //pjf
 	
 	// Modbus exception codes
 	/**

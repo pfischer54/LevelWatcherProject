@@ -18,7 +18,7 @@ public:
 LevelMeasurement();
 LevelMeasurement(String sid);
 
-String sensorId;
+String sensorId = {"Unkown"};
 bool isZeroingInProgress(void);
 void setZeroingInProgress(void);
 virtual void measureLevel(void) = 0;

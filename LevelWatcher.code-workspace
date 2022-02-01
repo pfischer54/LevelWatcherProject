@@ -10,7 +10,9 @@
 		"files.associations": {
 			"*.ino": "cpp",
 			"sstream": "cpp",
-			"charconv": "cpp"
+			"charconv": "cpp",
+			"atomic": "cpp",
+			"cstdint": "cpp"
 		},
 		"particle.firmwareVersion": "3.1.0",
 		"particle.targetPlatform": "electron",

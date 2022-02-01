@@ -21,6 +21,10 @@
 // be available.
 #pragma GCC optimize("O0")
 
+//DEBUG ON
+// Use primary serial over USB interface for logging output
+SerialLogHandler logHandler;
+
 //forward declarations
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
@@ -44,12 +48,15 @@ int startupLoopsCompleted = 0;
 int innerLoopDelayCount = 0;
 int innterLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT;
 
+// RS485 setup
+//Define the main node object. This controls the RS485 interface for all the slaves.
+ModbusMaster node = ModbusMaster();
+
 //Define sensor interfaces and objects and initialize sensor interfaces
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
 LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS");
-//xxxLevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS");
-LevelMeasurement *lm[2] = {&lm0, &lm1}; //xxx
-//xxxLevelMeasurement *lm[1] = {&lm0};  //xxx
+LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2); //Set to slave addr 2.
+LevelMeasurement *lm[3] = {&lm0, &lm1, &lm2};
 
 //Interaface objects
 JsonParserStatic<256, 20> parser;
@@ -58,9 +65,6 @@ JsonParserStatic<256, 20> parser;
 //String apn = "luner";
 String apn = "3iot.com"; //globalM2M
 
-//DEBUG ON
-// Use primary serial over USB interface for logging output
-SerialLogHandler logHandler;
 //xxx SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC); //Used for debug?
 
@@ -72,10 +76,8 @@ void setup()
     //DEBUG
     // Wait for a USB serial connection for up to 15 seconds
     waitFor(Serial.isConnected, 15000);
-    delay(1000);
     Log.info("Startup: Running Setup");
     Serial.begin(9600);
-
     Particle.keepAlive(30); //Needed for 3rd party SIMS
 
     //Register functions to control the electron
@@ -83,11 +85,21 @@ void setup()
     Particle.function("SetLoopDelay", setLoopDelay);
     Particle.function("SetAndSaveZero", measureZeroOffset);
 
-    // Subscribe to the webhook response event
-    Particle.subscribe(System.deviceID() + "/hook-response/Initialize/", startupHandler);
+    // Subscribe to the webhook startup2 response event
+    //This handler is called by azure script response to Startup2 event published below.
+    //Currently this is a placeholder so does nothing but there for future use.
+    Particle.subscribe(System.deviceID() + "/hook-response/startup2/", startupHandler);
 
-    pinMode(STATUSLED, OUTPUT);                         //Setup activity led so we can blink it to show we're rolling...
-    Particle.publish("Initialize", NULL, 600, PRIVATE); //TODO:  Specify and send sensor ID so as to retrieve correct offset.  Chaqnged name so as to not trigger LV3.
+    pinMode(STATUSLED, OUTPUT);                       //Setup activity led so we can blink it to show we're rolling...
+    Particle.publish("Startup2", NULL, 600, PRIVATE); //Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+
+    //RS485 start
+    // initialize Modbus communication baud rate and control pin
+    // Note: There is one node object that controls the RS485 interface for all the slaves.
+
+    node.begin(9600);     //pjf node.begin(57600);
+    node.enableTXpin(D5); //D7 is the pin used to control the TX enable pin of RS485 driver
+    //node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
 }
 //
 // Main loop
@@ -115,33 +127,34 @@ void loop()
     if (startupLoopsCompleted < STARTUP_LOOPS && startupLoopsCompleted > 0)
     //Keep waiting
     {
-        blinkShort(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
-        delay(STARTUP_LOOP_DELAY);           //Wait a bit to  let system run
+        blinkLong(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
+        delay(STARTUP_LOOP_DELAY);          //Wait a bit to  let system run
         startupLoopsCompleted++;
         return;
     }
 
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
-    if (innerLoopDelayCount >= innterLoopDelayCountDefault)
+    if ((innerLoopDelayCount >= innterLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
     {
         lm[0]->measureLevel();
         lm[1]->measureLevel();
-        //xxxlm[2]->measureLevel();
+        lm[2]->measureLevel();
+        blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
         innerLoopDelayCount = 0; //reset loop count
     }
 
     // Wait nn seconds until all/any zeroing completed
     if (isAnyZeroingInProgress(lm))
     {
-        blinkShort(ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY); //Signal zeroing running loop
-        delay(ZEROING_LOOP_DELAY);                            //Use shorter delay when averaging for zero...
+        blinkLong(ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY); //Signal zeroing running loop
+        delay(ZEROING_LOOP_DELAY);                           //Use shorter delay when averaging for zero...
     }
     else
     {
-        blinkShort(NORMAL_LOOP_BLINK_FREQUENCY); //Signal normal running loop
-        delay(loopDelay);                        //10s by default
-        innerLoopDelayCount++;                   //inc inner loop count
+        blinkShort(INNER_LOOP_BLINK_FREQUENCY); //Signal normal running loop
+        delay(loopDelay);                       //10s by default
+        innerLoopDelayCount++;                  //inc inner loop count
     }
 }
 
@@ -160,6 +173,7 @@ int measureZeroOffset(String command)
 
 void startupHandler(const char *event, const char *data)
 {
+    //NOOP at present.  Kept as placeholder for future use.
     startupLoopsCompleted = -1; //We can now run loop
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }

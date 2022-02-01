@@ -8,30 +8,13 @@
 #include <CellularHelper.h>
 #include "ModbusMaster.h"
 
-//#include <vector>
-//std::vector<int> v{ 1, 2, 3 };  // v becomes {1, 2, 3}
-
-LevelMeasurement_RS485::LevelMeasurement_RS485() : LevelMeasurement()
-{
-    // instantiate ModbusMaster object as slave ID 1
-    ModbusMaster node(nodeAddr);
-    // initialize Modbus communication baud rate
-    node.begin(9600);     //pjf node.begin(57600);
-    node.enableTXpin(D5); //D7 is the pin used to control the TX enable pin of RS485 driver
-    //node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
-    //while(!Serial.available()) Particle.process();
-    Serial.println("Starting Modbus Transaction:");
-};
-
 LevelMeasurement_RS485::LevelMeasurement_RS485(String sid) : LevelMeasurement(sid)
 {
-    LevelMeasurement_RS485();
 }
 
 LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr) : LevelMeasurement(sid)
 {
     nodeAddr = slaveAddr;
-    LevelMeasurement_RS485();
 }
 
 void LevelMeasurement_RS485::measureLevel()
@@ -39,7 +22,8 @@ void LevelMeasurement_RS485::measureLevel()
     int j, result;
     int rs485Data[10];
 
-    waterLevelSampleReading = 0; 
+    waterLevelSampleReading = 0;
+    node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(0x0, 1);
 
     Serial.println("");
@@ -56,14 +40,20 @@ void LevelMeasurement_RS485::measureLevel()
             Serial.print(" ");
         }
         Serial.println("");
+        publishLevel(waterLevelSampleReading);
     }
     else
     {
         Serial.print("Failed, Response Code: ");
         Serial.print(result, HEX);
+        Serial.print(", Sensor: ");
+        Serial.print(sensorId);
         Serial.println("");
-        waterLevelSampleReading = 0;
+        waterLevelSampleReading = -1;
+        if (result != node.ku8MBResponseTimedOut)
+        {
+            delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
+            node.flushReadBuffer();
+        }
     }
-
-    publishLevel(waterLevelSampleReading);
-};
+}

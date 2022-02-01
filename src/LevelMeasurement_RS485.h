@@ -10,30 +10,19 @@
 #include "ModbusMaster.h"
 #include <vector>
 
+extern ModbusMaster node;
 
-
-class LevelMeasurement_RS485: public LevelMeasurement
+class LevelMeasurement_RS485 : public LevelMeasurement
 {
 
 public:
-LevelMeasurement_RS485();
-LevelMeasurement_RS485(String sid);
-LevelMeasurement_RS485(String sid, int addr);
+    LevelMeasurement_RS485(String sid);
+    LevelMeasurement_RS485(String sid, int slaveAddr);
 
-void measureLevel(void);
-
-/* struct rs485Configuration
-{
-int channelNumber;  //adc channel number;
-int adcAddress;  //addressof I2C device
-int adcChannel;  //  adc channel number for this sensor
-}; */
-
+    void measureLevel(void);
 
 private:
-int nodeAddr = 1;  //slave node address, defaults to 1.
-ModbusMaster node;
-
+    int nodeAddr = {1}; //slave node address, defaults to 1.
 };
 
 #endif

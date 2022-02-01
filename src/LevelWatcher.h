@@ -15,7 +15,7 @@ const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 10 * 1 * 1000;      //60*60*1000; 
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
 const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
 const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
-const  int INNER_LOOP_DELAY_COUNT = 60;  // Default loop count - each inner loop takes 10s
+const  int INNER_LOOP_DELAY_COUNT = 1;  // Default loop count - each inner loop takes 10s:  60== 10min
 const int STARTUP_LOOPS = 20;  //Number of loops allowed for startup processing
 
 //LEDs timings etc
@@ -23,13 +23,13 @@ const int LONG_BLINK_MS = 600;
 const int SHORT_BLINK_MS = 200;
 const int BLINK_OFF_DELAY_MS = 200;
 const int STARTUP_BLINK_FREQUENCY = 6;
-const int NORMAL_LOOP_BLINK_FREQUENCY = 1;
+const int INNER_LOOP_BLINK_FREQUENCY = 1;
+const int OUTER_LOOP_BLINK_FREQUENCY = 3;
 const int ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY = 2;
 const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
 extern JsonParserStatic<256, 20> parser;
-//xxxextern  LevelMeasurement lm[1];
-//xxxextern int sample;
+
 
 #endif
 
