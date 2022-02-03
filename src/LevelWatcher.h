@@ -21,6 +21,7 @@ const int STARTUP_LOOPS = 20;  //Number of loops allowed for startup processing
 //LEDs timings etc
 const int LONG_BLINK_MS = 600;
 const int SHORT_BLINK_MS = 200;
+const int VERY_SHORT_BLINK_MS = 20;
 const int BLINK_OFF_DELAY_MS = 200;
 const int STARTUP_BLINK_FREQUENCY = 6;
 const int INNER_LOOP_BLINK_FREQUENCY = 1;

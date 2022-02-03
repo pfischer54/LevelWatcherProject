@@ -43,10 +43,11 @@ int setLoopDelay(String delay);
 String loopDelayData;
 unsigned long rebootSync = 0;
 bool resetFlag = false;
+bool startupCompleted = false;
 unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; //Loop delay default
 int startupLoopsCompleted = 0;
 int innerLoopDelayCount = 0;
-int innterLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT;
+int innerLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT;
 
 // RS485 setup
 //Define the main node object. This controls the RS485 interface for all the slaves.
@@ -88,7 +89,7 @@ void setup()
     // Subscribe to the webhook startup2 response event
     //This handler is called by azure script response to Startup2 event published below.
     //Currently this is a placeholder so does nothing but there for future use.
-    Particle.subscribe(System.deviceID() + "/hook-response/startup2/", startupHandler);
+    Particle.subscribe(System.deviceID() + "/hook-response/Startup2/", startupHandler);
 
     pinMode(STATUSLED, OUTPUT);                       //Setup activity led so we can blink it to show we're rolling...
     Particle.publish("Startup2", NULL, 600, PRIVATE); //Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
@@ -112,6 +113,8 @@ void loop()
         // do things here  before reset and then push the button
         sos();
         Particle.publish("Debug", "Reboot intiated", 300, PRIVATE);
+        startupCompleted = false;  // To be sure!
+        startupLoopsCompleted = 0; //To be sure!
         System.reset();
     }
 
@@ -121,10 +124,13 @@ void loop()
         sos();
 
         Particle.publish("Debug", "Remote Reset Initiated", 300, PRIVATE);
+        startupCompleted = false;  // To be sure!
+        startupLoopsCompleted = 0; //To be sure!
+        resetFlag = false;         //To be sure!
         System.reset();
     }
 
-    if (startupLoopsCompleted < STARTUP_LOOPS && startupLoopsCompleted > 0)
+    if (startupCompleted == false)
     //Keep waiting
     {
         blinkLong(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
@@ -135,13 +141,14 @@ void loop()
 
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
-    if ((innerLoopDelayCount >= innterLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
+    if ((innerLoopDelayCount >= innerLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
     {
         lm[0]->measureLevel();
         lm[1]->measureLevel();
         lm[2]->measureLevel();
-        blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
-        innerLoopDelayCount = 0; //reset loop count
+         blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
+        delay(2s); // Delay a tiny bit so that we can see the outer look blink distincly
+       innerLoopDelayCount = 0; //reset loop count
     }
 
     // Wait nn seconds until all/any zeroing completed
@@ -152,9 +159,9 @@ void loop()
     }
     else
     {
-        blinkShort(INNER_LOOP_BLINK_FREQUENCY); //Signal normal running loop
-        delay(loopDelay);                       //10s by default
-        innerLoopDelayCount++;                  //inc inner loop count
+        blinkVeryShort(INNER_LOOP_BLINK_FREQUENCY); //Signal normal running loop
+        delay(loopDelay);                           //10s by default
+        innerLoopDelayCount++;                      //inc inner loop count
     }
 }
 
@@ -174,17 +181,17 @@ int measureZeroOffset(String command)
 void startupHandler(const char *event, const char *data)
 {
     //NOOP at present.  Kept as placeholder for future use.
-    startupLoopsCompleted = -1; //We can now run loop
+    startupCompleted = true; //We can now run main loop
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
 int setLoopDelay(String delay)
 //Set loop delay count (default is n * 10s inner loop)
 {
-    innterLoopDelayCountDefault = atol(delay);
-    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay * innterLoopDelayCountDefault));
+    innerLoopDelayCountDefault = atol(delay);
+    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay * innerLoopDelayCountDefault));
     loopDelayData = String("{") +
-                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay * innterLoopDelayCountDefault) +
+                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay * innerLoopDelayCountDefault) +
                     String("\"}");
     Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
     return 0;

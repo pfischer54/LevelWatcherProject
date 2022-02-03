@@ -30,6 +30,14 @@ void blinkShort(int times)
     }
 }
 
+void blinkVeryShort(int times)
+{
+    for (int i = 0; i < times; i++)
+    {
+        blink(VERY_SHORT_BLINK_MS);
+    }
+}
+
 void sos()
 {
     blinkShort(3);
@@ -42,27 +50,28 @@ uint8_t getSensorIndex(String sensorId)
     return 0; //xxx
 }
 
-bool isAnyZeroingInProgress(LevelMeasurement * lm[])
+bool isAnyZeroingInProgress(LevelMeasurement *lm[])
 {
     int i;
-    
+
     //Checks if zeroing is going on  for any device.
 
     for (i = 0; i < NUMBER_OF_SENSORS; i++)
     {
         if (lm[i]->isZeroingInProgress() == true)
             return true;
-      }
-            return false;
+    }
+    return false;
 }
 
-    int parseValue(char *data)
-    {
-        parser.clear();
-        parser.addString(data);
-        if (parser.parse())
+//Not currently used.  Need to refactor - this routine is specific to zeroOffset field!
+int parseValue(char *data)
+{
+    parser.clear();
+    parser.addString(data);
+    if (parser.parse())
 
-            return parser.getReference().key("zeroOffset").valueFloat();
-        else
-            return -1;
-    }
+        return parser.getReference().key("zeroOffset").valueFloat();
+    else
+        return -1;
+}
