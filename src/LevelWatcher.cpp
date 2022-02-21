@@ -147,7 +147,7 @@ void loop()
         lm[1]->measureLevel();
         lm[2]->measureLevel();
          blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
-        delay(2s); // Delay a tiny bit so that we can see the outer look blink distincly
+        delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
        innerLoopDelayCount = 0; //reset loop count
     }
 
