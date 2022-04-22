@@ -52,9 +52,10 @@ ModbusMaster node = ModbusMaster();
 
 //Define sensor interfaces and objects and initialize sensor interfaces
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS");
-LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS");
-LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2); //Set to slave addr 2.
-LevelMeasurement *lm[3] = {&lm0, &lm1, &lm2};
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1);
+//xxxLevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2); //Set to slave addr 2.
+//xxxLevelMeasurement *lm[3] = {&lm0, &lm1, &lm2};
+LevelMeasurement *lm[2] = {&lm0, &lm1};
 
 //Interaface objects
 JsonParserStatic<256, 20> parser;
