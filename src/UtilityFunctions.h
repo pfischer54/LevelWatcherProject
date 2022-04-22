@@ -1,7 +1,7 @@
 #ifndef UTILITYFUNCTION_H
 #define UTILITYFUCTIONS_H
 
-#include <Adafruit_ADS1015.h>
+#include "Adafruit_ADS1015.h"
 
 void sos();
 void blink(unsigned long onTime);

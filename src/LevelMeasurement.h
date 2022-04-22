@@ -1,12 +1,12 @@
 #ifndef LEVELMEASUREMENT_H
 #define LEVELMEASUREMENT_H
 
-#include "Particle.h"
-#include <RunningAverage.h>
-#include <CellularHelper.h>
-#include <Adafruit_ADS1015.h>
-#include "JsonParserGeneratorRK.h"
-#include <vector>
+//#include "Particle.h"
+//#include <RunningAverage.h>
+//#include <CellularHelper.h>
+#include "Adafruit_ADS1015.h"
+//#include "JsonParserGeneratorRK.h"
+//#include <vector>
 
 // Two averaging buckets are provided, short and long averaging
 const int LONG_SAMPLE_SIZE = 4;                    // number of measurements to average for long term average;

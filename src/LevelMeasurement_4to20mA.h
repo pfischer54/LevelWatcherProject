@@ -1,13 +1,13 @@
 #ifndef LEVELMEASUREMENT_4TO20MA_H
 #define LEVELMEASUREMENT_4TO20MA_H
 
-#include "Particle.h"
-#include "LevelMeasurement.h"
-#include <RunningAverage.h>
-#include <CellularHelper.h>
-#include <Adafruit_ADS1015.h>
-#include "JsonParserGeneratorRK.h"
-#include <vector>
+//#include "Particle.h"
+//#include "LevelMeasurement.h"
+//#include <RunningAverage.h>
+//#include <CellularHelper.h>
+//#include <Adafruit_ADS1015.h>
+//#include "JsonParserGeneratorRK.h"
+//#include <vector>
 
 //https://store.ncd.io/product/2-channel-4-20-ma-current-loop-receiver-16-bit-ads1115-i2c-mini-module/
 //This sets internal values for offsets used as described on above ncdio webpage.

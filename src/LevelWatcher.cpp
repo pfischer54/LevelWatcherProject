@@ -1,20 +1,17 @@
 //Version info
 
 //This is branch "master" ... and is WIP
-//Includes startup call to get and set zero offset in mm.
-// This is done by publishing a startup event which triggers a function call to the device that includes
-//the zero offest as a parameter in the function call.
-//TODO how to make this device specific so that the function is only called on the device that is starting up?
 
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
+#include "LevelMeasurement.h"
 #include "LevelMeasurement_4to20mA.h"
 #include "LevelMeasurement_RS485.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
-#include <RunningAverage.h>
+//#include <RunningAverage.h>
 #include <CellularHelper.h>
-#include <Adafruit_ADS1015.h>
+//#include <Adafruit_ADS1015.h>
 
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't

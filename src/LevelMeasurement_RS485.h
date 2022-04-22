@@ -1,14 +1,14 @@
 #ifndef LEVELMEASUREMENT_RS485_H
 #define LEVELMEASUREMENT_RS485_H
 
-#include "Particle.h"
-#include "LevelMeasurement.h"
+//#include "Particle.h"
+//#include "LevelMeasurement.h"
+//#include "ModbusMaster.h"
+//#include <RunningAverage.h>
+//#include <CellularHelper.h>
+//#include "JsonParserGeneratorRK.h"
 #include "ModbusMaster.h"
-#include <RunningAverage.h>
-#include <CellularHelper.h>
-#include "JsonParserGeneratorRK.h"
-#include "ModbusMaster.h"
-#include <vector>
+//#include <vector>
 
 extern ModbusMaster node;
 
