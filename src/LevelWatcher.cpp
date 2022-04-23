@@ -9,9 +9,8 @@
 #include "LevelMeasurement_RS485.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
-//#include <RunningAverage.h>
 #include <CellularHelper.h>
-//#include <Adafruit_ADS1015.h>
+
 
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't
