@@ -1,0 +1,32 @@
+DayOfYearAbs = CONVERT('dataTable'[Timestamp].[Date], DOUBLE) - CONVERT(DATEVALUE("2021-01-01"), DOUBLE) + 1
+
+Lower Sterna Level (mm) = AVERAGE('dataTable'[LSWaterLevelCalculated])
+
+Lower Sterna Level (mm) = FILTER('dataTable'[LSFiltered], 'dataTable'[SensorId]="LS")
+
+
+
+Lower Sterna Level (mm) = AVERAGE(FILTER ('dataTable','dataTable'.Content.[SensorId] = "LS"), 'dataTable'[LSWaterLevelCalculated])
+
+Lower Sterna Level (mm) = AVERAGE(FILTER ('dataTable','dataTable'[Content.SensorId] = "LS" )[LSWaterLevelCalculated])
+
+
+
+------------------------
+
+
+Lower Sterna Level (mm) for LS = 
+CALCULATE(
+	[Lower Sterna Level (mm)],
+	'dataTable'[Content.SensorId] IN { "LS" }
+)
+
+-------------------------------
+
+Total Sales (2007) = 
+CALCULATE(
+    [Total Sales],
+    'Date'[Year] = 2007)
+    
+    
+    

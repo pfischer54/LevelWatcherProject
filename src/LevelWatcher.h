@@ -2,7 +2,7 @@
 #define LEVELWATCHER_H 
 #define STATUSLED D7 //D0, D1 used fro I2C,  D6 and D7 used for debugger
 
-const int NUMBER_OF_SENSORS = 2;  //number of sensors to scan
+const int NUMBER_OF_SENSORS = 3;  //number of sensors to scan
 
 //Sensor types enum
 
