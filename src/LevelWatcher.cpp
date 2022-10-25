@@ -62,8 +62,8 @@ JsonParserStatic<256, 20> parser;
 
 //Cellular constants
 
-String apn = "luner";
-//String apn = "3iot.com"; //globalM2M
+//String apn = "luner";
+String apn = "3iot.com"; //globalM2M
 
 //xxx SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC); //Used for debug?

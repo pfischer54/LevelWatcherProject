@@ -31,7 +31,7 @@ void LevelMeasurement::setZeroingInProgress(void)
 void LevelMeasurement::publishLevel(int reading)
 {
 
-    Log.info("Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
+    Log.info("Sensor: " + String::format("%i", sensorId)  +  " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
 
     if (sample == LONG_SAMPLE_SIZE + 1)
     {

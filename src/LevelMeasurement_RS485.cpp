@@ -26,29 +26,22 @@ void LevelMeasurement_RS485::measureLevel()
     node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(0x0, 1);
 
-    Serial.println("");
-
     // do something with data if read is successful
     if (result == node.ku8MBSuccess)
     {
-        Serial.print("Success, Received data: ");
+        Log.info("Success, Received data: ");
         for (j = 0; j < 1; j++)
         {
             rs485Data[j] = node.getResponseBuffer(j);
             waterLevelSampleReading = rs485Data[j];
-            Serial.print(waterLevelSampleReading);
-            Serial.print(" ");
-        }
-        Serial.println("");
+            Log.info("Reading= %d \r\n", waterLevelSampleReading);
+         }
+        Log.info("\r\n");
         publishLevel(waterLevelSampleReading);
     }
     else
     {
-        Serial.print("Failed, Response Code: ");
-        Serial.print(result, HEX);
-        Serial.print(", Sensor: ");
-        Serial.print(sensorId);
-        Serial.println("");
+        Log.info("Failed, Response Code: %x, Sensor: " + sensorId + "\r\n", result);
         waterLevelSampleReading = -1;
         if (result != node.ku8MBResponseTimedOut)
         {
