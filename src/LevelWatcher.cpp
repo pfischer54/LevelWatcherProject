@@ -1,13 +1,7 @@
-<<<<<<< HEAD
 //Version info
 
 //This is branch "master" ... and is WIP
 //synching
-=======
-// Version info
-
-// This is branch "V3" ... WIP
->>>>>>> 34e8007bbc0a50cf349de0cecaaaf4a24eafab7c
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
