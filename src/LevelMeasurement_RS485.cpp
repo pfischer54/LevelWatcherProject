@@ -15,6 +15,12 @@ LevelMeasurement_RS485::LevelMeasurement_RS485(String sid) : LevelMeasurement(si
 LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr) : LevelMeasurement(sid)
 {
     nodeAddr = slaveAddr;
+
+}
+LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr, boolean diff) : LevelMeasurement(sid, diff)
+{
+    nodeAddr = slaveAddr;
+
 }
 
 void LevelMeasurement_RS485::measureLevel()
@@ -22,34 +28,26 @@ void LevelMeasurement_RS485::measureLevel()
     int j, result;
     int rs485Data[10];
 
-    waterLevelSampleReading = 0;
+    sampleReading = 0;
     node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(0x0, 1);
-
-    Serial.println("");
 
     // do something with data if read is successful
     if (result == node.ku8MBSuccess)
     {
-        Serial.print("Success, Received data: ");
+        Log.info("Success, Received data: ");
         for (j = 0; j < 1; j++)
         {
             rs485Data[j] = node.getResponseBuffer(j);
-            waterLevelSampleReading = rs485Data[j];
-            Serial.print(waterLevelSampleReading);
-            Serial.print(" ");
-        }
-        Serial.println("");
-        publishLevel(waterLevelSampleReading);
+            sampleReading = rs485Data[j];
+            Log.info("Reading= %d", sampleReading);
+         }
+        publishLevel(sampleReading);
     }
     else
     {
-        Serial.print("Failed, Response Code: ");
-        Serial.print(result, HEX);
-        Serial.print(", Sensor: ");
-        Serial.print(sensorId);
-        Serial.println("");
-        waterLevelSampleReading = -1;
+        Log.info("Failed, Response Code: %x, Sensor: " + sensorId, result);
+        sampleReading = -1;
         if (result != node.ku8MBResponseTimedOut)
         {
             delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..

@@ -17,8 +17,11 @@ class LevelMeasurement
 public:
 LevelMeasurement();
 LevelMeasurement(String sid);
+LevelMeasurement(String sid, boolean diff);
 
 String sensorId = {"Unkown"};
+int innerLoopDelayCount = 0;
+int innerLoopDelayCountDefault = 0;
 bool isZeroingInProgress(void);
 void setZeroingInProgress(void);
 virtual void measureLevel(void) = 0;
@@ -28,8 +31,11 @@ void publishLevel(int);
 
 int sample;
 bool zeroingInProgress;
-int waterLevelSampleReading;
+int sampleReading;
 String data = String(80);
+bool firstTimeThrough = true;
+int previousReading = 0;
+boolean differential = false;  //Is this sensor to be read differentially one reading to the next.
 
 };
 
