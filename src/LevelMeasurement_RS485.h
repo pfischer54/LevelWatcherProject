@@ -17,8 +17,9 @@ class LevelMeasurement_RS485 : public LevelMeasurement
 public:
     LevelMeasurement_RS485(String sid);
     LevelMeasurement_RS485(String sid, int slaveAddr);
+    LevelMeasurement_RS485(String sid, int slaveAddr, boolean diff);
 
-    void measureLevel(void);
+    void measureLevel();
 
 private:
     int nodeAddr = {1}; //slave node address, defaults to 1.

@@ -23,8 +23,9 @@ class LevelMeasurement_4to20mA: public LevelMeasurement
 public:
 LevelMeasurement_4to20mA();
 LevelMeasurement_4to20mA(String sid);
+LevelMeasurement_4to20mA(String sid, boolean diff);
 
-void measureLevel(void);
+void measureLevel();
 
 /* struct adcConfiguration
 {

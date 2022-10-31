@@ -11,11 +11,11 @@ const int NUMBER_OF_SENSORS = 3;  //number of sensors to scan
 #define SENSOR_2 "TS";
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
-const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 10 * 1 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
+const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 1 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)
 const unsigned int REBOOT_DELAY_IN_MS = 15000;
 const unsigned int ZEROING_LOOP_DELAY = 5000;  //Use shortish dealy while executing zeroing function
 const unsigned int STARTUP_LOOP_DELAY = 10000; //Use shortish dealy while waiting for startup handler to return and complete startup process
-const  int INNER_LOOP_DELAY_COUNT = 360;  // Default loop count - each inner loop takes 10s:  60 == 10min, 360 == 1h
+const  int INNER_LOOP_DELAY_COUNT_DEFAULT = 10;  //xxx Default loop count - each inner loop takes 10s:  60 == 10min, 360 == 1h
 const int STARTUP_LOOPS = 20;  //Number of loops allowed for startup processing
 
 //LEDs timings etc

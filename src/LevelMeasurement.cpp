@@ -9,13 +9,19 @@
 LevelMeasurement::LevelMeasurement()
 {
     zeroingInProgress = false;
-    waterLevelSampleReading = 0;
+    sampleReading = 0;
     data = "";
 }
 LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
 {
     sensorId = sid;
 }
+
+LevelMeasurement::LevelMeasurement(String sid, boolean diff) :LevelMeasurement(sid)
+{
+    differential  = diff;
+    
+} 
 
 bool LevelMeasurement::isZeroingInProgress(void)
 {
@@ -31,7 +37,7 @@ void LevelMeasurement::setZeroingInProgress(void)
 void LevelMeasurement::publishLevel(int reading)
 {
 
-    Log.info("Sensor: " + String::format("%i", sensorId)  +  " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
+    Log.info("Sensor: " + sensorId  +  " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
 
     if (sample == LONG_SAMPLE_SIZE + 1)
     {
@@ -40,9 +46,23 @@ void LevelMeasurement::publishLevel(int reading)
         {
             blinkLong(ZEROING_COMPLETED_BLINK_FREQUENCY); // Signal zeroing complete.
             Particle.publish(System.deviceID() + " zeroing completed for " + String("\"") + sensorId + String("\""), NULL, 600, PRIVATE);
+            delay(1000);  //delay 1s so as to no overrun particle cloud
             zeroingInProgress = false;
         }
     }
+// Check for differential reading: If differential is true, only send reading if it changed from last time.
+        firstTimeThrough = false;
+if (differential== true)
+{
+    if (reading == previousReading)
+    {
+        previousReading = reading;  //update reading;
+    return;  //no need to publish, so exit.
+    }
+}
+previousReading = reading;  //update reading;
+//carry on
+
     // Trigger the integration
 
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();

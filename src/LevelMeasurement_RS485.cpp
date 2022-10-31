@@ -15,6 +15,12 @@ LevelMeasurement_RS485::LevelMeasurement_RS485(String sid) : LevelMeasurement(si
 LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr) : LevelMeasurement(sid)
 {
     nodeAddr = slaveAddr;
+
+}
+LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr, boolean diff) : LevelMeasurement(sid, diff)
+{
+    nodeAddr = slaveAddr;
+
 }
 
 void LevelMeasurement_RS485::measureLevel()
@@ -22,7 +28,7 @@ void LevelMeasurement_RS485::measureLevel()
     int j, result;
     int rs485Data[10];
 
-    waterLevelSampleReading = 0;
+    sampleReading = 0;
     node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(0x0, 1);
 
@@ -33,16 +39,15 @@ void LevelMeasurement_RS485::measureLevel()
         for (j = 0; j < 1; j++)
         {
             rs485Data[j] = node.getResponseBuffer(j);
-            waterLevelSampleReading = rs485Data[j];
-            Log.info("Reading= %d \r\n", waterLevelSampleReading);
+            sampleReading = rs485Data[j];
+            Log.info("Reading= %d", sampleReading);
          }
-        Log.info("\r\n");
-        publishLevel(waterLevelSampleReading);
+        publishLevel(sampleReading);
     }
     else
     {
-        Log.info("Failed, Response Code: %x, Sensor: " + sensorId + "\r\n", result);
-        waterLevelSampleReading = -1;
+        Log.info("Failed, Response Code: %x, Sensor: " + sensorId, result);
+        sampleReading = -1;
         if (result != node.ku8MBResponseTimedOut)
         {
             delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
