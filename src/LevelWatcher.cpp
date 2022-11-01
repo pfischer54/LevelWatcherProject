@@ -62,7 +62,8 @@ JsonParserStatic<256, 20> parser;
 
 //Cellular constants
 
-String apn = "luner";
+//String apn = "luner";  //xxx temp change to test
+String apn = "soracom.io";
 //String apn = "3iot.com"; //globalM2M
 
 //xxx SYSTEM_THREAD(ENABLED);
