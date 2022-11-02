@@ -41,8 +41,6 @@ bool resetFlag = false;
 bool startupCompleted = false;
 unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
 int startupLoopsCompleted = 0;
-int innerLoopDelayCount = 0;
-int innerLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT_DEFAULT;
 int sensorCount = 0;
 
 // RS485 setup
@@ -152,6 +150,7 @@ void loop()
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
              lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
         }
+         lm[sensorCount]->innerLoopDelayCount++;   //increment sensor publish delay count.
     }
 
     // Wait nn seconds until all/any zeroing completed
@@ -163,8 +162,6 @@ void loop()
     else
     {
         blinkVeryShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
-        delay(loopDelay);                           // 10s by default
-         lm[sensorCount]->innerLoopDelayCount++;                      // inc inner loop count
     }
 }
 
@@ -219,9 +216,9 @@ strcpy(tempchar, delays);
 
 
    //xxx lm[0]->innerLoopDelayCountDefault = atol(delayS0);
-    Log.info("Loop Delay updated to: " + String::format("%u", loopDelay * innerLoopDelayCountDefault));
+    Log.info("Loop Delay updated to:  " + *delays);
     loopDelayData = String("{") +
-                    String("\"LoopDelay\":") + String("\"") + String::format("%u", loopDelay * innerLoopDelayCountDefault) +
+                    String("\"LoopDelay\":") + *delays +
                     String("\"}");
     Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
     return 0;
