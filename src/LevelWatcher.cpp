@@ -18,7 +18,7 @@
 
 // DEBUG ON
 //  Use primary serial over USB interface for logging output
-SerialLogHandler logHandler;
+SerialLogHandler logHandler(LOG_LEVEL_INFO);
 
 // forward declarations
 int measureZeroOffset(String command);
@@ -48,9 +48,9 @@ int sensorCount = 0;
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false);
-LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, false);
-LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2, false); // Set to slave addr 2.
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS"); //xxx, false);
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1); //xxx, false);
+LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2); //xxx, false); // Set to slave addr 2.
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2};
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};
@@ -71,6 +71,7 @@ STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
 void setup()
 {
+    // Specify logging level directly
     //
     // DEBUG
     // Wait for a USB serial connection for up to 15 seconds
@@ -97,14 +98,16 @@ void setup()
     //  Note: There is one node object that controls the RS485 interface for all the slaves.
 
     node.begin(9600);     // pjf node.begin(57600);
-    node.enableTXpin(D5); // D7 is the pin used to control the TX enable pin of RS485 driver
+    node.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
+    Log.info("Startup: Finished Setup");
 }
 //
 // Main loop
 //
 void loop()
 {
+    Log.info("Startup: Looping");
     if ((millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
         // Reboot regularly to freshen up or if we missed startup acknowledgement from cloud

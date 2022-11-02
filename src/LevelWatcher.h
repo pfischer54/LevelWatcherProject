@@ -1,6 +1,6 @@
 #ifndef LEVELWATCHER_H
 #define LEVELWATCHER_H 
-#define STATUSLED D4 //D0, D1 used fro I2C,  D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
+#define STATUSLED D4 //D0, D1 used fro I2C,  D5 for RS85 interface, D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
 
 const int NUMBER_OF_SENSORS = 3;  //number of sensors to scan
 
