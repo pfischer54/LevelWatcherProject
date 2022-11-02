@@ -35,7 +35,7 @@ void LevelMeasurement_RS485::measureLevel()
     // do something with data if read is successful
     if (result == node.ku8MBSuccess)
     {
-        Log.info("Success, Received data: ");
+        Log.info("Sensor: " + sensorId + ": Success, Received data: ");
         for (j = 0; j < 1; j++)
         {
             rs485Data[j] = node.getResponseBuffer(j);
@@ -46,7 +46,7 @@ void LevelMeasurement_RS485::measureLevel()
     }
     else
     {
-        Log.info("Failed, Response Code: %x, Sensor: " + sensorId, result);
+        Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
         sampleReading = -1;
         if (result != node.ku8MBResponseTimedOut)
         {

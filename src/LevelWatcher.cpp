@@ -39,7 +39,7 @@ String loopDelayData;
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 bool startupCompleted = false;
-unsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
+//xxxxunsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
 int startupLoopsCompleted = 0;
 int sensorCount = 0;
 
@@ -48,9 +48,9 @@ int sensorCount = 0;
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS"); //xxx, false);
-LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1); //xxx, false);
-LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2); //xxx, false); // Set to slave addr 2.
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false);
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, false);
+LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2, false); // Set to slave addr 2.
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2};
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};
@@ -107,7 +107,7 @@ void setup()
 //
 void loop()
 {
-    Log.info("Startup: Looping");
+    Log.info("Main Loop: Looping");
     if ((millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
         // Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
@@ -196,8 +196,10 @@ int setLoopDelay( const char *delays)
 char tempchar[20];
 int i=0;  
 
-char *buffptr  = tempchar;  //probably redundant but just for now xx
 strcpy(tempchar, delays);
+char *buffptr;  //probably redundant but just for now xx
+buffptr  = tempchar;  //probably redundant but just for now xx
+
 
 //Copy over parameter string
 /* int i;
@@ -208,7 +210,7 @@ strcpy(tempchar, delays);
 
 	char *end = buffptr;
 	while(*end) {
-		lm[i]->innerLoopDelayCount = strtol(buffptr, &end, 10);
+		lm[i]->innerLoopDelayCountDefault = strtol(buffptr, &end, 10);
 		//xxxprintf("%d\n", n);
 		while (*end == ',') {
 			end++;
