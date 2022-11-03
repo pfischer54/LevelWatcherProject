@@ -48,7 +48,7 @@ void sos()
 
 uint8_t getSensorIndex(String sensorId)
 {
-    return 0; //xxx
+    return 0; //TODO
 }
 
 bool isAnyZeroingInProgress(LevelMeasurement *lm[])

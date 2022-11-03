@@ -1,6 +1,6 @@
-//Version info
-//This is branch "master" ... and is WIP
-//synching
+// Version info
+// This is branch "master" ... and is WIP
+// synching
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
@@ -23,7 +23,7 @@ SerialLogHandler logHandler(LOG_LEVEL_INFO);
 // forward declarations
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
-int setLoopDelay( const char *delays);
+int setLoopDelay(const char *delays);
 int cloudResetFunction(String command);
 int cloudResetFunction(String command);
 void setup();
@@ -39,7 +39,7 @@ String loopDelayData;
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 bool startupCompleted = false;
-//xxxxunsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
+// xxxxunsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
 int startupLoopsCompleted = 0;
 int sensorCount = 0;
 
@@ -48,8 +48,8 @@ int sensorCount = 0;
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false);
-LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, false);
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", true);
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, true);
 LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2, false); // Set to slave addr 2.
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2};
 
@@ -61,7 +61,7 @@ JsonParserStatic<256, 20> parser;
 // Cellular constants
 
 // String apn = "luner";
-//String apn = "3iot.com"; // globalM2M
+// String apn = "3iot.com"; // globalM2M
 String apn = "soracom.io"; // soracom
 
 // xxx SYSTEM_THREAD(ENABLED);
@@ -147,13 +147,11 @@ void loop()
         if ((lm[sensorCount]->innerLoopDelayCount >= lm[sensorCount]->innerLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
         {
             lm[sensorCount]->measureLevel();
-//xxx            lm[1]->measureLevel();
-//xxx            lm[2]->measureLevel();
-            blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
+             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
-             lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
+            lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
         }
-         lm[sensorCount]->innerLoopDelayCount++;   //increment sensor publish delay count.
+        lm[sensorCount]->innerLoopDelayCount++; // increment sensor publish delay count.
     }
 
     // Wait nn seconds until all/any zeroing completed
@@ -188,42 +186,41 @@ void startupHandler(const char *event, const char *data)
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
-int setLoopDelay( const char *delays)
+int setLoopDelay(const char *delays)
 // Set loop delay count (default is n * 10s inner loop)
 {
 
-// xxxtry this after: char *xxx [20];
-char tempchar[20];
-int i=0;  
+    char tempchar[SIZE_OF_DELAY_ARRAY]; 
+    int i = 0;
+    String d = delays;
 
-strcpy(tempchar, delays);
-char *buffptr;  //probably redundant but just for now xx
-buffptr  = tempchar;  //probably redundant but just for now xx
+    strcpy(tempchar, delays);
+    char *buffptr;      // probably redundant but just for now xx
+    buffptr = tempchar; // probably redundant but just for now xx
 
+    // Copy over parameter string
+    /* int i;
+        for (i = 0; i < 20; i++) {
+        tempchar[i] = delays[i];
+        } */
 
-//Copy over parameter string
-/* int i;
-    for (i = 0; i < 20; i++) {
-    tempchar[i] = delays[i];
-    } */
-
-
-	char *end = buffptr;
-	while(*end) {
-		lm[i]->innerLoopDelayCountDefault = strtol(buffptr, &end, 10);
-		//xxxprintf("%d\n", n);
-		while (*end == ',') {
-			end++;
-		}
+    char *end = buffptr;
+    while (*end)
+    {
+        lm[i]->innerLoopDelayCountDefault = strtol(buffptr, &end, 10);
+        // xxxprintf("%d\n", n);
+        while (*end == ',')
+        {
+            end++;
+        }
         i++;
-		buffptr = end;
-	}
+        buffptr = end;
+    }
 
 
-   //xxx lm[0]->innerLoopDelayCountDefault = atol(delayS0);
-    Log.info("Loop Delay updated to:  " + *delays);
+      Log.info("Loop Delay updated to: " + d);
     loopDelayData = String("{") +
-                    String("\"LoopDelay\":") + *delays +
+                    String("\"LoopDelay\": ") + d +
                     String("\"}");
     Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
     return 0;

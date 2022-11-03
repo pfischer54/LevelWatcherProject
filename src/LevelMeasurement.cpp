@@ -56,8 +56,7 @@ if (differential== true)
 {
     if (reading == previousReading)
     {
-        previousReading = reading;  //update reading;
-    return;  //no need to publish, so exit.
+      return;  //no need to publish, so exit.
     }
 }
 previousReading = reading;  //update reading;

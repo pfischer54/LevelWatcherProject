@@ -3,6 +3,7 @@
 #define STATUSLED D4 //D0, D1 used fro I2C,  D5 for RS85 interface, D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
 
 const int NUMBER_OF_SENSORS = 3;  //number of sensors to scan
+const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_SENSORS * 6; // That should do it :)
 
 //Sensor types enum
 

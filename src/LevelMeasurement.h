@@ -19,7 +19,7 @@ LevelMeasurement();
 LevelMeasurement(String sid);
 LevelMeasurement(String sid, boolean diff);
 
-const  int INNER_LOOP_DELAY_COUNT_DEFAULT = 1;  //xxx Default loop count - each inner loop takes 10s:  60 == 10min, 360 == 1h
+const  int INNER_LOOP_DELAY_COUNT_DEFAULT = 3600;  
 
 String sensorId = {"Unkown"};
 int innerLoopDelayCount = 0;
