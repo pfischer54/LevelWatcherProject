@@ -48,8 +48,8 @@ int sensorCount = 0;
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", true);
-LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, true);
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false);
+LevelMeasurement_RS485 lm1 = LevelMeasurement_RS485("MS", 1, false);
 LevelMeasurement_RS485 lm2 = LevelMeasurement_RS485("TS", 2, false); // Set to slave addr 2.
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2};
 
@@ -147,7 +147,7 @@ void loop()
         if ((lm[sensorCount]->innerLoopDelayCount >= lm[sensorCount]->innerLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
         {
             lm[sensorCount]->measureLevel();
-             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
+            blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
             lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
         }
@@ -187,24 +187,19 @@ void startupHandler(const char *event, const char *data)
 }
 
 int setLoopDelay(const char *delays)
-// Set loop delay count (default is n * 10s inner loop)
+// Set loop delay count
 {
 
-    char tempchar[SIZE_OF_DELAY_ARRAY]; 
-    int i = 0;
-    String d = delays;
+    char tempchar[SIZE_OF_DELAY_ARRAY];
+    int i = 0;         // sensor delay index
+    String d = delays; // makes it easier to log and publish
 
-    strcpy(tempchar, delays);
-    char *buffptr;      // probably redundant but just for now xx
-    buffptr = tempchar; // probably redundant but just for now xx
-
-    // Copy over parameter string
-    /* int i;
-        for (i = 0; i < 20; i++) {
-        tempchar[i] = delays[i];
-        } */
-
+    strcpy(tempchar, delays); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
     char *end = buffptr;
+
+    // parse delays
     while (*end)
     {
         lm[i]->innerLoopDelayCountDefault = strtol(buffptr, &end, 10);
@@ -217,8 +212,7 @@ int setLoopDelay(const char *delays)
         buffptr = end;
     }
 
-
-      Log.info("Loop Delay updated to: " + d);
+    Log.info("Loop Delay updated to: " + d);
     loopDelayData = String("{") +
                     String("\"LoopDelay\": ") + d +
                     String("\"}");

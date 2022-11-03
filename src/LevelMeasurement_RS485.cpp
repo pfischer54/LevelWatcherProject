@@ -29,6 +29,7 @@ void LevelMeasurement_RS485::measureLevel()
     int rs485Data[10];
 
     sampleReading = 0;
+    startOfMeasurement = System.millis();  //mark  start time.
     node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(0x0, 1);
 
