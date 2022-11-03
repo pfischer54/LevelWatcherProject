@@ -1,29 +1,15 @@
 #include "Particle.h"
-//#include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485.h"
-//#include "LevelWatcher.h"
-//#include "UtilityFunctions.h"
-//#include <RunningAverage.h>
-//#include <CellularHelper.h>
-//#include "ModbusMaster.h"
 
-LevelMeasurement_RS485::LevelMeasurement_RS485(String sid) : LevelMeasurement(sid)
-{
-}
 
-LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr) : LevelMeasurement(sid)
-{
-    nodeAddr = slaveAddr;
-
-}
-LevelMeasurement_RS485::LevelMeasurement_RS485(String sid, int slaveAddr, boolean diff) : LevelMeasurement(sid, diff)
+LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, boolean diff) : LevelMeasurement(sid, diff)
 {
     nodeAddr = slaveAddr;
 
 }
 
-void LevelMeasurement_RS485::measureLevel()
+void LevelMeasurement_RS485_Analogue::measureLevel()
 {
     int j, result;
     int rs485Data[10];
@@ -37,7 +23,7 @@ void LevelMeasurement_RS485::measureLevel()
     if (result == node.ku8MBSuccess)
     {
         Log.info("Sensor: " + sensorId + ": Success, Received data: ");
-        for (j = 0; j < 1; j++)
+        for (j = 0; j < 1; j++)   //This code only reads 1x 16bit register
         {
             rs485Data[j] = node.getResponseBuffer(j);
             sampleReading = rs485Data[j];

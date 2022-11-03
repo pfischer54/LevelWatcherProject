@@ -3,7 +3,6 @@
 #include "LevelMeasurement.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
-//#include <RunningAverage.h>
 #include <CellularHelper.h>
 
 LevelMeasurement::LevelMeasurement()

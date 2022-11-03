@@ -11,13 +11,13 @@
 
 extern ModbusMaster node;
 
-class LevelMeasurement_RS485 : public LevelMeasurement
+class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485(String sid);
-    LevelMeasurement_RS485(String sid, int slaveAddr);
-    LevelMeasurement_RS485(String sid, int slaveAddr, boolean diff);
+    LevelMeasurement_RS485_Analogue(String sid);
+    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr);
+    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, boolean diff);
 
     void measureLevel();
 

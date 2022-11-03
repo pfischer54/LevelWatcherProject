@@ -2,7 +2,6 @@
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
 #include "LevelWatcher.h"
-//#include <Adafruit_ADS1015.h>
 #include "UtilityFunctions.h"
 
 void blink(unsigned long onTime)
