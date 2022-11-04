@@ -1,6 +1,6 @@
 #include "Particle.h"
 #include "LevelMeasurement.h"
-#include "LevelMeasurement_RS485.h"
+#include "LevelMeasurement_RS485_Analogue.h"
 
 
 LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, boolean diff) : LevelMeasurement(sid, diff)

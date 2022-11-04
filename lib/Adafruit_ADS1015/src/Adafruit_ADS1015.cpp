@@ -18,6 +18,13 @@
     v1.0 - First release
 */
 /**************************************************************************/
+
+//ARDUINO test added by pjf
+#ifndef ARDUINO
+#define ARDUINO 101
+#endif 
+
+
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else

@@ -82,8 +82,8 @@ void LevelMeasurement::publishLevel(int reading)
     {
         sample++;
     }
-    timeTakenForMeasurement = System.millis() - startOfMeasurement; // how long did this take?
 
+    timeTakenForMeasurement = System.millis() - startOfMeasurement; // how long did this take?
     if (timeTakenForMeasurement < 1000)
         delay(1000 - timeTakenForMeasurement); // make sure we are not publishing events at a rate > 1/sec
 };

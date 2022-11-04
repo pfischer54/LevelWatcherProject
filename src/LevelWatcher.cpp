@@ -5,7 +5,7 @@
 #include "JsonParserGeneratorRK.h"
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_4to20mA.h"
-#include "LevelMeasurement_RS485.h"
+#include "LevelMeasurement_RS485_Analogue.h"
 #include "LevelWatcher.h"
 #include "UtilityFunctions.h"
 #include <CellularHelper.h>
