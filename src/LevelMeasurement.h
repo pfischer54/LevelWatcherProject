@@ -40,6 +40,10 @@ int previousReading = 0;
 boolean differential = false;  //Is this sensor to be read differentially one reading to the next.
 uint64_t startOfMeasurement = 0;  // Start time of measurement in ms (we only want to delay 1s max per measurement)
 
+
+private:
+void publish(uint);
+
 };
 
 #endif
