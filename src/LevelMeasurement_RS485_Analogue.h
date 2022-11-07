@@ -3,17 +3,21 @@
 
 #include "ModbusMaster.h"
 
+#define MAX_NO_OF_HOLDING_REGS 4 // max number with reading returned as 64bit int
+
 extern ModbusMaster node;
 
 class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, boolean diff);
+    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff);
     void measureLevel();
 
 private:
-    int nodeAddr = {1}; //slave node address, defaults to 1.
+    int nodeAddr = {1}; // slave node address, defaults to 1.
+    int startingRegister = {0};
+    int numberOfRegistersToRead = {1};
 };
 
 #endif

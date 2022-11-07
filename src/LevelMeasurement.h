@@ -33,7 +33,7 @@ void publishLevel(int);
 
 int sample;
 bool zeroingInProgress;
-int sampleReading;
+uint64_t sampleReading;
 String data = String(80);
 bool firstTimeThrough = true;
 int previousReading = 0;

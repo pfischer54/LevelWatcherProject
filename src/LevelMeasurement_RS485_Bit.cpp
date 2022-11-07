@@ -28,7 +28,7 @@ void LevelMeasurement_RS485_Bit::measureLevel()
         {
             rs485Data[j] = node.getResponseBuffer(j);
             sampleReading = rs485Data[j];
-            Log.info("Reading= %d", sampleReading);
+            Log.info("Reading= %llu", sampleReading);
          }
         publishLevel(sampleReading);
     }
