@@ -2,7 +2,7 @@
 #define LEVELWATCHER_H 
 #define STATUSLED D4 //D0, D1 used fro I2C,  D5 for RS85 interface, D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
 
-const int NUMBER_OF_SENSORS = 3;  //number of sensors to scan
+const int NUMBER_OF_SENSORS = 4;  //number of sensors to scan
 const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_SENSORS * 6; // That should do it :)
 
 //Sensor types enum
@@ -10,6 +10,7 @@ const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_SENSORS * 6; // That should do it :)
 #define SENSOR_0 "LS";
 #define SENSOR_1 "MS";
 #define SENSOR_2 "TS";
+#define SENSOR_3 "PP";
 
 const unsigned long REBOOT_INTERVAL_IN_MS = 14 * 24 * 3600 * 1000; // 14*24*3600*1000 Reboot every 14 days
 const unsigned int DEFAULT_LOOP_DELAY_IN_MS = 1 * 1000;      //60*60*1000; 1hour = (min = 60 = 1 hour)*(sec = 60 = 1 min)*(msec = 1000 = 1 sec)

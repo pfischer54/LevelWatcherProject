@@ -13,8 +13,8 @@ void LevelMeasurement_RS485_Analogue::measureLevel()
 {
     int j, result;
     int rs485Data[MAX_NO_OF_HOLDING_REGS];
+    uint64_t sampleReading = 0;
 
-    sampleReading = 0;
     startOfMeasurement = System.millis(); // mark  start time.
     node.SetNodeAddr(nodeAddr);
     result = node.readHoldingRegisters(startingRegister, numberOfRegistersToRead);
@@ -29,7 +29,7 @@ void LevelMeasurement_RS485_Analogue::measureLevel()
             if (j == 0)
                 sampleReading = rs485Data[j];
             else
-                sampleReading = (sampleReading  * 0x10000) + + rs485Data[j] ;
+                sampleReading = (sampleReading * 0x10000) + +rs485Data[j];
         }
         Log.info("Reading= %llu", sampleReading);
         publishLevel(sampleReading);

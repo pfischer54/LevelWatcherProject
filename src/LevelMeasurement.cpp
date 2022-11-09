@@ -8,7 +8,6 @@
 LevelMeasurement::LevelMeasurement()
 {
     zeroingInProgress = false;
-    sampleReading = 0;
     data = "";
 }
 LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
