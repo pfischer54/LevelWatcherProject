@@ -39,29 +39,29 @@ void LevelMeasurement::publish(uint reading)
     // xxxString("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
     // xxx String("\"DT\":") + String("\"") + String::format("%u", System.millis()) + String("\",") +
 
-       Particle.connect(); // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
+    Particle.connect(); // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
 
     if (publishToSink & 0x01)
     {
-    data = String("{") +
-           String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
-           String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
-           String("\"LsBits\":") + String("\"") + String::format("%u", reading) + String("\",") +
-           String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
-           String("\"}");
-     Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
+        data = String("{") +
+               String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
+               String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
+               String("\"LsBits\":") + String("\"") + String::format("%u", reading) + String("\",") +
+               String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
+               String("\"}");
+        Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
                                                             // Log.info(data);
                                                             //   Log.info(String::format("%f", waterLevelInMm));
                                                             //   Log.info(data);
     }
     if (publishToSink & 0x02)
     {
-  data = String("{") +
-           String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
-           String("\"OnOff\":") + String("\"") + String::format("%u", reading) + String("\",") +
-           String("\"}");
-//xxx       Particle.publish("PressuringPumpStatus", data, PRIVATE);
-       Particle.publish("PressuringPumpStatus", String::format("%u", reading), PRIVATE);
+        data = String("{") +
+               String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
+               String("\"OnOff\":") + String("\"") + String::format("%u", reading) + String("\",") +
+               String("\"}");
+        // xxx       Particle.publish("PressuringPumpStatus", data, PRIVATE);
+        Particle.publish("PressuringPumpStatus", String::format("%u", reading), PRIVATE);
     }
 }
 
@@ -83,27 +83,38 @@ void LevelMeasurement::publishLevel(int reading)
     }
     // Check for differential reading: If differential is true, only send reading if it changed from last time.
 
-    if (differential == true && !firstTimeThrough)
+    if (firstTimeThrough)
     {
-        if (reading == previousReading)
+        firstTimeThrough = false;
+    }
+    else
+    {
+        if (differential == true)
         {
-            firstTimeThrough = false;
-            return; // no need to publish, so exit.
+            if (reading == previousReading)
+            {
+                if (oneExtraSlice) // send last reading one more time in case of timing skew, lost readings, etc.
+                {
+                    publish(reading); // publish one more reading
+                    oneExtraSlice = false;
+                }
+                return; // now return.
+            }
+            else
+            {
+                publish(previousReading);        // First publish previous reading, i.e. reading valid up until this point in time
+                delay(DIFFERENTIAL_DELAY_IN_MS); // wait 1s so as not to overload particle cloud
+                publish(reading);                // Now publish reading follwing transition to new reading.
+                oneExtraSlice = true;            // we will send out one more reading to deal with time skews and missed packets/
+            }
         }
-        else
+        else // not differential
         {
-            publish(previousReading); // First publish previous reading, i.e. reading valid up until this point in time
-            delay(DIFFERENTIAL_DELAY_IN_MS);                // wait 1s so as not to overload particle cloud
-            publish(reading);         // Now publish reading follwing transition to new reading.
+            publish(reading);
         }
     }
-    else // not differential or it's fisttimeThrough
-    {
-        publish(reading);
-    }
-    firstTimeThrough = false;
     previousReading = reading; // update reading;
-
+    
     if (sample >= 0)
     {
         sample++;

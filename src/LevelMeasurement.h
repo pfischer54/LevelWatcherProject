@@ -37,7 +37,7 @@ protected:
     bool firstTimeThrough = true;
     int previousReading = 0;
     boolean differential = false;    // Is this sensor to be read differentially one reading to the next.
-    bool oneMoreTime = false; // send one more reading - relevant if change of state happening as sometimes readings get ouf of synch and this should ensure we get the right state transition (corrected if necessary)
+    bool oneExtraSlice = false; // send one more reading - relevant if change of state happening as sometimes readings get ouf of synch and this should ensure we get the right state transition (corrected if necessary)
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
 
