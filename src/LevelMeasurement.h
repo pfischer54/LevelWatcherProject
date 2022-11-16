@@ -17,7 +17,7 @@ class LevelMeasurement
 public:
 LevelMeasurement();
 LevelMeasurement(String sid);
-LevelMeasurement(String sid, boolean diff);
+LevelMeasurement(String sid, boolean diff, uint sink);
 
 const  int INNER_LOOP_DELAY_COUNT_DEFAULT = 3600;  
 
@@ -38,6 +38,7 @@ bool firstTimeThrough = true;
 int previousReading = 0;
 boolean differential = false;  //Is this sensor to be read differentially one reading to the next.
 uint64_t startOfMeasurement = 0;  // Start time of measurement in ms (we only want to delay 1s max per measurement)
+    uint publishToSink = 0; //What stream to publish to - bit set: 1 = datatable, 2=iothub.
 
 
 private:

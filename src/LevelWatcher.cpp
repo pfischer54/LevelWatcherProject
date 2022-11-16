@@ -26,7 +26,6 @@ int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(const char *delays);
 int cloudResetFunction(String command);
-int cloudResetFunction(String command);
 void setup();
 void loop();
 
@@ -49,11 +48,12 @@ int sensorCount = 0;
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false);
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", 1, 0, 1, false);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", 2, 0, 1, false); // Set to slave addr 2.
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", 3, 0, 1, false); // Set to slave addr 2.
-LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2};
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false, 1);
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", 1, 0, 1, false, 1);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", 2, 0, 1, false, 1); // Set to slave addr 2.
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", 3, 129, 1, false, 2); // Set to slave addr 2.
+LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2, &lm3};
+
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};
 

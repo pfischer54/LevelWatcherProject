@@ -11,7 +11,7 @@ class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff);
+    LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink);
     void measureLevel();
 
 private:

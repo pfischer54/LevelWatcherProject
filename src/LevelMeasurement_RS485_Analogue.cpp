@@ -2,7 +2,7 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Analogue.h"
 
-LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int sR, int nR, boolean diff) : LevelMeasurement(sid, diff)
+LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int sR, int nR, boolean diff, uint sink) : LevelMeasurement(sid, diff, sink)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;

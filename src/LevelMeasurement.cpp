@@ -15,9 +15,10 @@ LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
     sensorId = sid;
 }
 
-LevelMeasurement::LevelMeasurement(String sid, boolean diff) : LevelMeasurement(sid)
+LevelMeasurement::LevelMeasurement(String sid, boolean diff, uint sink) : LevelMeasurement(sid)
 {
     differential = diff;
+    publishToSink = sink;
 }
 
 bool LevelMeasurement::isZeroingInProgress(void)
@@ -38,17 +39,30 @@ void LevelMeasurement::publish(uint reading)
     // xxxString("\"DT\":") + String("\"") + Time.format(time, TIME_FORMAT_ISO8601_FULL) + String("\",") +
     // xxx String("\"DT\":") + String("\"") + String::format("%u", System.millis()) + String("\",") +
 
+       Particle.connect(); // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
+
+    if (publishToSink & 0x01)
+    {
     data = String("{") +
            String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
            String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
            String("\"LsBits\":") + String("\"") + String::format("%u", reading) + String("\",") +
            String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
            String("\"}");
-    Particle.connect();                                 // Not necessary but maybe this will help with poor connectivity issues as it will not return until device connected to cloud...
-    Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
-                                                        // Log.info(data);
-                                                        //   Log.info(String::format("%f", waterLevelInMm));
-                                                        //   Log.info(data);
+     Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
+                                                            // Log.info(data);
+                                                            //   Log.info(String::format("%f", waterLevelInMm));
+                                                            //   Log.info(data);
+    }
+    if (publishToSink & 0x02)
+    {
+  data = String("{") +
+           String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
+           String("\"OnOff\":") + String("\"") + String::format("%u", reading) + String("\",") +
+           String("\"}");
+//xxx       Particle.publish("PressuringPumpStatus", data, PRIVATE);
+       Particle.publish("PressuringPumpStatus", String::format("%u", reading), PRIVATE);
+    }
 }
 
 void LevelMeasurement::publishLevel(int reading)
