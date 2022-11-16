@@ -93,7 +93,7 @@ void LevelMeasurement::publishLevel(int reading)
         else
         {
             publish(previousReading); // First publish previous reading, i.e. reading valid up until this point in time
-            delay(1s);                // wait 1s so as not to overload particle cloud
+            delay(DIFFERENTIAL_DELAY_IN_MS);                // wait 1s so as not to overload particle cloud
             publish(reading);         // Now publish reading follwing transition to new reading.
         }
     }

@@ -30,6 +30,10 @@ const int OUTER_LOOP_BLINK_FREQUENCY = 3;
 const int ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY = 2;
 const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
+
+//Measurement Paramenters
+
+const uint DIFFERENTIAL_DELAY_IN_MS = 2000;  //Needs a bit of help to allow for network routing issues etc
 extern JsonParserStatic<256, 20> parser;
 
 
