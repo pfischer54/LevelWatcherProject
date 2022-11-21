@@ -49,9 +49,9 @@ ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false, 1);
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", 1, 0, 1, false, 1);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", 2, 0, 1, false, 1); // Set to slave addr 2.
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", 3, 129, 1, true, 2); // Set to slave addr 2.
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", 1, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", 2, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE); // Set to slave addr 2.
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", 3, 129, 1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_AZURE_STREAM); // Set to slave addr 3.
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2, &lm3};
 
 

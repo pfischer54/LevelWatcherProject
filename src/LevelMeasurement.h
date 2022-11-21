@@ -12,6 +12,13 @@
 const int LONG_SAMPLE_SIZE = 4;  // number of measurements to average for long term average;
 const int SHORT_SAMPLE_SIZE = 3; // number of measurements to average for short term average;
 
+const uint PUBLISH_2_AZURE_TABLE = 0x1;
+const uint PUBLISH_2_AZURE_STREAM = 0x2;
+const uint PUBLISH_2_THINGSPEAK = 0x4;
+
+const bool PUBLISH_EVERY_TICK = false;
+const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
+
 class LevelMeasurement
 {
 public:
