@@ -9,7 +9,7 @@ LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, int slaveAddr
     channelBit = bit;
 }
 
-void LevelMeasurement_RS485_Bit::measureLevel()
+void LevelMeasurement_RS485_Bit::measureReading()
 {
     int result;
     int sampleReading;

@@ -72,7 +72,7 @@ void LevelMeasurement::publish(uint reading)
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
                String("\"State\":") + String("\"") + String::format("%u", reading) +
                String("\"}");
-        Particle.publish("thingSpeakWrite_A0", "{ \"1\": \"" + String::format("%u", reading) + "\", \"k\": \"JNCR3IEAN13USRSZ\" }", 60, PRIVATE);
+        Particle.publish("thingSpeakWrite", "{ \"1\": \"" + String::format("%u", reading) + "\", \"k\": \"JNCR3IEAN13USRSZ\" }", 60, PRIVATE);
     } 
 
 }

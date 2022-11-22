@@ -9,7 +9,7 @@ LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, int
     numberOfRegistersToRead = nR;
 }
 
-void LevelMeasurement_RS485_Analogue::measureLevel()
+void LevelMeasurement_RS485_Analogue::measureReading()
 {
     int j, result;
     int rs485Data[MAX_NO_OF_HOLDING_REGS];

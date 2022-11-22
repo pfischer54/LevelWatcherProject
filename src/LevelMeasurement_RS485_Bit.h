@@ -10,7 +10,7 @@ class LevelMeasurement_RS485_Bit : public LevelMeasurement
 
 public:
     LevelMeasurement_RS485_Bit(String sid, int slaveAddr, int sR, uint bit, boolean diff, uint sink);
-    void measureLevel();
+    void measureReading();
 
 private:
     int nodeAddr = {3}; // slave node address, defaults to 3.

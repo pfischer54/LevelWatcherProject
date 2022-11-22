@@ -33,7 +33,7 @@ public:
     int innerLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT_DEFAULT; // need to change this for production versipn
     bool isZeroingInProgress(void);
     void setZeroingInProgress(void);
-    virtual void measureLevel(void) = 0;
+    virtual void measureReading(void) = 0;
 
 protected:
     void publishLevel(int);

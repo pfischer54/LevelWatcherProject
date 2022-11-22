@@ -12,7 +12,7 @@ class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 
 public:
     LevelMeasurement_RS485_Analogue(String sid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink);
-    void measureLevel();
+    void measureReading();
 
 private:
     int nodeAddr = {1}; // slave node address, defaults to 1.

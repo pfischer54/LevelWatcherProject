@@ -9,7 +9,7 @@ LevelMeasurement_4to20mA::LevelMeasurement_4to20mA(String sid, boolean diff, uin
     ads.begin();
 }
 
-void LevelMeasurement_4to20mA::measureLevel()
+void LevelMeasurement_4to20mA::measureReading()
 {
    int sampleReading = 0;
     startOfMeasurement = System.millis();       // mark  start time.
