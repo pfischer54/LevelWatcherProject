@@ -5,6 +5,13 @@
 
 #define MAX_NO_OF_HOLDING_REGS 4 // max number with reading returned as 64bit int
 
+const uint MODBUS_SLAVE_1 = 1;
+const uint MODBUS_SLAVE_2 = 2;
+const uint MODBUS_SLAVE_3 = 3;
+const uint MODBUS_SLAVE_4 = 4;
+const uint MODBUS_SLAVE_5 = 5;
+const uint MODBUS_SLAVE_0 = 0;
+
 extern ModbusMaster node;
 
 class LevelMeasurement_RS485_Analogue : public LevelMeasurement
