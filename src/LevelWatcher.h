@@ -33,7 +33,7 @@ const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
 //Measurement Paramenters
 
-const uint DIFFERENTIAL_DELAY_IN_MS = 2000;  //Needs a bit of help to allow for network routing issues etc
+const uint DIFFERENTIAL_DELAY_IN_MS = 500;  //Needs a bit of help to allow for network routing issues etc. Set back to tiny amount as bursts are allowed.
 extern JsonParserStatic<256, 20> parser;
 
 

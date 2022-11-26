@@ -51,10 +51,9 @@ ModbusMaster node = ModbusMaster();
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false, 1);
 LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", MODBUS_SLAVE_1, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
 LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", MODBUS_SLAVE_2, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", MODBUS_SLAVE_3, 129, 1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_THINGSPEAK | PUBLISH_2_AZURE_STREAM);
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", MODBUS_SLAVE_3, 129, 1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_STREAM);
 LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", MODBUS_SLAVE_4, 0x0403, 2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2, &lm3, &lm4};
-
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};
 
@@ -110,6 +109,8 @@ void setup()
 //
 void loop()
 {
+    bool aSensorRead = false; //  will be true if at least one sensor read
+
     Log.info("Main Loop: Looping");
     if ((millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
@@ -147,15 +148,19 @@ void loop()
 
     for (sensorCount = 0; sensorCount < NUMBER_OF_SENSORS; sensorCount++)
     {
+        aSensorRead = false; // reset
         if ((lm[sensorCount]->innerLoopDelayCount >= lm[sensorCount]->innerLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
         {
             lm[sensorCount]->measureReading();
             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
             lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
+            aSensorRead = true;                       // a sensor has been read
         }
         lm[sensorCount]->innerLoopDelayCount++; // increment sensor publish delay count.
     }
+    if (!aSensorRead)
+        delay(1s); // make sure we have at least a 1s loop delay  TODO: allow this to be tuned
 
     // Wait nn seconds until all/any zeroing completed
     if (isAnyZeroingInProgress(lm))

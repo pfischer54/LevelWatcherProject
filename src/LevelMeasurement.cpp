@@ -55,7 +55,6 @@ void LevelMeasurement::publish(uint reading)
                                                             //   Log.info(data);
     }
 
-
     if (publishToSink & PUBLISH_2_AZURE_STREAM)
     {
         data = String("{") +
@@ -65,7 +64,6 @@ void LevelMeasurement::publish(uint reading)
         Particle.publish("PressuringPumpStatus", data, PRIVATE);
     }
 
-
     if (publishToSink & PUBLISH_2_THINGSPEAK)
     {
         data = String("{") +
@@ -73,13 +71,22 @@ void LevelMeasurement::publish(uint reading)
                String("\"State\":") + String("\"") + String::format("%u", reading) +
                String("\"}");
         Particle.publish("thingSpeakWrite", "{ \"1\": \"" + String::format("%u", reading) + "\", \"k\": \"JNCR3IEAN13USRSZ\" }", 60, PRIVATE);
-    } 
+    }
 
+    if (publishToSink & PUBLISH_2_BLYNK)
+    {
+        data = String("{") +
+               String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
+               String("\"State\":") + String("\"") + String::format("%u", reading) +
+               String("\"}");
+        Particle.publish("BlynkWrite", String::format("%u", reading), PRIVATE);
+    }
 }
 
 void LevelMeasurement::publishLevel(int reading)
 {
     uint64_t timeTakenForMeasurement;
+    publishedAReading = false;
 
     Log.info("Sensor: " + sensorId + " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
 
@@ -95,19 +102,21 @@ void LevelMeasurement::publishLevel(int reading)
     }
     // Check for differential reading: If differential is true, only send reading if it changed from last time.
 
-    if (firstTimeThrough | !differential)
+    if (firstTimeThrough || !differential)
     {
         publish(reading);
         firstTimeThrough = false;
+        publishedAReading = true; // we published
     }
-    else
+    else // This is not first time through and this is a differential reading
     {
         if (reading == previousReading)
         {
             if (oneExtraSlice) // send last reading one more time in case of timing skew, lost readings, etc.
             {
-                publish(reading); // publish one more reading
+                publish(reading);         // publish one more reading
                 oneExtraSlice = false;
+                diffHeartbeatReadingCount = 0; // we published so reset count
             }
             return; // now return.
         }
@@ -117,7 +126,19 @@ void LevelMeasurement::publishLevel(int reading)
             delay(DIFFERENTIAL_DELAY_IN_MS); // wait 1s so as not to overload particle cloud
             publish(reading);                // Now publish reading follwing transition to new reading.
             oneExtraSlice = true;            // we will send out one more reading to deal with time skews and missed packets/
+            publishedAReading = true;        // we published
         }
+
+        if (!publishedAReading)
+        {
+            if (diffHeartbeatReadingCount == DIFFERENTIAL_READING_HEARTBEAT_COUNT)
+            {
+                publish(reading);  //publish a heartbeat reading
+                diffHeartbeatReadingCount = 0; // reset count
+            }
+            else
+                diffHeartbeatReadingCount++; //  we did not publish a reading so increment count
+        }                                    
     }
 
     previousReading = reading; // update reading;

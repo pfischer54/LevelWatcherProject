@@ -1,0 +1,12 @@
+{
+    "event": "temperature",
+    "responseTopic": "",
+    "url": "https://lon1.blynk.cloud/external/api/update?token=8Sr7FG3X6vVj7cmoxnD22PUdR8WuWr1g",
+    "requestType": "GET",
+    "noDefaults": true,
+    "rejectUnauthorized": true,
+    "responseTemplate": "",
+    "query": {
+        "V1": "{{{PARTICLE_EVENT_VALUE}}}"
+    }
+}

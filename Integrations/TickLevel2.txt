@@ -1,0 +1,18 @@
+{
+    "event": "TickLevel2",
+    "responseTopic": "{{PARTICLE_DEVICE_ID}}/hook-response/{{PARTICLE_EVENT_NAME}}",
+    "url": "https://pflfunctions.azurewebsites.net/api/LevelMeasurement4?code=13wWuPxRjC3E/ipjg9Cg7JT7aS821Sq/3O49cRq361LalJO56h0PSw==",
+    "requestType": "POST",
+    "noDefaults": true,
+    "rejectUnauthorized": true,
+    "json": {
+        "source": "{{{PARTICLE_DEVICE_ID}}}",
+        "RowKey": "{{SPARK_PUBLISHED_AT}}",
+        "SensorId": "{{{SensorId}}}",
+        "SS": "{{{SS}}}",
+        "LsBits": "{{{LsBits}}}",
+        "ZeroingInProgress": "{{{ZeroingInProgress}}}",
+        "P": "{{{P}}}",
+        "T": "{{{T}}}"
+    }
+}

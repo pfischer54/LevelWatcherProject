@@ -15,9 +15,12 @@ const int SHORT_SAMPLE_SIZE = 3; // number of measurements to average for short 
 const uint PUBLISH_2_AZURE_TABLE = 0x1;
 const uint PUBLISH_2_AZURE_STREAM = 0x2;
 const uint PUBLISH_2_THINGSPEAK = 0x4;
+const uint PUBLISH_2_BLYNK = 0x8;
 
 const bool PUBLISH_EVERY_TICK = false;
 const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
+
+const uint DIFFERENTIAL_READING_HEARTBEAT_COUNT = 10;
 
 class LevelMeasurement
 {
@@ -47,6 +50,8 @@ protected:
     bool oneExtraSlice = false; // send one more reading - relevant if change of state happening as sometimes readings get ouf of synch and this should ensure we get the right state transition (corrected if necessary)
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
+    bool publishedAReading = false;
+    uint diffHeartbeatReadingCount = 0;
 
 private:
     void publish(uint);
