@@ -11,7 +11,8 @@
 			"sstream": "cpp",
 			"charconv": "cpp",
 			"atomic": "cpp",
-			"cstdint": "cpp"
+			"cstdint": "cpp",
+			"ostream": "cpp"
 		},
 		"particle.firmwareVersion": "3.3.0",
 		"particle.targetPlatform": "electron",

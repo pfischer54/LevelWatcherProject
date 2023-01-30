@@ -12,6 +12,7 @@
 #include <CellularHelper.h>
 #include "string.h"
 
+
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't
 // be available.
@@ -42,17 +43,18 @@ bool startupCompleted = false;
 // xxxxunsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
 int startupLoopsCompleted = 0;
 int sensorCount = 0;
+int readings[NUMBER_OF_SENSORS][2];
 
 // RS485 setup
 // Define the main node object. This controls the RS485 interface for all the slaves.
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", false, 1);
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", MODBUS_SLAVE_1, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", MODBUS_SLAVE_2, 0, 1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", MODBUS_SLAVE_3, 129, 1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_STREAM);
-LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", MODBUS_SLAVE_4, 0x0403, 2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE);
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS","V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS","V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE);
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP","V1", MODBUS_SLAVE_3, STARTING_REG_81H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_STREAM);
+LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1","V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE);
 LevelMeasurement *lm[NUMBER_OF_SENSORS] = {&lm0, &lm1, &lm2, &lm3, &lm4};
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};

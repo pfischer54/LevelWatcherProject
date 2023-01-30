@@ -17,6 +17,13 @@ const uint PUBLISH_2_AZURE_STREAM = 0x2;
 const uint PUBLISH_2_THINGSPEAK = 0x4;
 const uint PUBLISH_2_BLYNK = 0x8;
 
+//Set channel type.
+//Digital channels have an associated timer measuring ontime.
+
+const uint ANALOGUE_CHANNEL = 0x0;
+const uint DIGITAL_CHANNEL = 0x1; 
+
+
 const bool PUBLISH_EVERY_TICK = false;
 const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
 
@@ -27,7 +34,7 @@ class LevelMeasurement
 public:
     LevelMeasurement();
     LevelMeasurement(String sid);
-    LevelMeasurement(String sid, boolean diff, uint sink);
+    LevelMeasurement(String sid, String bid, boolean diff, uint sink);
 
     const int INNER_LOOP_DELAY_COUNT_DEFAULT = 3600;
 
@@ -50,8 +57,12 @@ protected:
     bool oneExtraSlice = false; // send one more reading - relevant if change of state happening as sometimes readings get ouf of synch and this should ensure we get the right state transition (corrected if necessary)
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
+    String blynkPinId;
     bool publishedAReading = false;
     uint diffHeartbeatReadingCount = 0;
+    uint ChannelType = ANALOGUE_CHANNEL;
+    ulong onTime;
+    
 
 private:
     void publish(uint);

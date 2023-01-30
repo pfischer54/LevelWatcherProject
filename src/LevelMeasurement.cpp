@@ -15,10 +15,11 @@ LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
     sensorId = sid;
 }
 
-LevelMeasurement::LevelMeasurement(String sid, boolean diff, uint sink) : LevelMeasurement(sid)
+LevelMeasurement::LevelMeasurement(String sid, String bpid,  boolean diff, uint sink) : LevelMeasurement(sid)
 {
-    differential = diff;
-    publishToSink = sink;
+    differential = diff;  // Publish every measurement or only changes
+    publishToSink = sink;  //Who to publish to
+    blynkPinId = bpid; //Blynk needs it's own virtual pin designation for each signal
 }
 
 bool LevelMeasurement::isZeroingInProgress(void)
@@ -76,17 +77,16 @@ void LevelMeasurement::publish(uint reading)
     if (publishToSink & PUBLISH_2_BLYNK)
     {
         data = String("{") +
-               String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
-               String("\"State\":") + String("\"") + String::format("%u", reading) +
+              String("\"") + blynkPinId + String("\":\"") + + String::format("%u", reading) +
                String("\"}");
-        Particle.publish("BlynkWrite", String::format("%u", reading), PRIVATE);
+        Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
     }
 }
 
 void LevelMeasurement::publishLevel(int reading)
 {
     uint64_t timeTakenForMeasurement;
-    publishedAReading = false;
+    publishedAReading = false; // start by assuming we are not publishing
 
     Log.info("Sensor: " + sensorId + " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
 
@@ -114,11 +114,10 @@ void LevelMeasurement::publishLevel(int reading)
         {
             if (oneExtraSlice) // send last reading one more time in case of timing skew, lost readings, etc.
             {
-                publish(reading);         // publish one more reading
+                publish(reading); // publish one more reading
                 oneExtraSlice = false;
                 diffHeartbeatReadingCount = 0; // we published so reset count
             }
-            return; // now return.
         }
         else
         {
@@ -133,12 +132,12 @@ void LevelMeasurement::publishLevel(int reading)
         {
             if (diffHeartbeatReadingCount == DIFFERENTIAL_READING_HEARTBEAT_COUNT)
             {
-                publish(reading);  //publish a heartbeat reading
+                publish(reading);              // publish a heartbeat reading
                 diffHeartbeatReadingCount = 0; // reset count
             }
             else
                 diffHeartbeatReadingCount++; //  we did not publish a reading so increment count
-        }                                    
+        }
     }
 
     previousReading = reading; // update reading;

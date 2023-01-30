@@ -2,11 +2,12 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Bit.h"
 
-LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, int slaveAddr, int sR, uint bit, boolean diff, uint sink) : LevelMeasurement(sid, diff, sink)
+LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink) : LevelMeasurement(sid, bpid, diff, sink)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
     channelBit = bit;
+    //AveragingArray(AVERAGING_SAMPLE_SIZE);  //averaging bucket
 }
 
 void LevelMeasurement_RS485_Bit::measureReading()
