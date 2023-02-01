@@ -56,7 +56,12 @@ LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS","V4",
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP","V1", MODBUS_SLAVE_3, STARTING_REG_81H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_STREAM);
 LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1","V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 1.0);
 LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM","XX", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE, 0, 1.0);
-LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5};
+
+LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1","XX", MODBUS_SLAVE_5, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE, 0, 1.0);
+LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2","XX", MODBUS_SLAVE_6, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE, 0, 1.0);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","XX", MODBUS_SLAVE_7, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE, 0, 1.0);
+
+LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
 
 // xxxLevelMeasurement *lm[2] = {&lm0, &lm1};

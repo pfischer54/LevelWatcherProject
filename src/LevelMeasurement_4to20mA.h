@@ -16,7 +16,13 @@ const double MAX_16_BIT_ANALOGUE_BIT_VALUE = 32154; // 19200.0;  //19200 for 120
 //xxxconst double SENSOR_FULL_RANGE_IN_MM = 2000.0;
 
 
-
+/// @brief Measurement class to measure analogue values.
+/// @param sid  Sensor ID to identify the target sensor
+/// @param bpid Blynk Virtual Pin ID
+/// @param diff Publish every reading or only when reading changes from previous reading (plus regular heartbeats and readings to frame the transition)
+/// @param sink Specify what endpoints to publish to: PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE | PUBLISH_2_AZURE_STREAM
+/// @param o Sensor reading offset
+/// @param g Sensor gain:  Published reading = (reading - o) * g
 class LevelMeasurement_4to20mA: public LevelMeasurement
 {
 
