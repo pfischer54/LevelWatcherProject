@@ -2,19 +2,13 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Analogue.h"
 
-/// @brief 
-/// @param sid 
-/// @param bpid 
-/// @param slaveAddr 
-/// @param sR 
-/// @param nR 
-/// @param diff 
-/// @param sink 
-LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int sR, int nR, boolean diff, uint sink) : LevelMeasurement(sid, bpid, diff, sink)
+LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int sR, int nR, boolean diff, uint sink, int o, float g) : LevelMeasurement(sid, bpid, diff, sink)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
-    numberOfRegistersToRead = nR;
+    numberOfRegistersToRead = (nR < MAX_NO_OF_HOLDING_REGS) ? nR: MAX_NO_OF_HOLDING_REGS;  //avoid fatality!
+    offset = o;
+    gain = g;
 }
 
 void LevelMeasurement_RS485_Analogue::measureReading()

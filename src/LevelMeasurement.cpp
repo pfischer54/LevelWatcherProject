@@ -15,11 +15,11 @@ LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
     sensorId = sid;
 }
 
-LevelMeasurement::LevelMeasurement(String sid, String bpid,  boolean diff, uint sink) : LevelMeasurement(sid)
+LevelMeasurement::LevelMeasurement(String sid, String bpid, boolean diff, uint sink) : LevelMeasurement(sid)
 {
     differential = diff;  // Publish every measurement or only changes
-    publishToSink = sink;  //Who to publish to
-    blynkPinId = bpid; //Blynk needs it's own virtual pin designation for each signal
+    publishToSink = sink; // Who to publish to
+    blynkPinId = bpid;    // Blynk needs it's own virtual pin designation for each signal
 }
 
 bool LevelMeasurement::isZeroingInProgress(void)
@@ -76,10 +76,22 @@ void LevelMeasurement::publish(uint reading)
 
     if (publishToSink & PUBLISH_2_BLYNK)
     {
-        data = String("{") +
-              String("\"") + blynkPinId + String("\":\"") + + String::format("%u", reading) +
-               String("\"}");
-        Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
+        float scaledReading = 0.0;
+        if (gain == 0) // This is a bit or integer stream
+        {
+            data = String("{") +
+                   String("\"") + blynkPinId + String("\":\"") + +String::format("%u", reading) +
+                   String("\"}");
+            Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
+        }
+        else  //This stream needs sclaling and offsetting... publish as a float
+        {
+            scaledReading = (reading - offset) * gain;
+            data = String("{") +
+                   String("\"") + blynkPinId + String("\":\"") + +String::format("%f", scaledReading) +
+                   String("\"}");
+            Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
+        }
     }
 }
 

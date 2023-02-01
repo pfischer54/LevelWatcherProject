@@ -58,6 +58,10 @@ protected:
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
     String blynkPinId;
+
+// published reading = (sensor reading - offset) * gain
+    float gain = 0.0;  //Gain  (Used only for Blynk data as this cannot be set by the app)
+    int offset = 0; //Offset  (Used only for Blynk data as this cannot be set by the app)
     bool publishedAReading = false;
     uint diffHeartbeatReadingCount = 0;
     uint ChannelType = ANALOGUE_CHANNEL;

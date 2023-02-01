@@ -56,7 +56,7 @@ bool isAnyZeroingInProgress(LevelMeasurement *lm[])
 
     //Checks if zeroing is going on  for any device.
 
-    for (i = 0; i < NUMBER_OF_SENSORS; i++)
+    for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
     {
         if (lm[i]->isZeroingInProgress() == true)
             return true;
