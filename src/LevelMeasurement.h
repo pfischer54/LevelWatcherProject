@@ -2,7 +2,7 @@
 #define LEVELMEASUREMENT_H
 
 //#include "Particle.h"
-//#include <RunningAverage.h>
+#include <RunningAverage.h>
 //#include <CellularHelper.h>
 #include "Adafruit_ADS1015.h"
 //#include "JsonParserGeneratorRK.h"
@@ -16,6 +16,7 @@ const uint PUBLISH_2_AZURE_TABLE = 0x1;
 const uint PUBLISH_2_AZURE_STREAM = 0x2;
 const uint PUBLISH_2_THINGSPEAK = 0x4;
 const uint PUBLISH_2_BLYNK = 0x8;
+const uint CHECK_FOR_AVERAGE_USE = 0x10;
 
 //Set channel type.
 //Digital channels have an associated timer measuring ontime.
@@ -23,11 +24,12 @@ const uint PUBLISH_2_BLYNK = 0x8;
 const uint ANALOGUE_CHANNEL = 0x0;
 const uint DIGITAL_CHANNEL = 0x1; 
 
-
 const bool PUBLISH_EVERY_TICK = false;
 const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
 
 const uint DIFFERENTIAL_READING_HEARTBEAT_COUNT = 10;
+
+const int AVERAGING_SAMPLE_SIZE = 200; // number of measurements to average;
 
 class LevelMeasurement
 {
@@ -66,6 +68,7 @@ protected:
     uint diffHeartbeatReadingCount = 0;
     uint ChannelType = ANALOGUE_CHANNEL;
     ulong onTime;
+       RunningAverage AveragingArray = RunningAverage(AVERAGING_SAMPLE_SIZE); // averaging bucket
     
 
 private:

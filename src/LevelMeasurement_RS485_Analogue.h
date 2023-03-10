@@ -15,7 +15,8 @@ const uint MODBUS_SLAVE_7 = 7;
 const uint MODBUS_SLAVE_8 = 8;
 
 const uint STARTING_REG_0 = 0;
-const uint STARTING_REG_81H = 0x0081;
+const uint STARTING_REG_004H = 0x0004;
+const uint STARTING_REG_081H = 0x0081;
 const uint STARTING_REG_200H = 0x0200;
 const uint STARTING_REG_400H = 0x0400;
 const uint STARTING_REG_403H = 0x0403;

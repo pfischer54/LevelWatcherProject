@@ -19,7 +19,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
 
     startOfMeasurement = System.millis(); // mark  start time.
     node.SetNodeAddr(nodeAddr);
-    result = node.readHoldingRegisters(startingRegister, numberOfRegistersToRead);
+    result = node.readHoldingRegisters(startingRegister, numberOfRegistersToRead);++*
 
     // do something with data if read is successful
     if (result == node.ku8MBSuccess)

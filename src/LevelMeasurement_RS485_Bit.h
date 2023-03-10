@@ -2,9 +2,7 @@
 #define LEVELMEASUREMENT_RS485_BIT_H
 
 #include "ModbusMaster.h"
-#include <RunningAverage.h>
-
-const int AVERAGING_SAMPLE_SIZE = 200; // number of measurements to average;
+//#include <RunningAverage.h>
 
 extern ModbusMaster node;
 
@@ -27,6 +25,6 @@ private:
     int nodeAddr = {3}; // slave node address, defaults to 3.
     int startingRegister = {0};
     uint channelBit = 0;                                                   // active bit for this channel
-    RunningAverage AveragingArray = RunningAverage(AVERAGING_SAMPLE_SIZE); // averaging bucket
+ 
 };
 #endif

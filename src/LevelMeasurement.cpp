@@ -17,9 +17,11 @@ LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
 
 LevelMeasurement::LevelMeasurement(String sid, String bpid, boolean diff, uint sink) : LevelMeasurement(sid)
 {
-    differential = diff;  // Publish every measurement or only changes
-    publishToSink = sink; // Who to publish to
-    blynkPinId = bpid;    // Blynk needs it's own virtual pin designation for each signal
+    differential = diff;                                  // Publish every measurement or only changes
+    publishToSink = sink;                                 // Who to publish to
+    blynkPinId = bpid;                                    // Blynk needs it's own virtual pin designation for each signal
+    AveragingArray.clear();
+    AveragingArray.fillValue(0.0, LONG_SAMPLE_SIZE);
 }
 
 bool LevelMeasurement::isZeroingInProgress(void)
@@ -84,7 +86,7 @@ void LevelMeasurement::publish(uint reading)
                    String("\"}");
             Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
         }
-        else  //This stream needs sclaling and offsetting... publish as a float
+        else // This stream needs sclaling and offsetting... publish as a float
         {
             scaledReading = (reading - offset) * gain;
             data = String("{") +
@@ -93,6 +95,11 @@ void LevelMeasurement::publish(uint reading)
             Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
         }
     }
+    if (publishToSink & CHECK_FOR_AVERAGE_USE)
+    {
+        AveragingArray.addValue(reading);
+    }
+
 }
 
 void LevelMeasurement::publishLevel(int reading)

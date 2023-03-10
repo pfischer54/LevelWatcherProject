@@ -7,7 +7,6 @@ LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, 
     nodeAddr = slaveAddr;
     startingRegister = sR;
     channelBit = bit;
-    //AveragingArray(AVERAGING_SAMPLE_SIZE);  //averaging bucket
 }
 
 void LevelMeasurement_RS485_Bit::measureReading()
@@ -24,8 +23,8 @@ void LevelMeasurement_RS485_Bit::measureReading()
     if (result == node.ku8MBSuccess)
     {
         sampleReading = node.getResponseBuffer(0);
-        Log.info("Sensor: " + sensorId + ": Success, Received data: " +  sampleReading);
-         publishLevel(sampleReading);
+        Log.info("Sensor: " + sensorId + ": Success, Received data: " + sampleReading);
+        publishLevel(sampleReading);
     }
     else
     {
