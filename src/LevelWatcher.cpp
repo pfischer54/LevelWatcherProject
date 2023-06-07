@@ -54,12 +54,12 @@ LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_EVER
 LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS","V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
 LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS","V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP","V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_STREAM);
-LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1","V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.001);
+LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1","V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.0167);
 LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM","XX", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_EVERY_TICK, PUBLISH_2_AZURE_TABLE, 0, 1.0);
 
-LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1","V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
-LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2","V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_EVERY_TICK, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1","V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2","V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
@@ -71,9 +71,9 @@ JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
-String apn = "luner";
+ //String apn = "luner";
 // String apn = "3iot.com"; // globalM2M
-//String apn = "soracom.io"; // soracom
+String apn = "soracom.io"; // soracom
 
 // xxx SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC); // Used for debug?

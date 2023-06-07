@@ -16,5 +16,6 @@ void LevelMeasurement_4to20mA::measureReading()
     int sampleReading = 0;
     startOfMeasurement = System.millis();       // mark  start time.
     sampleReading = ads.readADC_SingleEnded(0); // FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
-    publishLevel(sampleReading);
+    if (sampleReading != 65535)  //65535 means not interface present
+        publishLevel(sampleReading);
 };
