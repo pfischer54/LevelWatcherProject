@@ -15,7 +15,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
 {
     int j, result;
     int rs485Data[MAX_NO_OF_HOLDING_REGS];
-    uint64_t sampleReading = 0;
+    int64_t sampleReading = 0;
 
     startOfMeasurement = System.millis(); // mark  start time.
     node.SetNodeAddr(nodeAddr);
@@ -29,9 +29,9 @@ void LevelMeasurement_RS485_Analogue::measureReading()
         {
             rs485Data[j] = node.getResponseBuffer(j);
             if (j == 0)
-                sampleReading = rs485Data[j];
+                sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
             else
-                sampleReading = (sampleReading * 0x10000) + +rs485Data[j];
+                sampleReading = (sampleReading * 0x10000) + +rs485Data[j];  //TODO 2s complement will fail with this method?
         }
         Log.info("Reading= %llu", sampleReading);
         publishLevel(sampleReading);

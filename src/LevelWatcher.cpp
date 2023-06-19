@@ -71,7 +71,7 @@ JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
- //String apn = "luner";
+//String apn = "luner";
 // String apn = "3iot.com"; // globalM2M
 String apn = "soracom.io"; // soracom
 
