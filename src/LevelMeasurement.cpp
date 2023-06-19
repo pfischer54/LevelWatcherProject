@@ -35,7 +35,7 @@ void LevelMeasurement::setZeroingInProgress(void)
     sample = 1; // Reset sample count for this sensor
 }
 
-void LevelMeasurement::publish(uint reading)
+void LevelMeasurement::publish(int reading)
 {
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
     // TODO:
@@ -49,7 +49,7 @@ void LevelMeasurement::publish(uint reading)
         data = String("{") +
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
                String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
-               String("\"LsBits\":") + String("\"") + String::format("%u", reading) + String("\",") +
+               String("\"LsBits\":") + String("\"") + String::format("%d", reading) + String("\",") +
                String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
                String("\"}");
         Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
@@ -62,7 +62,7 @@ void LevelMeasurement::publish(uint reading)
     {
         data = String("{") +
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
-               String("\"State\":") + String("\"") + String::format("%u", reading) +
+               String("\"State\":") + String("\"") + String::format("%d", reading) +
                String("\"}");
         Particle.publish("PressuringPumpStatus", data, PRIVATE);
     }
@@ -71,9 +71,9 @@ void LevelMeasurement::publish(uint reading)
     {
         data = String("{") +
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
-               String("\"State\":") + String("\"") + String::format("%u", reading) +
+               String("\"State\":") + String("\"") + String::format("%d", reading) +
                String("\"}");
-        Particle.publish("thingSpeakWrite", "{ \"1\": \"" + String::format("%u", reading) + "\", \"k\": \"JNCR3IEAN13USRSZ\" }", 60, PRIVATE);
+        Particle.publish("thingSpeakWrite", "{ \"1\": \"" + String::format("%d", reading) + "\", \"k\": \"JNCR3IEAN13USRSZ\" }", 60, PRIVATE);
     }
 
     if (publishToSink & PUBLISH_2_BLYNK)
@@ -82,7 +82,7 @@ void LevelMeasurement::publish(uint reading)
         if (gain == 0) // This is a bit or integer stream
         {
             data = String("{") +
-                   String("\"") + blynkPinId + String("\":\"") + +String::format("%u", reading) +
+                   String("\"") + blynkPinId + String("\":\"") + +String::format("%d", reading) +
                    String("\"}");
             Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
         }
@@ -107,7 +107,7 @@ void LevelMeasurement::publishLevel(int reading)
     uint64_t timeTakenForMeasurement;
     publishedAReading = false; // start by assuming we are not publishing
 
-    Log.info("Sensor: " + sensorId + " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%u", reading));
+    Log.info("Sensor: " + sensorId + " Sample: " + String::format("%i", sample) + ", Reading: " + String::format("%d", reading));
 
     if (sample == LONG_SAMPLE_SIZE + 1)
     {

@@ -30,7 +30,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
             rs485Data[j] = node.getResponseBuffer(j);
             if (j == 0)
                 sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
-            else
+             else
                 sampleReading = (sampleReading * 0x10000) + +rs485Data[j];  //TODO 2s complement will fail with this method?
         }
         Log.info("Reading= %llu", sampleReading);

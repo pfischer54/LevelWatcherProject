@@ -72,7 +72,7 @@ protected:
     
 
 private:
-    void publish(uint);
+    void publish(int);
 };
 
 #endif

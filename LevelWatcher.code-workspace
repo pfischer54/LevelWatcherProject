@@ -12,7 +12,13 @@
 			"charconv": "cpp",
 			"atomic": "cpp",
 			"cstdint": "cpp",
-			"ostream": "cpp"
+			"ostream": "cpp",
+			"iosfwd": "cpp",
+			"iterator": "cpp",
+			"streambuf": "cpp",
+			"xlocale": "cpp",
+			"xstring": "cpp",
+			"xutility": "cpp"
 		},
 		"particle.firmwareVersion": "3.3.0",
 		"particle.targetPlatform": "electron",

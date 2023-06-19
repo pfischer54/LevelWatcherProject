@@ -59,7 +59,7 @@ LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM","XX",
 
 LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1","V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
 LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2","V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, -5, 0.01);
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
@@ -71,9 +71,9 @@ JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
-//String apn = "luner";
+String apn = "luner";  //Levelwatcher 3
 // String apn = "3iot.com"; // globalM2M
-String apn = "soracom.io"; // soracom
+// String apn = "soracom.io"; //Levelwatcher 2
 
 // xxx SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC); // Used for debug?
