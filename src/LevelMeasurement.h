@@ -27,7 +27,7 @@ const uint DIGITAL_CHANNEL = 0x1;
 const bool PUBLISH_EVERY_TICK = false;
 const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
 
-const uint DIFFERENTIAL_READING_HEARTBEAT_COUNT = 10;
+const uint DIFFERENTIAL_READING_HEARTBEAT_COUNT = 100;
 
 const int AVERAGING_SAMPLE_SIZE = 200; // number of measurements to average;
 

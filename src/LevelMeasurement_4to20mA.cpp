@@ -15,7 +15,7 @@ void LevelMeasurement_4to20mA::measureReading()
 {
     int sampleReading = 0;
     startOfMeasurement = System.millis();       // mark  start time.
-    sampleReading = ads.readADC_SingleEnded(0); // FOR NDC setup -- ads.readADC_Differential_0_1() for ...;
-    if (sampleReading != 65535)  //65535 means not interface present
+    sampleReading = ads.readADC_SingleEnded(0); // FOR NDC setup -- ads.readADC_Differential_0_1() for ...
+    if ((sampleReading != 65535) && (sampleReading > 6400))  //65535 means no interface present or 24V failure and value must be > 4mA Offset i.e. about 6400
         publishLevel(sampleReading);
 };
