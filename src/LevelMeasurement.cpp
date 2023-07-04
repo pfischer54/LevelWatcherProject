@@ -149,7 +149,7 @@ void LevelMeasurement::publishLevel(int reading)
 
         if (!publishedAReading)
         {
-            if (diffHeartbeatReadingCount == DIFFERENTIAL_READING_HEARTBEAT_COUNT)
+            if (diffHeartbeatReadingCount >= DIFFERENTIAL_READING_HEARTBEAT_COUNT)
             {
                 publish(reading);              // publish a heartbeat reading
                 diffHeartbeatReadingCount = 0; // reset count

@@ -24,7 +24,7 @@ const uint CHECK_FOR_AVERAGE_USE = 0x10;
 const uint ANALOGUE_CHANNEL = 0x0;
 const uint DIGITAL_CHANNEL = 0x1; 
 
-const bool PUBLISH_EVERY_TICK = false;
+const bool PUBLISH_READINGS = false;
 const bool PUBLISH_DIFFERENTIAL_CHANGES = true;
 
 const uint DIFFERENTIAL_READING_HEARTBEAT_COUNT = 100;
