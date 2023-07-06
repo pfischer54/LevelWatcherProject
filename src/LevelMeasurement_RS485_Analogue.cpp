@@ -6,7 +6,7 @@ LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, Str
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
-    numberOfRegistersToRead = (nR < MAX_NO_OF_HOLDING_REGS) ? nR: MAX_NO_OF_HOLDING_REGS;  //avoid fatality!
+    numberOfRegistersToRead = (nR < MAX_NO_OF_HOLDING_REGS) ? nR : MAX_NO_OF_HOLDING_REGS; // avoid fatality!
     offset = o;
     gain = g;
 }
@@ -30,8 +30,8 @@ void LevelMeasurement_RS485_Analogue::measureReading()
             rs485Data[j] = node.getResponseBuffer(j);
             if (j == 0)
                 sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
-             else
-                sampleReading = (sampleReading * 0x10000) + +rs485Data[j];  //TODO 2s complement will fail with this method?
+            else
+                sampleReading = (sampleReading * 0x10000) + +rs485Data[j]; // TODO 2s complement will fail with this method?
         }
         Log.info("Reading= %llu", sampleReading);
         publishLevel(sampleReading);
@@ -44,6 +44,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
         {
             delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
             node.flushReadBuffer();
+            node.Reset();
         }
     }
 }
