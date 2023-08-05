@@ -21,9 +21,9 @@
 			"xutility": "cpp",
 			"initializer_list": "cpp"
 		},
-		"particle.firmwareVersion": "3.3.0",
+		"particle.firmwareVersion": "",
 		"particle.targetPlatform": "electron",
-		"particle.targetDevice": "LevelWatcher2",
+		"particle.targetDevice": "",
 		"cortex-debug.variableUseNaturalFormat": true
 	}
 }

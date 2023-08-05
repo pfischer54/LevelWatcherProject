@@ -1,3 +1,4 @@
+
 DayOfYearAbs = CONVERT('dataTable'[Timestamp].[Date], DOUBLE) - CONVERT(DATEVALUE("2021-01-01"), DOUBLE) + 1
 
 Lower Sterna Level (mm) = AVERAGE('dataTable'[LSWaterLevelCalculated])

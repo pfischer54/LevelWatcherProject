@@ -1,1 +1,2 @@
+//** Filters for VS cloud explorer
 Timestamp lt datetime'2022-07-15T00:00:00Z'

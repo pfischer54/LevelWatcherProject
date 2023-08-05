@@ -74,8 +74,8 @@ JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
- //String apn = "luner";  //Levelwatcher 3
- String apn = "soracom.io"; //Levelwatcher 2, LevelWatcher
+String apn = "luner";  //Levelwatcher 3
+ //String apn = "soracom.io"; //Levelwatcher 2, LevelWatcher
 
 // String apn = "3iot.com"; // globalM2M
 
