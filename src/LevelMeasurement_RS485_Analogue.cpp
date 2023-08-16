@@ -23,18 +23,19 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     result = node.readHoldingRegisters(startingRegister, numberOfRegistersToRead);
 
     // do something with data if read is successful
+    //TODO:  This must be buggy for 32bit and above :) ?
     if (result == node.ku8MBSuccess)
     {
         Log.info("Sensor: " + sensorId + ": Success, Received data: ");
-        for (j = 0; j < numberOfRegistersToRead; j++) // This code only reads 1x 16bit register
+        for (j = 0; j < numberOfRegistersToRead; j++) // This code only reads up to  4x 16bit register = 64 bit unsigned value
         {
             rs485Data[j] = node.getResponseBuffer(j);
             if (j == 0)
                 sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
             else
-                sampleReading = (sampleReading * 0x10000) + +rs485Data[j]; // TODO 2s complement will fail with this method?
+                sampleReading = (sampleReading * 0x10000) + rs485Data[j]; // TODO 2s complement will fail with this method?
         }
-        Log.info("Reading=%s", toString(sampleReading).c_str());
+        Log.info("Reading=%s", toString(sampleReading).c_str());  //Need special library function to handle llu (64bit) datatype
         publishLevel(sampleReading);
     }
     else

@@ -41,8 +41,8 @@ public:
     const int INNER_LOOP_DELAY_COUNT_DEFAULT = 3600;
 
     String sensorId = {"Unkown"};
-    int innerLoopDelayCount = 0;
-    int innerLoopDelayCountDefault = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
+    int loopDelayCount = 0;
+    int loopDelay = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
     bool isZeroingInProgress(void);
     void setZeroingInProgress(void);
     virtual void measureReading(void) = 0;

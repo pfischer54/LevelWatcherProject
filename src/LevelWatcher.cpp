@@ -18,6 +18,9 @@
 // be available.
 #pragma GCC optimize("O0")
 
+
+STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY));  //Enable retained values feature
+
 // DEBUG ON
 //  Use primary serial over USB interface for logging output
 SerialLogHandler logHandler(LOG_LEVEL_INFO);
@@ -34,6 +37,9 @@ void loop();
 /* int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay); */
+
+//Retained values
+
 
 // globals
 String loopDelayData;
@@ -130,7 +136,7 @@ void loop()
         // Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
         //  do things here  before reset and then push the button
         sos();
-        Particle.publish("Debug", "Reboot intiated", 300, PRIVATE);
+        Particle.publish("Reboot Interval Reached Or Too Many Startup Loops", "Reboot intiated", 300, PRIVATE);
         startupCompleted = false;  // To be sure!
         startupLoopsCompleted = 0; // To be sure!
         System.reset();
@@ -162,15 +168,15 @@ void loop()
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
     {
         aSensorRead = false; // reset
-        if ((lm[sensorCount]->innerLoopDelayCount >= lm[sensorCount]->innerLoopDelayCountDefault) || isAnyZeroingInProgress(lm))
+        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) || isAnyZeroingInProgress(lm))
         {
             lm[sensorCount]->measureReading();
             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
-            lm[sensorCount]->innerLoopDelayCount = 0; // reset loop count
+            lm[sensorCount]->loopDelayCount = 0; // reset loop count
             aSensorRead = true;                       // a sensor has been read
         }
-        lm[sensorCount]->innerLoopDelayCount++; // increment sensor publish delay count.
+        lm[sensorCount]->loopDelayCount++; // increment sensor publish delay count.
     }
     if (!aSensorRead)
         delay(1s); // make sure we have at least a 1s loop delay  TODO: allow this to be tuned
@@ -223,7 +229,7 @@ int setLoopDelay(const char *delays)
     // parse delays
     while (*end)
     {
-        lm[i]->innerLoopDelayCountDefault = strtol(buffptr, &end, 10);
+        lm[i]->loopDelay = strtol(buffptr, &end, 10);
         // xxxprintf("%d\n", n);
         while (*end == ',')
         {
