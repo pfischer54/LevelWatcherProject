@@ -7,6 +7,6 @@
     },
     "particle.firmwareVersion": "3.3.1",
     "particle.targetPlatform": "electron",
-    "particle.targetDevice": "LevelWatcher3",
+    "particle.targetDevice": "LevelWatcher4",
     "cmake.configureOnOpen": true
 }

@@ -1,4 +1,5 @@
 #include "Particle.h"
+#include <Print64.h>
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Analogue.h"
 
@@ -33,7 +34,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
             else
                 sampleReading = (sampleReading * 0x10000) + +rs485Data[j]; // TODO 2s complement will fail with this method?
         }
-        Log.info("Reading= %llu", sampleReading);
+        Log.info("Reading=%s", toString(sampleReading).c_str());
         publishLevel(sampleReading);
     }
     else
