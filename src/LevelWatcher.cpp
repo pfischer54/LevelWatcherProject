@@ -12,14 +12,12 @@
 #include <CellularHelper.h>
 #include "string.h"
 
-
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't
 // be available.
 #pragma GCC optimize("O0")
 
-
-STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY));  //Enable retained values feature
+STARTUP(System.enableFeature(FEATURE_RETAINED_MEMORY)); // Enable retained values feature
 
 // DEBUG ON
 //  Use primary serial over USB interface for logging output
@@ -29,24 +27,26 @@ SerialLogHandler logHandler(LOG_LEVEL_INFO);
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(const char *delays);
+int setLoopDelayWithTimeout(const char *delays);
 int cloudResetFunction(String command);
 void setup();
 void loop();
+void setLoopDelays();
 
 // forward declarations
 /* int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelay(String delay); */
 
-//Retained values
-
+// Retained values
+retained int LoopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
 
 // globals
 String loopDelayData;
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 bool startupCompleted = false;
-// xxxxunsigned long loopDelay = DEFAULT_LOOP_DELAY_IN_MS; // Loop delay default
+unsigned long loopDelayTimeout =  0;           // This will be the time for which the temporary loop delays run for before reverting
 int startupLoopsCompleted = 0;
 int sensorCount = 0;
 int readings[NUMBER_OF_MEASUREMENTS][2];
@@ -56,32 +56,29 @@ int readings[NUMBER_OF_MEASUREMENTS][2];
 ModbusMaster node = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
-//Tank levels
+// Tank levels
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484);
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS","V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS","V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
-//Pressrising pump state
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP","V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK);  // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
-//FLow and volume
-LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1","V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167);
-LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM","V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE, 0, 1.0);
-//Pressures
-LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1","V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01);
-LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2","V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK , 0, 0.01);
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP","V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK , -5, 0.01);
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1);
+// Pressrising pump state
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
+// FLow and volume
+LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", "V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167);
+LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE, 0, 1.0);
+// Pressures
+LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01);
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
-
-// xxxLevelMeasurement *lm[2] = {&lm0, &lm1};
-
-// Interaface objects
+// Interface objects
 JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
-//String apn = "luner";  //Levelwatcher 3
- String apn = "soracom.io"; //Levelwatcher 2, LevelWatcher4
+String apn = "luner";  //Levelwatcher 3
+//String apn = "soracom.io"; // Levelwatcher 2, LevelWatcher4
 
 // String apn = "3iot.com"; // globalM2M
 
@@ -104,6 +101,7 @@ void setup()
     // Register functions to control the electron
     Particle.function("CloudResetFunction", cloudResetFunction);
     Particle.function("SetLoopDelay", setLoopDelay);
+    Particle.function("SetLoopDelayWithTimeout", setLoopDelayWithTimeout);
     Particle.function("SetAndSaveZero", measureZeroOffset);
 
     // Subscribe to the webhook startup2 response event
@@ -121,6 +119,8 @@ void setup()
     node.begin(9600);     // pjf node.begin(57600);
     node.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
+
+    setLoopDelays(); // Set the delays from power on defaults or persisted values.
     Log.info("Startup: Finished Setup");
 }
 //
@@ -130,8 +130,8 @@ void loop()
 {
     bool aSensorRead = false; //  will be true if at least one sensor read
 
-    Log.info("Main Loop: Looping");
-    if ((millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
+    Log.info("Startup Loop: Looping");
+    if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
         // Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
         //  do things here  before reset and then push the button
@@ -142,7 +142,7 @@ void loop()
         System.reset();
     }
 
-    if ((resetFlag) && (millis() - rebootSync >= REBOOT_DELAY_IN_MS))
+    if ((resetFlag) && (System.millis() - rebootSync >= REBOOT_DELAY_IN_MS))
     {
         // do things here  before reset and then push the button                                                                                                                                              on
         sos();
@@ -163,6 +163,8 @@ void loop()
         return;
     }
 
+    // Into main loop
+   Log.info("Main Loop: Looping");
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
@@ -174,7 +176,7 @@ void loop()
             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
             lm[sensorCount]->loopDelayCount = 0; // reset loop count
-            aSensorRead = true;                       // a sensor has been read
+            aSensorRead = true;                  // a sensor has been read
         }
         lm[sensorCount]->loopDelayCount++; // increment sensor publish delay count.
     }
@@ -191,6 +193,9 @@ void loop()
     {
         blinkVeryShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
     }
+
+    if (System.millis() > loopDelayTimeout)
+        setLoopDelays(); // Time is up, reset loop delays to default value
 }
 
 int measureZeroOffset(String command)
@@ -229,8 +234,8 @@ int setLoopDelay(const char *delays)
     // parse delays
     while (*end)
     {
-        lm[i]->loopDelay = strtol(buffptr, &end, 10);
-        // xxxprintf("%d\n", n);
+        LoopDelayDefaultCount[i] = strtol(buffptr, &end, 10); // Set the default loop delays.  These are retained unless power is removed.
+        Log.info("%d\n", LoopDelayDefaultCount[i]);           // xxx
         while (*end == ',')
         {
             end++;
@@ -239,7 +244,53 @@ int setLoopDelay(const char *delays)
         buffptr = end;
     }
 
+    setLoopDelays(); // Set the working loop delays
+
     Log.info("Loop Delay updated to: " + d);
+    loopDelayData = String("{") +
+                    String("\"LoopDelay\": ") + d +
+                    String("\"}");
+    Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
+    return 0;
+}
+
+int setLoopDelayWithTimeout(const char *params)
+// Set loop delay count with a given time and then revert to previous
+{
+
+    char tempchar[SIZE_OF_DELAY_ARRAY + 1];
+    int i = 0;         // sensor delay index
+    String d = params; // makes it easier to log and publish
+
+    strcpy(tempchar, params); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
+    char *end = buffptr;
+
+    // parse timeout length
+
+    // parse delays
+    while (*end)
+    {
+        if (i == 0)
+        {
+            loopDelayTimeout = (strtol(buffptr, &end, 10) * 1000 * 60) + System.millis(); // First param is the length of time to run in minutes
+               // Log.info("%d\n", loopDelayTimeout); // xxx
+        }
+        else
+        {
+            lm[i - 1]->loopDelay = strtol(buffptr, &end, 10);
+            // Log.info("%d\n", LoopDelayDefaultCount[i]);
+        }
+        while (*end == ',')
+        {
+            end++;
+        }
+        i++;
+        buffptr = end;
+    }
+
+    Log.info("Loop Delays updated to: " + d);
     loopDelayData = String("{") +
                     String("\"LoopDelay\": ") + d +
                     String("\"}");
@@ -251,6 +302,14 @@ int cloudResetFunction(String command)
 {
     Log.info("Restart triggered");
     resetFlag = true;
-    rebootSync = millis();
+    rebootSync = System.millis();
     return 0;
+}
+
+void setLoopDelays()
+{
+    int i = 0;
+
+    for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
+        lm[i]->loopDelay = LoopDelayDefaultCount[i];
 }
