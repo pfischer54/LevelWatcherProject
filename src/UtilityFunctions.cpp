@@ -47,24 +47,10 @@ void sos()
 
 uint8_t getSensorIndex(String sensorId)
 {
-    return 0; //TODO
+    return 0; // TODO
 }
 
-bool isAnyZeroingInProgress(LevelMeasurement *lm[])
-{
-    int i;
-
-    //Checks if zeroing is going on  for any device.
-
-    for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
-    {
-        if (lm[i]->isZeroingInProgress() == true)
-            return true;
-    }
-    return false;
-}
-
-//Not currently used.  Need to refactor - this routine is specific to zeroOffset field!
+// Not currently used.  Need to refactor - this routine is specific to zeroOffset field!
 int parseValue(char *data)
 {
     parser.clear();

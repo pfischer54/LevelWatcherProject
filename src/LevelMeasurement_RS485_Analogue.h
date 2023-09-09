@@ -41,11 +41,13 @@ extern ModbusMaster node;
 /// @param sink Specify what endpoints to publish to: PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE | PUBLISH_2_AZURE_STREAM
 /// @param o Sensor reading offset
 /// @param g Sensor gain:  Published reading = (reading - o) * g
+/// @param bm Blynk Batch Mode flag: If set to true, update data to Blynk as a batch
+/// @param bmfs  Format string for how to format this measurement
 class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink, int o, float g);
+    LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink, int o, float g, bool bm, String bmfs);
     void measureReading();
 
 private:

@@ -2,7 +2,7 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Bit.h"
 
-LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink) : LevelMeasurement(sid, bpid, diff, sink)
+LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmf) : LevelMeasurement(sid, bpid, diff, sink, bm, bmf)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
@@ -23,7 +23,7 @@ void LevelMeasurement_RS485_Bit::measureReading()
     if (result == node.ku8MBSuccess)
     {
         sampleReading = node.getResponseBuffer(0);
-        Log.info("Sensor: " + sensorId + ": Success, Received data: " + sampleReading);
+        Log.info("Sensor: " + sensorId + ": Success, Received data: %d" + sampleReading);
         publishLevel(sampleReading);
     }
     else

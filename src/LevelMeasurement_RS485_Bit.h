@@ -18,7 +18,7 @@ class LevelMeasurement_RS485_Bit : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink);
+    LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmfs);
     void measureReading();
 
 private:

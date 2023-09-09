@@ -3,7 +3,7 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_4to20mA.h"
 
-LevelMeasurement_4to20mA::LevelMeasurement_4to20mA(String sid, String bpid, boolean diff, uint sink, int o, float g) : LevelMeasurement(sid, bpid, diff, sink)
+LevelMeasurement_4to20mA::LevelMeasurement_4to20mA(String sid, String bpid, boolean diff, uint sink, int o, float g, bool bm, String bmfs) : LevelMeasurement(sid, bpid, diff, sink, bm, bmfs)
 {
     ads.setGain(GAIN_TWO); // GAIN_ONE for ...
     ads.begin();
