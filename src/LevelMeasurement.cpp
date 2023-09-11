@@ -125,7 +125,7 @@ void LevelMeasurement::publish(int reading)
             {
                 blynkBatchModeCount++;
             }
-            else
+            else  //Off we go - blush the buffer...
             {
                 Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
                 Log.info("%s\n", blynkBatchModeData);

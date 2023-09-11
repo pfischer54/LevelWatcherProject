@@ -26,23 +26,20 @@ SerialLogHandler logHandler(LOG_LEVEL_INFO);
 // forward declarations
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
-int setLoopDelay(const char *delays);
-int setLoopDelayWithTimeout(const char *delays);
+int setLoopDelaysFromCloud(const char *delays);
+int setLoopDelaysWithTimeoutFromCloud(const char *delays);
 int cloudResetFunction(String command);
+int setBlynkBatchModeSize(const char *data);
+int setBlynkPinToBatchMode(const char *data);
 void setup();
 void loop();
 void setLoopDelays();
-
-// forward declarations
-/* int measureZeroOffset(String command);
-void startupHandler(const char *event, const char *data);
-int setLoopDelay(String delay); */
 
 // globals
 
 // Retained values
 retained u_int LoopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
-retained u_int BlynkBatchModeSize = DEFAULT_BATCH_COUNT;                                                                           // Batch size if batching data for Blynk
+retained u_int BlynkBatchModeSize = DEFAULT_BATCH_COUNT;                                                                        // Batch size if batching data for Blynk
 
 //"normal"
 unsigned long rebootSync = 0;
@@ -59,17 +56,17 @@ ModbusMaster node = ModbusMaster();
 // Define sensor interfaces and objects and initialize sensor interfaces
 // Tank levels
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%d");
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%d");
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, true, "%.1f");
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "");
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "");
 // Pressrising pump state
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, false, "%d"); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, ""); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
 // FLow and volume
-LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", "V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167, false, "%d");
-LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE | PUBLISH_2_BLYNK, 0, 1.0, false, "%d");
+LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", "V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167, true, "%.1f");
+LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE | PUBLISH_2_BLYNK, 0, 1.0, false, "");
 // Pressures
-LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, false, "%d");
-LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, false, "%d");
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01, false, "%d");
+LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f");
+LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f");
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01, true, "%.2f");
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
@@ -101,8 +98,10 @@ void setup()
 
     // Register functions to control the electron
     Particle.function("CloudResetFunction", cloudResetFunction);
-    Particle.function("SetLoopDelay", setLoopDelay);
-    Particle.function("SetLoopDelayWithTimeout", setLoopDelayWithTimeout);
+    Particle.function("SetLoopDelay", setLoopDelaysFromCloud);
+    Particle.function("SetLoopDelayWithTimeout", setLoopDelaysWithTimeoutFromCloud);
+    Particle.function("SetBlynkBatchModeSize", setBlynkBatchModeSize);
+    Particle.function("SetBlynkPinToBatchMode", setBlynkPinToBatchMode);
 
     // Subscribe to the webhook startup2 response event
     // This handler is called by azure script response to Startup2 event published below.
@@ -167,7 +166,7 @@ void loop()
 
     // Into main loop
     Log.info("Main Loop: Looping");
-    //CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
+    // CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
 
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
     {
@@ -198,32 +197,60 @@ void startupHandler(const char *event, const char *data)
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
-int setLoopDelay(const char *delays)
+//***************************************
+
+// A function that takes a pointer to a string, a pointer to an end character, and a pointer to an index
+// It parses the string as a decimal number and returns it
+// It also updates the end character and the index accordingly
+long parseDecimal(char *str, char **end, int *index)
+{
+    long result = strtol(str, end, 10); // Parse the string as a decimal number
+    while (**end == ',')                // Skip any commas
+    {
+        (*end)++;
+    }
+    (*index)++; // Increment the index
+    return result;
+}
+
+int setLoopDelaysFromCloud(const char *delays)
 // Set loop delay count
 {
 
     String loopDelayData;
     char tempchar[SIZE_OF_DELAY_ARRAY];
-    int i = 0;         // sensor delay index
-    String d = delays; // makes it easier to log and publish
-
+    int i = -1;               // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
     strcpy(tempchar, delays); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
     char *end = buffptr;
+    u_int tempd;
+
+    String d = delays; // makes it easier to log and publish
 
     // parse delays
+    /*   while (*end)
+      {
+          LoopDelayDefaultCount[i] = strtol(buffptr, &end, 10); // Set the default loop delays.  These are retained unless power is removed.
+          Log.info("%d\n", LoopDelayDefaultCount[i]);           // xxx
+          while (*end == ',')
+          {
+              end++;
+          }
+          i++;
+          buffptr = end;
+      } */
+    //*****
+
     while (*end)
     {
-        LoopDelayDefaultCount[i] = strtol(buffptr, &end, 10); // Set the default loop delays.  These are retained unless power is removed.
-        Log.info("%d\n", LoopDelayDefaultCount[i]);           // xxx
-        while (*end == ',')
-        {
-            end++;
-        }
-        i++;
-        buffptr = end;
+        tempd = parseDecimal(buffptr, &end, &i); // Set the default loop delays and update the variables
+        LoopDelayDefaultCount[i] = tempd;
+        Log.info("LoopDelayDefaultCount[%d]=%d\n", i, LoopDelayDefaultCount[i]);
+        buffptr = end; // Update the buffer pointer
     }
+
+    //******
 
     setLoopDelays(); // Set the working loop delays
 
@@ -235,42 +262,63 @@ int setLoopDelay(const char *delays)
     return 0;
 }
 
-int setLoopDelayWithTimeout(const char *params)
+int setLoopDelaysWithTimeoutFromCloud(const char *params)
 // Set loop delay count with a given time and then revert to previous
 {
 
     String loopDelayData;
-    char tempchar[SIZE_OF_DELAY_ARRAY + 1];
-    int i = 0;         // sensor delay index
+    char tempchar[SIZE_OF_DELAY_ARRAY];
+    int i = -1;        // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
     String d = params; // makes it easier to log and publish
 
     strcpy(tempchar, params); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
     char *end = buffptr;
+    ulong tempd;
 
     // parse timeout length
 
     // parse delays
+    /*     while (*end)
+        {
+            if (i == 0)
+            {
+                loopDelayTimeout = (strtol(buffptr, &end, 10) * 1000 * 60) + System.millis(); // First param is the length of time to run in minutes
+                                                                                              // Log.info("%d\n", loopDelayTimeout); // xxx
+            }
+            else
+            {
+                lm[i - 1]->loopDelay = strtol(buffptr, &end, 10);
+                // Log.info("%d\n", LoopDelayDefaultCount[i]);
+            }
+            while (*end == ',')
+            {
+                end++;
+            }
+            i++;
+            buffptr = end;
+        }
+     */
+
+    //*****
     while (*end)
     {
-        if (i == 0)
+        if (i == -1) // initial index
         {
-            loopDelayTimeout = (strtol(buffptr, &end, 10) * 1000 * 60) + System.millis(); // First param is the length of time to run in minutes
-                                                                                          // Log.info("%d\n", loopDelayTimeout); // xxx
+            loopDelayTimeout = (parseDecimal(buffptr, &end, &i) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
+            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);                              // xxx
         }
         else
         {
-            lm[i - 1]->loopDelay = strtol(buffptr, &end, 10);
-            // Log.info("%d\n", LoopDelayDefaultCount[i]);
+            tempd = parseDecimal(buffptr, &end, &i); // Parse the other parameters and update the variables
+            lm[i - 1]->loopDelay = tempd;
+            Log.info("lm[%d]->loopDelay=%d\n", i - 1, lm[i - 1]->loopDelay);
         }
-        while (*end == ',')
-        {
-            end++;
-        }
-        i++;
-        buffptr = end;
+        buffptr = end; // Update the buffer pointer
     }
+
+    //******
 
     Log.info("Loop Delays updated to: " + d);
     loopDelayData = String("{") +
@@ -294,4 +342,29 @@ void setLoopDelays()
 
     for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
         lm[i]->loopDelay = LoopDelayDefaultCount[i];
+}
+
+int setBlynkBatchModeSize(const char *data)
+
+{
+
+    BlynkBatchModeSize = atol(data);
+    Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
+    String publishData = String("{") +
+                         String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", BlynkBatchModeSize) +
+                         String("\"}");
+    Particle.publish("BlynkBatchModeSize updated", publishData, 600, PRIVATE);
+    return 0;
+}
+
+int setBlynkPinToBatchMode(const char *data)
+{
+
+    BlynkBatchModeSize = atol(data);
+    Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
+    String publishData = String("{") +
+                         String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", BlynkBatchModeSize) +
+                         String("\"}");
+    Particle.publish("BlynkBatchModeSize updated", publishData, 600, PRIVATE);
+    return 0;
 }

@@ -3,7 +3,7 @@
 #define STATUSLED D7 //D0, D1 used fro I2C,  D5 for RS85 interface, D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
 
 const int NUMBER_OF_MEASUREMENTS = 9;  //number of sensors to scan
-const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_MEASUREMENTS * 6; // That should do it :)
+const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_MEASUREMENTS * 6 + 10; // That should do it :)
 const int DEFAULT_BATCH_COUNT = 10; // xxx start with 2 - 100; // Default batch count when batching data for Blynk.
 const uint DIFFERENTIAL_DELAY_IN_MS = 1000;  //Needs a bit of help to allow for network routing issues etc. Set back to tiny amount as bursts are allowed.
 
@@ -26,7 +26,7 @@ const int LONG_BLINK_MS = 600;
 const int SHORT_BLINK_MS = 200;
 const int VERY_SHORT_BLINK_MS = 20;
 const int BLINK_OFF_DELAY_MS = 200;
-const int STARTUP_BLINK_FREQUENCY = 10; //xxx
+const int STARTUP_BLINK_FREQUENCY = 1; //xxx
 const int INNER_LOOP_BLINK_FREQUENCY = 2; //
 const int OUTER_LOOP_BLINK_FREQUENCY = 1;
 const int ZEROING_IN_PROGRESS_LOOP_BLINK_FREQUENCY = 2;
