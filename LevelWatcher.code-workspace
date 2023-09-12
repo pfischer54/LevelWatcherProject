@@ -19,7 +19,8 @@
 			"xlocale": "cpp",
 			"xstring": "cpp",
 			"xutility": "cpp",
-			"initializer_list": "cpp"
+			"initializer_list": "cpp",
+			"xiosbase": "cpp"
 		},
 		"particle.firmwareVersion": "",
 		"particle.targetPlatform": "electron",

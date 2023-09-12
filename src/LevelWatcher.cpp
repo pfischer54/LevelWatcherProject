@@ -57,7 +57,7 @@ ModbusMaster node = ModbusMaster();
 // Tank levels
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%d");
 LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "");
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "");
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, true, "%.1f");
 // Pressrising pump state
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, ""); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
 // FLow and volume
@@ -108,8 +108,7 @@ void setup()
     // Currently this is a placeholder so does nothing but there for future use.
     Particle.subscribe(System.deviceID() + "/hook-response/Startup2/", startupHandler);
 
-    pinMode(STATUSLED, OUTPUT);                       // Setup activity led so we can blink it to show we're rolling...
-    Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+    pinMode(STATUSLED, OUTPUT); // Setup activity led so we can blink it to show we're rolling...
 
     // RS485 start
     //  initialize Modbus communication baud rate and control pin
@@ -119,8 +118,10 @@ void setup()
     node.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
 
-    setLoopDelays(); // Set the delays from power on defaults or persisted values.
-    Log.info("Startup: Finished Setup");
+    setLoopDelays();                                  // Set the delays from power on defaults or persisted values.
+    delay(2000);                                      // Try a bit of delay before publishing startup completed event to allow the handler subscription to take effect?
+    Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+    Log.info("Setup Completed");
 }
 //
 // Main loop
@@ -202,55 +203,38 @@ void startupHandler(const char *event, const char *data)
 // A function that takes a pointer to a string, a pointer to an end character, and a pointer to an index
 // It parses the string as a decimal number and returns it
 // It also updates the end character and the index accordingly
-long parseDecimal(char *str, char **end, int *index)
+long parseDecimal(char **str)
 {
-    long result = strtol(str, end, 10); // Parse the string as a decimal number
-    while (**end == ',')                // Skip any commas
+    char *end;
+    long result = strtol(*str, &end, 10); // Parse the string as a decimal number
+    while (*end == ',')                   // Skip any commas
     {
-        (*end)++;
+        end++;
     }
-    (*index)++; // Increment the index
+    *str = end; // update to point to next token
     return result;
 }
 
 int setLoopDelaysFromCloud(const char *delays)
 // Set loop delay count
 {
-
-    String loopDelayData;
     char tempchar[SIZE_OF_DELAY_ARRAY];
-    int i = -1;               // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
     strcpy(tempchar, delays); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
-    char *end = buffptr;
-    u_int tempd;
+    int index = 0;            // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
+ 
+    String loopDelayData;
+     String d = delays;        // makes it easier to log and publish
 
-    String d = delays; // makes it easier to log and publish
-
-    // parse delays
-    /*   while (*end)
-      {
-          LoopDelayDefaultCount[i] = strtol(buffptr, &end, 10); // Set the default loop delays.  These are retained unless power is removed.
-          Log.info("%d\n", LoopDelayDefaultCount[i]);           // xxx
-          while (*end == ',')
-          {
-              end++;
-          }
-          i++;
-          buffptr = end;
-      } */
-    //*****
-
-    while (*end)
+    while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
-        tempd = parseDecimal(buffptr, &end, &i); // Set the default loop delays and update the variables
-        LoopDelayDefaultCount[i] = tempd;
-        Log.info("LoopDelayDefaultCount[%d]=%d\n", i, LoopDelayDefaultCount[i]);
-        buffptr = end; // Update the buffer pointer
+        LoopDelayDefaultCount[index] = parseDecimal(&buffptr); // Set the default loop delays and update the variables;
+                                                               // Log.info("LoopDelayDefaultCount[%d]=%d\n", index, LoopDelayDefaultCount[index]);
+        // Log.info("%s\n", buffptr);
+        // Log.info("%u\n", LoopDelayDefaultCount[index] );
+        index++;
     }
-
-    //******
 
     setLoopDelays(); // Set the working loop delays
 
@@ -265,60 +249,29 @@ int setLoopDelaysFromCloud(const char *delays)
 int setLoopDelaysWithTimeoutFromCloud(const char *params)
 // Set loop delay count with a given time and then revert to previous
 {
-
     String loopDelayData;
     char tempchar[SIZE_OF_DELAY_ARRAY];
-    int i = -1;        // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
+    int index = 0;     // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
     String d = params; // makes it easier to log and publish
 
     strcpy(tempchar, params); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
-    char *end = buffptr;
-    ulong tempd;
 
-    // parse timeout length
-
-    // parse delays
-    /*     while (*end)
-        {
-            if (i == 0)
-            {
-                loopDelayTimeout = (strtol(buffptr, &end, 10) * 1000 * 60) + System.millis(); // First param is the length of time to run in minutes
-                                                                                              // Log.info("%d\n", loopDelayTimeout); // xxx
-            }
-            else
-            {
-                lm[i - 1]->loopDelay = strtol(buffptr, &end, 10);
-                // Log.info("%d\n", LoopDelayDefaultCount[i]);
-            }
-            while (*end == ',')
-            {
-                end++;
-            }
-            i++;
-            buffptr = end;
-        }
-     */
-
-    //*****
-    while (*end)
+    while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
-        if (i == -1) // initial index
+        if (index == 0) // initial index
         {
-            loopDelayTimeout = (parseDecimal(buffptr, &end, &i) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
-            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);                              // xxx
+            loopDelayTimeout = (parseDecimal(&buffptr) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
+            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);                     // xxx
         }
         else
         {
-            tempd = parseDecimal(buffptr, &end, &i); // Parse the other parameters and update the variables
-            lm[i - 1]->loopDelay = tempd;
-            Log.info("lm[%d]->loopDelay=%d\n", i - 1, lm[i - 1]->loopDelay);
+            lm[index - 1]->loopDelay = parseDecimal(&buffptr); // Parse the other parameters and update the variables;
+            Log.info("lm[%d]->loopDelay=%d\n", index - 1, lm[index - 1]->loopDelay);
         }
-        buffptr = end; // Update the buffer pointer
+        index++;
     }
-
-    //******
 
     Log.info("Loop Delays updated to: " + d);
     loopDelayData = String("{") +
@@ -349,6 +302,7 @@ int setBlynkBatchModeSize(const char *data)
 {
 
     BlynkBatchModeSize = atol(data);
+
     Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
     String publishData = String("{") +
                          String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", BlynkBatchModeSize) +
@@ -359,6 +313,8 @@ int setBlynkBatchModeSize(const char *data)
 
 int setBlynkPinToBatchMode(const char *data)
 {
+
+    uint pin;
 
     BlynkBatchModeSize = atol(data);
     Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
