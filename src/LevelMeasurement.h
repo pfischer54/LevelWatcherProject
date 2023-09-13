@@ -45,8 +45,8 @@ public:
     String sensorId = {"Unkown"};
     int loopDelayCount = 0;
     int loopDelay = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
-    bool isZeroingInProgress(void);
-    void setZeroingInProgress(void);
+    bool blynkBatchMode = false; // Send this measurement to Blynk as a batch
+    
     virtual void measureReading(void) = 0;
     void Add2BlynkBatchModeData(float);
 
@@ -63,7 +63,6 @@ protected:
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
     String blynkPinId;
-    bool blynkBatchMode = false; // Send this measurement to Blynk as a batch
     char blynkBatchModeData [MAX_BLYNK_BATCH_MODE_BUFFER_SIZE] = {0}; // Data string if batch mode used.
     uint blynkBatchModeCount = 0;  //Number of measurements so far
     String blynkBatchmodeReadingFormatString = "";  //The string used to format this sensor measurement for transmission to Blunk

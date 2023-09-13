@@ -119,7 +119,6 @@ void setup()
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
 
     setLoopDelays();                                  // Set the delays from power on defaults or persisted values.
-    delay(2000);                                      // Try a bit of delay before publishing startup completed event to allow the handler subscription to take effect?
     Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
     Log.info("Setup Completed");
 }
@@ -172,7 +171,7 @@ void loop()
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
     {
         aSensorRead = false; // reset
-        if (lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay)
+        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) &&  (lm[sensorCount]->loopDelay > 0))  //Set delay to -1 to disable measurement
         {
             lm[sensorCount]->measureReading();
             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
@@ -223,14 +222,14 @@ int setLoopDelaysFromCloud(const char *delays)
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
     int index = 0;            // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
- 
+
     String loopDelayData;
-     String d = delays;        // makes it easier to log and publish
+    String d = delays; // makes it easier to log and publish
 
     while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
         LoopDelayDefaultCount[index] = parseDecimal(&buffptr); // Set the default loop delays and update the variables;
-                                                               // Log.info("LoopDelayDefaultCount[%d]=%d\n", index, LoopDelayDefaultCount[index]);
+        // Log.info("LoopDelayDefaultCount[%d]=%d\n", index, LoopDelayDefaultCount[index]);
         // Log.info("%s\n", buffptr);
         // Log.info("%u\n", LoopDelayDefaultCount[index] );
         index++;
@@ -267,7 +266,7 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
         }
         else
         {
-            lm[index - 1]->loopDelay = parseDecimal(&buffptr); // Parse the other parameters and update the variables;
+            lm[index - 1]->loopDelay = (int)parseDecimal(&buffptr); // Parse the other parameters and update the variables;
             Log.info("lm[%d]->loopDelay=%d\n", index - 1, lm[index - 1]->loopDelay);
         }
         index++;
@@ -300,7 +299,6 @@ void setLoopDelays()
 int setBlynkBatchModeSize(const char *data)
 
 {
-
     BlynkBatchModeSize = atol(data);
 
     Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
@@ -311,16 +309,26 @@ int setBlynkBatchModeSize(const char *data)
     return 0;
 }
 
-int setBlynkPinToBatchMode(const char *data)
+int setBlynkPinToBatchMode(const char *params)
 {
+    char tempchar[20];        // Plenty
+    strcpy(tempchar, params); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
 
-    uint pin;
+    uint measurementIndex;
+    bool OnOff;
 
-    BlynkBatchModeSize = atol(data);
-    Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
+    measurementIndex = parseDecimal(&buffptr);
+    OnOff = (bool)parseDecimal(&buffptr);
+
+    if (measurementIndex < NUMBER_OF_MEASUREMENTS)
+        lm[measurementIndex]->blynkBatchMode = OnOff;
+
+    Serial.printlnf("BlynkBatchMode for measurement %d is %d", measurementIndex, OnOff);
     String publishData = String("{") +
-                         String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", BlynkBatchModeSize) +
+                         String("\"BlynkBatchMode for pin ") + String::format("%d", measurementIndex) + String("\":") + String::format("%d", OnOff) +
                          String("\"}");
-    Particle.publish("BlynkBatchModeSize updated", publishData, 600, PRIVATE);
+    Particle.publish("BlynkBatchModeForPin updated", publishData, 600, PRIVATE);
     return 0;
 }

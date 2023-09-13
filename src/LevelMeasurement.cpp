@@ -26,17 +26,6 @@ LevelMeasurement::LevelMeasurement(String sid, String bpid, boolean diff, uint s
     blynkBatchmodeReadingFormatString = bmfs;
 }
 
-bool LevelMeasurement::isZeroingInProgress(void)
-{
-    return zeroingInProgress;
-}
-
-void LevelMeasurement::setZeroingInProgress(void)
-{
-    zeroingInProgress = true;
-    sample = 1; // Reset sample count for this sensor
-}
-
 void LevelMeasurement::Add2BlynkBatchModeData(float reading)
 {
     if (blynkBatchModeCount == 0) // Add first open bracket
@@ -125,12 +114,12 @@ void LevelMeasurement::publish(int reading)
             {
                 blynkBatchModeCount++;
             }
-            else  //Off we go - blush the buffer...
+            else  //Off we go - flush the buffer...
             {
                 Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
                 Log.info("%s\n", blynkBatchModeData);
                 blynkBatchModeData[0] = 0; // Clear data string
-                blynkBatchModeCount = 0;   // reset
+                blynkBatchModeCount = 0;   // reset count
             }
         }
     }
