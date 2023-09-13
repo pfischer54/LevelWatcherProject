@@ -11,6 +11,7 @@
 #include "UtilityFunctions.h"
 #include <CellularHelper.h>
 #include "string.h"
+#include "Serial5/Serial5.h"
 
 // This turns off optimization for this file which makes it easier to debug.
 // Otherwise you can't break on some lines, and some local variables won't
@@ -51,7 +52,10 @@ int startupLoopsCompleted = 0;
 
 // RS485 setup
 // Define the main node object. This controls the RS485 interface for all the slaves.
-ModbusMaster node = ModbusMaster();
+ModbusMaster node1 = ModbusMaster();
+ModbusMaster node5 = ModbusMaster();
+
+
 
 // Define sensor interfaces and objects and initialize sensor interfaces
 // Tank levels
@@ -87,6 +91,8 @@ STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
 void setup()
 {
+    
+   
     // Specify logging level directly
     //
     // DEBUG
@@ -114,8 +120,12 @@ void setup()
     //  initialize Modbus communication baud rate and control pin
     //  Note: There is one node object that controls the RS485 interface for all the slaves.
 
-    node.begin(9600);     // pjf node.begin(57600);
-    node.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver
+    node1.SetMasterSerialPort(1);  //yyy
+    node5.SetMasterSerialPort(5);  //yyy
+        node1.begin(9600);  //yyy
+        node5.begin(9600);  //yyy
+
+    node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver  //yyy
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
 
     setLoopDelays();                                  // Set the delays from power on defaults or persisted values.

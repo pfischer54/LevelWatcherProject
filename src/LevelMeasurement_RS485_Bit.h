@@ -4,7 +4,9 @@
 #include "ModbusMaster.h"
 //#include <RunningAverage.h>
 
-extern ModbusMaster node;
+//yyyextern ModbusMaster node;//yyy
+extern ModbusMaster node1;//yyy
+extern ModbusMaster node5;//yyy
 
 /// @brief Measurement class to measure bit values.
 /// @param sid  Sensor ID to identify the target sensor
@@ -25,6 +27,7 @@ private:
     int nodeAddr = {3}; // slave node address, defaults to 3.
     int startingRegister = {0};
     uint channelBit = 0;                                                   // active bit for this channel
+        ModbusMaster *node;  //yyy
  
 };
 #endif

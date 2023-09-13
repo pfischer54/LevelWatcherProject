@@ -113,6 +113,14 @@ void ModbusMaster::SetNodeAddr(uint8_t u8MBSlave)
 	_u8MBSlave = u8MBSlave;
 }
 
+void ModbusMaster::SetMasterSerialPort(uint8_t u8SerialPort)
+{
+	_u8SerialPort = u8SerialPort;
+}
+
+
+//pjf end
+
 // Reset on fault
 void ModbusMaster::Reset()
 {
@@ -165,6 +173,9 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 		break;
 	case 2:
 		// MBSerial = Serial2; //Serial2 has not been implemented on Photon yet
+		// break;
+	case 5:
+		MBSerial = Serial5; //Serial2 has not been implemented on Photon yet
 		// break;
 	default:
 		MBSerial = Serial1; // Default to Serial1 for Spark Core
