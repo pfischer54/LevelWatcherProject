@@ -44,11 +44,12 @@ extern ModbusMaster node5;//yyy
 /// @param g Sensor gain:  Published reading = (reading - o) * g
 /// @param bm Blynk Batch Mode flag: If set to true, update data to Blynk as a batch
 /// @param bmfs  Format string for how to format this measurement
+/// @param msp  serial to use for master node
 class LevelMeasurement_RS485_Analogue : public LevelMeasurement
 {
 
 public:
-    LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink, int o, float g, bool bm, String bmfs);
+    LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink, int o, float g, bool bm, String bmfs, uint msp);
     void measureReading();
 
 private:

@@ -55,22 +55,20 @@ int startupLoopsCompleted = 0;
 ModbusMaster node1 = ModbusMaster();
 ModbusMaster node5 = ModbusMaster();
 
-
-
 // Define sensor interfaces and objects and initialize sensor interfaces
 // Tank levels
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%d");
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "");
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, true, "%.1f");
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, true, "%.1f", SERIAL_1);
 // Pressrising pump state
-LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, ""); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
+LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, "", SERIAL_1); // removed  | PUBLISH_2_AZURE_STREAM  to save data :)
 // FLow and volume
-LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", "V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167, true, "%.1f");
-LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE | PUBLISH_2_BLYNK, 0, 1.0, false, "");
+LevelMeasurement_RS485_Analogue lm4 = LevelMeasurement_RS485_Analogue("F1", "V5", MODBUS_SLAVE_4, STARTING_REG_400H, REGISTER_COUNT_2, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.0167, true, "%.1f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0", MODBUS_SLAVE_4, STARTING_REG_200H, REGISTER_COUNT_2, PUBLISH_READINGS, PUBLISH_2_AZURE_TABLE | PUBLISH_2_BLYNK, 0, 1.0, false, "", SERIAL_1);
 // Pressures
-LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f");
-LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f");
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01, true, "%.2f");
+LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01, true, "%.2f", SERIAL_1);
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
@@ -91,15 +89,15 @@ STARTUP(cellular_credentials_set(apn, "", "", NULL));
 
 void setup()
 {
-    
-   
+
     // Specify logging level directly
     //
     // DEBUG
     // Wait for a USB serial connection for up to 15 seconds
     waitFor(Serial.isConnected, 15000);
-    Log.info("Startup: Running Setup");
     Serial.begin(9600);
+    Log.info("Startup: Running Setup");
+
     Particle.keepAlive(30); // Needed for 3rd party SIMS
 
     // Register functions to control the electron
@@ -120,15 +118,16 @@ void setup()
     //  initialize Modbus communication baud rate and control pin
     //  Note: There is one node object that controls the RS485 interface for all the slaves.
 
-    node1.SetMasterSerialPort(1);  //yyy
-    node5.SetMasterSerialPort(5);  //yyy
-        node1.begin(9600);  //yyy
-        node5.begin(9600);  //yyy
+    node1.SetMasterSerialPort(1); // yyy
+    node5.SetMasterSerialPort(5); // yyy
+    node1.begin(9600);            // yyy
+    node5.begin(9600);            // yyy
 
     node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver  //yyy
     // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
 
     setLoopDelays();                                  // Set the delays from power on defaults or persisted values.
+    delay(10s);                                       /// try this
     Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
     Log.info("Setup Completed");
 }
@@ -180,8 +179,8 @@ void loop()
 
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
     {
-        aSensorRead = false; // reset
-        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) &&  (lm[sensorCount]->loopDelay > 0))  //Set delay to -1 to disable measurement
+        aSensorRead = false;                                                                                     // reset
+        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) && (lm[sensorCount]->loopDelay > 0)) // Set delay to -1 to disable measurement
         {
             lm[sensorCount]->measureReading();
             blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
@@ -209,9 +208,9 @@ void startupHandler(const char *event, const char *data)
 
 //***************************************
 
-// A function that takes a pointer to a string, a pointer to an end character, and a pointer to an index
+// A function that takes a pointer to a string, a pointer to an end character
 // It parses the string as a decimal number and returns it
-// It also updates the end character and the index accordingly
+// It also updates the end character
 long parseDecimal(char **str)
 {
     char *end;
@@ -235,6 +234,9 @@ int setLoopDelaysFromCloud(const char *delays)
 
     String loopDelayData;
     String d = delays; // makes it easier to log and publish
+
+    if (strlen(delays) == 0)
+        return -1;
 
     while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
@@ -266,6 +268,9 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
     strcpy(tempchar, params); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
+
+    if (strlen(params) == 0)
+        return -1;
 
     while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
@@ -307,8 +312,10 @@ void setLoopDelays()
 }
 
 int setBlynkBatchModeSize(const char *data)
-
 {
+    if (strlen(data) == 0)
+        return -1;
+
     BlynkBatchModeSize = atol(data);
 
     Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
@@ -328,6 +335,9 @@ int setBlynkPinToBatchMode(const char *params)
 
     uint measurementIndex;
     bool OnOff;
+
+    if (strlen(params) == 0)
+        return -1;
 
     measurementIndex = parseDecimal(&buffptr);
     OnOff = (bool)parseDecimal(&buffptr);

@@ -2,12 +2,16 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Bit.h"
 
-LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmf) : LevelMeasurement(sid, bpid, diff, sink, bm, bmf)
+LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmf, uint msp) : LevelMeasurement(sid, bpid, diff, sink, bm, bmf)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
     channelBit = bit;
-        node = &node1; //yyy
+    if (msp == SERIAL_1)
+        node = &node1; // yyy //temp
+    else
+        node = &node5; // yyy //temp
+    ;
 }
 
 void LevelMeasurement_RS485_Bit::measureReading()

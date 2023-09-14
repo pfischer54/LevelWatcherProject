@@ -3,14 +3,18 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Analogue.h"
 
-LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int sR, int nR, boolean diff, uint sink, int o, float g, bool bm, String bmfs) : LevelMeasurement(sid, bpid, diff, sink, bm, bmfs)
+LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int sR, int nR, boolean diff, uint sink, int o, float g, bool bm, String bmfs, uint msp) : LevelMeasurement(sid, bpid, diff, sink, bm, bmfs)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
     numberOfRegistersToRead = (nR < MAX_NO_OF_HOLDING_REGS) ? nR : MAX_NO_OF_HOLDING_REGS; // avoid fatality!
     offset = o;
     gain = g;
-    node = &node1; //yyy
+    if (msp == SERIAL_1)
+        node = &node1; // yyy //temp
+    else
+        node = &node5; // yyy //temp
+    ;
 }
 
 void LevelMeasurement_RS485_Analogue::measureReading()
@@ -19,18 +23,18 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     int rs485Data[MAX_NO_OF_HOLDING_REGS];
     int64_t sampleReading = 0;
 
-    startOfMeasurement = System.millis(); // mark  start time.
-    (*node).SetNodeAddr(nodeAddr); //yyy
-    result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); //yyy
+    startOfMeasurement = System.millis();                                             // mark  start time.
+    (*node).SetNodeAddr(nodeAddr);                                                    // yyy
+    result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); // yyy
 
     // do something with data if read is successful
     // TODO:  This must be buggy for 32bit and above :) ?
-    if (result == (*node).ku8MBSuccess) //yyy
+    if (result == (*node).ku8MBSuccess) // yyy
     {
         Log.info("Sensor: " + sensorId + ": Success, Received data: ");
         for (j = 0; j < numberOfRegistersToRead; j++) // This code only reads up to  4x 16bit register = 64 bit unsigned value
         {
-            rs485Data[j] = (*node).getResponseBuffer(j); //yyy
+            rs485Data[j] = (*node).getResponseBuffer(j); // yyy
             if (j == 0)
                 sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
             else
@@ -43,11 +47,11 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     {
         Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
         sampleReading = -1;
-        if (result != (*node).ku8MBResponseTimedOut) //yyy
+        if (result != (*node).ku8MBResponseTimedOut) // yyy
         {
-            delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
-            (*node).flushReadBuffer(); //yyy
-            (*node).Reset(); //yyy
+            delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
+            (*node).flushReadBuffer(); // yyy
+            (*node).Reset();           // yyy
         }
     }
 }

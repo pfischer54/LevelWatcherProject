@@ -18,6 +18,11 @@ const uint PUBLISH_2_THINGSPEAK = 0x4;
 const uint PUBLISH_2_BLYNK = 0x8;
 const uint CHECK_FOR_AVERAGE_USE = 0x10;
 
+
+// Modbus
+const uint SERIAL_1=1;  //Use Serial1 Port for Modbus
+const uint SERIAL_5=5;  //Use Serial5 Port for Modbus
+
 // Set channel type.
 // Digital channels have an associated timer measuring ontime.
 
