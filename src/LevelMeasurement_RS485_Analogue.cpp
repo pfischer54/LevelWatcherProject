@@ -5,7 +5,7 @@
 
 LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int sR, int nR, boolean diff, uint sink, int o, float g, bool bm, String bmfs, uint msp) : LevelMeasurement(sid, bpid, diff, sink, bm, bmfs)
 {
-    nodeAddr = slaveAddr;
+    slaveNodeAddr = slaveAddr;
     startingRegister = sR;
     numberOfRegistersToRead = (nR < MAX_NO_OF_HOLDING_REGS) ? nR : MAX_NO_OF_HOLDING_REGS; // avoid fatality!
     offset = o;
@@ -14,8 +14,7 @@ LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, Str
         node = &node1; // yyy //temp
     else
         node = &node5; // yyy //temp
-    ;
-}
+};
 
 void LevelMeasurement_RS485_Analogue::measureReading()
 {
@@ -24,7 +23,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     int64_t sampleReading = 0;
 
     startOfMeasurement = System.millis();                                             // mark  start time.
-    (*node).SetNodeAddr(nodeAddr);                                                    // yyy
+    (*node).SetNodeAddr(slaveNodeAddr);                                                    // yyy
     result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); // yyy
 
     // do something with data if read is successful

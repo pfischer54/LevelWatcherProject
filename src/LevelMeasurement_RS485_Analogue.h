@@ -17,6 +17,7 @@ const uint MODBUS_SLAVE_8 = 8;
 const uint STARTING_REG_0 = 0;
 const uint STARTING_REG_004H = 0x0004;
 const uint STARTING_REG_081H = 0x0081;
+const uint STARTING_REG_101H = 0x0101;
 const uint STARTING_REG_200H = 0x0200;
 const uint STARTING_REG_400H = 0x0400;
 const uint STARTING_REG_403H = 0x0403;
@@ -29,8 +30,8 @@ const uint BIT_1 = 0b00000010; // Read bit 1
 
 // Gains and offsets used by Blynk
 
-extern ModbusMaster node1;//yyy
-extern ModbusMaster node5;//yyy
+extern ModbusMaster node1; // yyy
+extern ModbusMaster node5; // yyy
 
 /// @brief Measurement class to measure analogue values.
 /// @param sid  Sensor ID to identify the target sensor
@@ -53,10 +54,10 @@ public:
     void measureReading();
 
 private:
-    int nodeAddr = {1}; // slave node address, defaults to 1.
     int startingRegister = {0};
     int numberOfRegistersToRead = {1};
-    ModbusMaster *node; //yyy
+    int slaveNodeAddr = {1}; // slave node address, defaults to 1.
+    ModbusMaster *node;      // yyy
 };
 
 #endif

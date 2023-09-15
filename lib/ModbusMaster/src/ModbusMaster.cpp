@@ -97,7 +97,7 @@ Constructor.
 Creates class object using specified serial port, Modbus slave ID.
 
 @overload void ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
-@param u8SerialPort serial port (Serial1, Serial2)
+@param u8SerialPort serial port (Serial1, Serial2)  //Needs to be fixed for e.g. Serial5 use
 @param u8MBSlave Modbus slave ID (1..255)
 @ingroup setup
 */
@@ -117,8 +117,6 @@ void ModbusMaster::SetMasterSerialPort(uint8_t u8SerialPort)
 {
 	_u8SerialPort = u8SerialPort;
 }
-
-
 //pjf end
 
 // Reset on fault
@@ -172,11 +170,11 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 		MBSerial = Serial1;
 		break;
 	case 2:
-		// MBSerial = Serial2; //Serial2 has not been implemented on Photon yet
-		// break;
+		// Not defined?: MBSerial = Serial2; 
+		break;
 	case 5:
-		MBSerial = Serial5; //Serial2 has not been implemented on Photon yet
-		// break;
+		MBSerial = Serial5; 
+		break;
 	default:
 		MBSerial = Serial1; // Default to Serial1 for Spark Core
 		break;

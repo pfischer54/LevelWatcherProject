@@ -2,17 +2,17 @@
 #define LEVELMEASUREMENT_RS485_BIT_H
 
 #include "ModbusMaster.h"
-//#include <RunningAverage.h>
+// #include <RunningAverage.h>
 
-//yyyextern ModbusMaster node;//yyy
-extern ModbusMaster node1;//yyy
-extern ModbusMaster node5;//yyy
+// yyyextern ModbusMaster node;//yyy
+extern ModbusMaster node1; // yyy
+extern ModbusMaster node5; // yyy
 
 /// @brief Measurement class to measure bit values.
 /// @param sid  Sensor ID to identify the target sensor
 /// @param bpid Blynk Virtual Pin ID
 /// @param slaveAddr Modbus Slaved ID
-/// @param sR Modbus Register 
+/// @param sR Modbus Register
 /// @param bit Bit to read 0-15
 /// @param diff Publish every reading or only when reading changes from previous reading (plus regular heartbeats and readings to frame the transition)
 /// @param sink Specify what endpoints to publish to: PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE | PUBLISH_2_AZURE_STREAM
@@ -27,8 +27,7 @@ public:
 private:
     int nodeAddr = {3}; // slave node address, defaults to 3.
     int startingRegister = {0};
-    uint channelBit = 0;                                                   // active bit for this channel
-        ModbusMaster *node;  //yyy
- 
+    uint channelBit = 0; // active bit for this channel
+    ModbusMaster *node;  // yyy
 };
 #endif
