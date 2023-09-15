@@ -87,9 +87,9 @@ public:
 	void begin(uint16_t);
 	void idle(void (*)());
 	void flushReadBuffer();	   // pjf
-	void SetNodeAddr(uint8_t); // pjf
-	void SetMasterSerialPort(uint8_t); //pjf
-	void Reset(void);		   // pjf
+	void setNodeAddr(uint8_t); // pjf
+	void setMasterSerialPort(uint8_t); //pjf
+	void reset(void);		   // pjf
 
 	// Modbus exception codes
 	/**

@@ -108,19 +108,19 @@ ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
 }
 
 // pjf
-void ModbusMaster::SetNodeAddr(uint8_t u8MBSlave)
+void ModbusMaster::setNodeAddr(uint8_t u8MBSlave)
 {
 	_u8MBSlave = u8MBSlave;
 }
 
-void ModbusMaster::SetMasterSerialPort(uint8_t u8SerialPort)
+void ModbusMaster::setMasterSerialPort(uint8_t u8SerialPort)
 {
 	_u8SerialPort = u8SerialPort;
 }
-//pjf end
+// pjf end
 
 // Reset on fault
-void ModbusMaster::Reset()
+void ModbusMaster::reset()
 {
 
 	MBSerial.end();
@@ -170,10 +170,10 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 		MBSerial = Serial1;
 		break;
 	case 2:
-		// Not defined?: MBSerial = Serial2; 
+		// Not defined?: MBSerial = Serial2;
 		break;
 	case 5:
-		MBSerial = Serial5; 
+		MBSerial = Serial5;
 		break;
 	default:
 		MBSerial = Serial1; // Default to Serial1 for Spark Core
@@ -984,5 +984,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
 	_u8TransmitBufferIndex = 0;
 	u16TransmitBufferLength = 0;
 	_u8ResponseBufferIndex = 0;
+	if (u8MBStatus != ku8MBSuccess)
+		digitalWrite(MBTXEnablePin, LOW); // pjf added this to make sure pin is set low.  2023-09-15
 	return u8MBStatus;
 }

@@ -20,14 +20,14 @@ void LevelMeasurement_RS485_Bit::measureReading()
     int sampleReading;
 
     sampleReading = 0;
-    startOfMeasurement = System.millis(); // mark  start time.
-    (*node).SetNodeAddr(nodeAddr);  //yyy
-    result = (*node).readHoldingRegisters(startingRegister, 1); //yyy
+    startOfMeasurement = System.millis();                       // mark  start time.
+    (*node).setNodeAddr(nodeAddr);                              // yyy
+    result = (*node).readHoldingRegisters(startingRegister, 1); // yyy
 
     // do something with data if read is successful
-    if (result == (*node).ku8MBSuccess)  //yyy
+    if (result == (*node).ku8MBSuccess) // yyy
     {
-        sampleReading = (*node).getResponseBuffer(0); //yyy
+        sampleReading = (*node).getResponseBuffer(0); // yyy
         Log.info("Sensor: " + sensorId + ": Success, Received data: %d" + sampleReading);
         publishLevel(sampleReading);
     }
@@ -35,10 +35,11 @@ void LevelMeasurement_RS485_Bit::measureReading()
     {
         Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
         sampleReading = -1;
-        if (result != (*node).ku8MBResponseTimedOut) //yyy
-        {
-            delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
-            (*node).flushReadBuffer(); //yyy
-        }
+        //    if (result != (*node).ku8MBResponseTimedOut) // Not sure what this was doing here 2023-09-15
+        //   {
+        delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
+        (*node).flushReadBuffer(); // yyy
+        (*node).reset();           // added reset.  2023-09-15
+        //   }
     }
 }

@@ -23,7 +23,7 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     int64_t sampleReading = 0;
 
     startOfMeasurement = System.millis();                                             // mark  start time.
-    (*node).SetNodeAddr(slaveNodeAddr);                                                    // yyy
+    (*node).setNodeAddr(slaveNodeAddr);                                               // yyy
     result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); // yyy
 
     // do something with data if read is successful
@@ -45,12 +45,12 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     else
     {
         Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
-        sampleReading = -1;
-        if (result != (*node).ku8MBResponseTimedOut) // yyy
-        {
-            delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
-            (*node).flushReadBuffer(); // yyy
-            (*node).Reset();           // yyy
-        }
+        sampleReading = LLONG_MIN;
+        //    if (result != (*node).ku8MBResponseTimedOut) // yyy
+        //    {
+        delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
+        (*node).flushReadBuffer(); // yyy
+        (*node).reset();           // yyy
+                                   //}
     }
 }

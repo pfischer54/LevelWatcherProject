@@ -48,7 +48,7 @@ bool resetFlag = false;
 bool startupCompleted = false;
 unsigned long loopDelayTimeout = 0; // This will be the time for which the temporary loop delays run for before reverting
 int startupLoopsCompleted = 0;
-// xxxint readings[NUMBER_OF_MEASUREMENTS][2];
+bool firstTimeThrough = true;
 
 // RS485 setup
 // Define the main node object. This controls the RS485 interface for all the slaves.
@@ -57,8 +57,11 @@ ModbusMaster node5 = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
 // Tank levels
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%d");
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%.1f");
+
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_2, STARTING_REG_101H, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_5);
+//xxxLevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
+
 LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
 // Pressrising pump state
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, "", SERIAL_1); // removed:  | PUBLISH_2_AZURE_STREAM  to save data :)
@@ -77,8 +80,8 @@ JsonParserStatic<256, 20> parser;
 
 // Cellular constants
 
-String apn = "luner"; // Levelwatcher 3
-//String apn = "soracom.io"; // Levelwatcher 2, LevelWatcher4
+// String apn = "luner"; // Levelwatcher 3
+String apn = "soracom.io"; // Levelwatcher 2, LevelWatcher4
 
 // String apn = "3iot.com"; // globalM2M
 
@@ -97,8 +100,6 @@ void setup()
     waitFor(Serial.isConnected, 15000);
     Serial.begin(9600);
     Log.info("Startup: Running Setup");
-
-    //xxxLog.info("Nodes setup %d\n", lm2.node.;
 
     Particle.keepAlive(30); // Needed for 3rd party SIMS
 
@@ -120,19 +121,15 @@ void setup()
     //  initialize Modbus communication baud rate and control pin
     //  Note: There is one node object that controls the RS485 interface for all the slaves.
 
-    node1.SetMasterSerialPort(1); // yyy
-    node5.SetMasterSerialPort(5); // yyy
+    node1.setMasterSerialPort(1); // yyy
+    node5.setMasterSerialPort(5); // yyy
     node1.begin(9600);            // yyy
     node5.begin(9600);            // yyy
 
     node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver for Serial1 //yyy
     node5.enableTXpin(D2); // D2 is the pin used to control the TX enable pin of RS485 driver for Serial5  //yyy
 
-    // node.enableDebug();  //Print TX and RX frames out on Serial. Beware, enabling this messes up the timings for RS485 Transactions, causing them to fail.
-
-    setLoopDelays();                                  // Set the delays from power on defaults or persisted values.
-    delay(10s);                                       /// try this
-    Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+    setLoopDelays(); // Set the delays from power on defaults or persisted values.
     Log.info("Setup Completed");
 }
 //
@@ -143,6 +140,11 @@ void loop()
     int sensorCount = 0;
     bool aSensorRead = false; //  will be true if at least one sensor read
 
+    if (firstTimeThrough)
+    {
+        Particle.publish("Startup2", NULL, 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+        firstTimeThrough = false;
+    }
     if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
     {
         // Reboot regularly to freshen up or if we missed startup acknowledgement from cloud
