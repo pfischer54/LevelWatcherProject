@@ -4,7 +4,7 @@
 
 const int NUMBER_OF_MEASUREMENTS = 9;  //number of sensors to scan
 const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_MEASUREMENTS * 6 + 10; // That should do it :)
-const int DEFAULT_BATCH_COUNT = 10; // xxx start with 2 - 100; // Default batch count when batching data for Blynk.
+const int DEFAULT_BATCH_COUNT = 20; // xxx start with 2 - 100; // Default batch count when batching data for Blynk.
 const uint DIFFERENTIAL_DELAY_IN_MS = 1000;  //Needs a bit of help to allow for network routing issues etc. Set back to tiny amount as bursts are allowed.
 
 //Sensor types enum

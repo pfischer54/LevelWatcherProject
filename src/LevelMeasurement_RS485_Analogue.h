@@ -30,8 +30,8 @@ const uint BIT_1 = 0b00000010; // Read bit 1
 
 // Gains and offsets used by Blynk
 
-extern ModbusMaster node1; // yyy
-extern ModbusMaster node5; // yyy
+extern ModbusMaster node1; 
+extern ModbusMaster node5; 
 
 /// @brief Measurement class to measure analogue values.
 /// @param sid  Sensor ID to identify the target sensor
@@ -57,7 +57,7 @@ private:
     int startingRegister = {0};
     int numberOfRegistersToRead = {1};
     int slaveNodeAddr = {1}; // slave node address, defaults to 1.
-    ModbusMaster *node;      // yyy
+    ModbusMaster *node;      
 };
 
 #endif

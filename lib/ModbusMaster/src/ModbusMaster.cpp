@@ -31,10 +31,12 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 #include "ModbusMaster.h"
 
 /* _____GLOBAL VARIABLES_____________________________________________________ */
-USARTSerial MBSerial = Serial1; ///< Pointer to Serial1 class object
-uint8_t MBTXEnablePin = D7;		///< GPIO pin used for toggling RS485 Driver IC's TX Enable pin, default is D7
-uint8_t MBUseEnablePin = 0;		///< Should a TX_ENABLE pin be used? 0 = No, 1 = Yes
-uint8_t MBDebugSerialPrint = 0; ///< Do you want the TX and RX fraimes printed out on Serial for debugging? 0 = No, 1 = Yes
+
+//pjf
+// USARTSerial MBSerial = Serial1; ///< Pointer to Serial1 class object
+//uint8_t MBTXEnablePin = D7;		///< GPIO pin used for toggling RS485 Driver IC's TX Enable pin, default is D7
+//uint8_t MBUseEnablePin = 0;		///< Should a TX_ENABLE pin be used? 0 = No, 1 = Yes
+//uint8_t MBDebugSerialPrint = 0; ///< Do you want the TX and RX fraimes printed out on Serial for debugging? 0 = No, 1 = Yes
 
 // Fix to define word type conversion function
 uint16_t word(uint8_t high, uint8_t low)
@@ -168,12 +170,14 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 	{
 	case 1:
 		MBSerial = Serial1;
+		Log.info("mbserial1");
 		break;
 	case 2:
 		// Not defined?: MBSerial = Serial2;
 		break;
 	case 5:
 		MBSerial = Serial5;
+		Log.info("mbserial5");
 		break;
 	default:
 		MBSerial = Serial1; // Default to Serial1 for Spark Core

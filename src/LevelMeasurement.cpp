@@ -61,7 +61,7 @@ void LevelMeasurement::publish(int reading)
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
                String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
                String("\"LsBits\":") + String("\"") + String::format("%d", reading) + String("\",") +
-               // xxx        String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
+              String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
                String("\"}");
         Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
                                                             // Log.info(data);
@@ -92,6 +92,7 @@ void LevelMeasurement::publish(int reading)
         float scaledReading = 0.0;
         if (gain == 0) // This is a bit or integer stream
         {
+            scaledReading = reading;  //used by BatchMode
             data = String("{") +
                    String("\"") + blynkPinId + String("\":\"") + +String::format("%d", reading) +
                    String("\"}");

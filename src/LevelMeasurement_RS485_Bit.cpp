@@ -2,15 +2,15 @@
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_RS485_Bit.h"
 
-LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmf, uint msp) : LevelMeasurement(sid, bpid, diff, sink, bm, bmf)
+LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, int slaveAddr, int sR, uint bit, boolean diff, uint sink, bool bm, String bmfs, uint msp) : LevelMeasurement(sid, bpid, diff, sink, bm, bmfs)
 {
     nodeAddr = slaveAddr;
     startingRegister = sR;
     channelBit = bit;
     if (msp == SERIAL_1)
-        node = &node1; // yyy //temp
+        node = &node1; 
     else
-        node = &node5; // yyy //temp
+        node = &node5; 
     ;
 }
 
@@ -21,13 +21,13 @@ void LevelMeasurement_RS485_Bit::measureReading()
 
     sampleReading = 0;
     startOfMeasurement = System.millis();                       // mark  start time.
-    (*node).setNodeAddr(nodeAddr);                              // yyy
-    result = (*node).readHoldingRegisters(startingRegister, 1); // yyy
+    (*node).setNodeAddr(nodeAddr);                              
+    result = (*node).readHoldingRegisters(startingRegister, 1); 
 
     // do something with data if read is successful
-    if (result == (*node).ku8MBSuccess) // yyy
+    if (result == (*node).ku8MBSuccess) 
     {
-        sampleReading = (*node).getResponseBuffer(0); // yyy
+        sampleReading = (*node).getResponseBuffer(0); 
         Log.info("Sensor: " + sensorId + ": Success, Received data: %d" + sampleReading);
         publishLevel(sampleReading);
     }
@@ -38,7 +38,7 @@ void LevelMeasurement_RS485_Bit::measureReading()
         //    if (result != (*node).ku8MBResponseTimedOut) // Not sure what this was doing here 2023-09-15
         //   {
         delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
-        (*node).flushReadBuffer(); // yyy
+        (*node).flushReadBuffer(); 
         (*node).reset();           // added reset.  2023-09-15
         //   }
     }

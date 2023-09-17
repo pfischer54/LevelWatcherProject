@@ -1,3 +1,5 @@
 VS filtering string
 
 Timestamp gt datetime'2023-06-06T15:00:00Z' and PartitionKey eq '330053000450483553353520'
+
+Timestamp gt datetime'2023-09-15T15:00:00Z' 

@@ -11,9 +11,9 @@ LevelMeasurement_RS485_Analogue::LevelMeasurement_RS485_Analogue(String sid, Str
     offset = o;
     gain = g;
     if (msp == SERIAL_1)
-        node = &node1; // yyy //temp
+        node = &node1; 
     else
-        node = &node5; // yyy //temp
+        node = &node5;
 };
 
 void LevelMeasurement_RS485_Analogue::measureReading()
@@ -22,18 +22,21 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     int rs485Data[MAX_NO_OF_HOLDING_REGS];
     int64_t sampleReading = 0;
 
-    startOfMeasurement = System.millis();                                             // mark  start time.
-    (*node).setNodeAddr(slaveNodeAddr);                                               // yyy
-    result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); // yyy
+    startOfMeasurement = System.millis();       // mark  start time.
+    (*node).setNodeAddr(slaveNodeAddr);                                              
+    result = (*node).readHoldingRegisters(startingRegister, numberOfRegistersToRead); 
+
+Log.info("node: %d\n", (*node)._u8SerialPort);  //xxx
+
 
     // do something with data if read is successful
     // TODO:  This must be buggy for 32bit and above :) ?
-    if (result == (*node).ku8MBSuccess) // yyy
+    if (result == (*node).ku8MBSuccess) 
     {
         Log.info("Sensor: " + sensorId + ": Success, Received data: ");
         for (j = 0; j < numberOfRegistersToRead; j++) // This code only reads up to  4x 16bit register = 64 bit unsigned value
         {
-            rs485Data[j] = (*node).getResponseBuffer(j); // yyy
+            rs485Data[j] = (*node).getResponseBuffer(j);
             if (j == 0)
                 sampleReading = rs485Data[j] <= 32767 ? rs485Data[j] : -(65536 - rs485Data[j]);
             else
@@ -46,11 +49,11 @@ void LevelMeasurement_RS485_Analogue::measureReading()
     {
         Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
         sampleReading = LLONG_MIN;
-        //    if (result != (*node).ku8MBResponseTimedOut) // yyy
+        //    if (result != (*node).ku8MBResponseTimedOut)
         //    {
         delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
-        (*node).flushReadBuffer(); // yyy
-        (*node).reset();           // yyy
+        (*node).flushReadBuffer();
+        (*node).reset();          
                                    //}
     }
 }

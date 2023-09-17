@@ -86,10 +86,12 @@ public:
 	void begin();
 	void begin(uint16_t);
 	void idle(void (*)());
-	void flushReadBuffer();	   // pjf
-	void setNodeAddr(uint8_t); // pjf
-	void setMasterSerialPort(uint8_t); //pjf
-	void reset(void);		   // pjf
+	void flushReadBuffer();			   // pjf
+	void setNodeAddr(uint8_t);		   // pjf
+	void setMasterSerialPort(uint8_t); // pjf
+	void reset(void);				   // pjf
+
+	uint8_t _u8SerialPort;
 
 	// Modbus exception codes
 	/**
@@ -237,7 +239,11 @@ public:
 	uint8_t readWriteMultipleRegisters(uint16_t, uint16_t);
 
 private:
-	uint8_t _u8SerialPort;						   ///< serial port (0..3) initialized in constructor
+	USARTSerial MBSerial = Serial1; ///< Pointer to Serial1 class object
+	uint8_t MBTXEnablePin = D7;		///< GPIO pin used for toggling RS485 Driver IC's TX Enable pin, default is D7
+	uint8_t MBUseEnablePin = 0;		///< Should a TX_ENABLE pin be used? 0 = No, 1 = Yes
+	uint8_t MBDebugSerialPrint = 0; ///< Do you want the TX and RX fraimes printed out on Serial for debugging? 0 = No, 1 = Yes
+
 	uint8_t _u8MBSlave;							   ///< Modbus slave (1..255) initialized in constructor
 	uint16_t _u16BaudRate;						   ///< baud rate (300..115200) initialized in begin()
 	static const uint8_t ku8MaxBufferSize = 64;	   ///< size of response/transmit buffers
