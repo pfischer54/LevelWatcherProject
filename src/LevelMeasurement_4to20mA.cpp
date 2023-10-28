@@ -20,7 +20,15 @@ void LevelMeasurement_4to20mA::measureReading()
     if ((sampleReading != 65535)) // xxx  && (sampleReading > 6400)) // 65535 means no interface present or 24V failure and value must be > 4mA Offset i.e. about 6400
         publishLevel(sampleReading);
     else
-        // Log.info("4to20ma Reading Failed For Sensor %s\n", sensorId.c_str());
+      if (publishDebugData)
+        {
+            char status[] = "{\"debug\":\"Sensor: %s failed, Sample Reading: %d\"}";
+            char errorMsg[sizeof(status) + 16];
+            snprintf(errorMsg, sizeof(errorMsg), status, sensorId.c_str(), sampleReading);
+            Particle.publish("DEBUG", errorMsg, 60, PRIVATE);
+        }
+          // Log.info("4to20ma Reading Failed For Sensor %s\n", sensorId.c_str());
         // Log.info("4to20ma Reading Failed For Sensor " + sensorId);
         Log.info("\nSensor: " + sensorId + ": Failed.  4to20mA Sample Reading: %d", sampleReading);
+        
 };

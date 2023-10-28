@@ -33,6 +33,8 @@ int cloudResetFunction(String command);
 int setBlynkBatchModeSize(const char *data);
 int setBlynkPinToBatchMode(const char *data);
 int setSensorDebugPublishState(const char *data);
+int setAllSensorDebugPublishState(const char *data);
+
 void setup();
 void loop();
 void setLoopDelays();
@@ -106,6 +108,7 @@ void setup()
     Particle.function("SetBlynkBatchModeSize", setBlynkBatchModeSize);
     Particle.function("SetBlynkPinToBatchMode", setBlynkPinToBatchMode);
     Particle.function("SetSensorDebugPublishState", setSensorDebugPublishState);
+    Particle.function("SetAllSensorDebugPublishState", setAllSensorDebugPublishState);
 
     // Subscribe to the webhook startup2 response event
     // This handler is called by azure script response to Startup2 event published below.
@@ -350,7 +353,7 @@ int setBlynkPinToBatchMode(const char *params)
 
     Serial.printlnf("BlynkBatchMode for measurement %d is %d", measurementIndex, OnOff);
     String publishData = String("{") +
-                         String("\"BlynkBatchMode for measurement ") + String::format("%d", measurementIndex) + String(": ") + String::format("%d", OnOff) +
+                         String("\"BlynkBatchMode for sensor ") + lm[measurementIndex]->sensorId + String(": ") + String::format("%d", OnOff) +
                          String("\"}");
     Particle.publish("BlynkBatchModeForPin updated", publishData, 600, PRIVATE);
     return 0;
@@ -375,10 +378,36 @@ int setSensorDebugPublishState(const char *params)
     if (measurementIndex < NUMBER_OF_MEASUREMENTS)
         lm[measurementIndex]->setDebug(OnOff);
 
-    Serial.printlnf("Debug mode for measurement %d is %d", measurementIndex, OnOff);
+    Serial.printlnf("Debug mode for sensor %s is %d", lm[measurementIndex]->sensorId.c_str(), OnOff);
     String publishData = String("{") +
-                         String("\"Debug mode for measurement ") + String::format("%d", measurementIndex) + String(": ") + String::format("%d", OnOff) +
+                         String("\"Debug mode for sensor ") + lm[measurementIndex]->sensorId + String(": ") + String::format("%d", OnOff) +
                          String("\"}");
-    Particle.publish("Debug mode for measurement updated", publishData, 600, PRIVATE);
+    Particle.publish("Debug mode for sensor updated", publishData, 600, PRIVATE);
+    return 0;
+}
+
+int setAllSensorDebugPublishState(const char *params)
+{
+    char tempchar[20];        // Plenty
+    strcpy(tempchar, params); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
+
+    bool OnOff;
+
+    if (strlen(params) == 0)
+        return -1;
+
+    OnOff = (bool)parseDecimal(&buffptr);
+
+    int i;
+    for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
+        lm[i]->setDebug(OnOff);
+
+    Serial.printlnf("Debug mode for all sensors is %d", OnOff);
+    String publishData = String("{") +
+                         String("\"Debug mode is ") + String::format("%d", OnOff) +
+                         String("\"}");
+    Particle.publish("Debug mode for  all sensors updated", publishData, 600, PRIVATE);
     return 0;
 }

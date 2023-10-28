@@ -50,10 +50,10 @@ void LevelMeasurement_RS485_Analogue::measureReading()
         {
             char status[] = "{\"debug\":\"Sensor: %s failed, Response Code: %x\"}";
             char errorMsg[sizeof(status) + 16];
-            snprintf(errorMsg, sizeof(errorMsg), status, sensorId, result);
+            snprintf(errorMsg, sizeof(errorMsg), status, sensorId.c_str(), result);
             Particle.publish("DEBUG", errorMsg, 60, PRIVATE);
         }
-        Log.info("Sensor: " + sensorId + ": Failed, Response Code: %x,", result);
+        Log.info("Sensor: " + sensorId + " failed, Response Code: %x,", result);
         sampleReading = LLONG_MIN;
         //    if (result != (*node).ku8MBResponseTimedOut)
         //    {
