@@ -53,6 +53,7 @@ public:
     LevelMeasurement_RS485_Analogue(String sid, String bpid, int slaveAddr, int startingRegister, int numberOfRegistersToRead, boolean diff, uint sink, int o, float g, bool bm, String bmfs, uint msp);
     void measureReading();
 
+
 private:
     int startingRegister = {0};
     int numberOfRegistersToRead = {1};

@@ -18,10 +18,9 @@ const uint PUBLISH_2_THINGSPEAK = 0x4;
 const uint PUBLISH_2_BLYNK = 0x8;
 const uint CHECK_FOR_AVERAGE_USE = 0x10;
 
-
 // Modbus
-const uint SERIAL_1=1;  //Use Serial1 Port for Modbus
-const uint SERIAL_5=5;  //Use Serial5 Port for Modbus
+const uint SERIAL_1 = 1; // Use Serial1 Port for Modbus
+const uint SERIAL_5 = 5; // Use Serial5 Port for Modbus
 
 // Set channel type.
 // Digital channels have an associated timer measuring ontime.
@@ -50,16 +49,16 @@ public:
     String sensorId = {"Unkown"};
     int loopDelayCount = 0;
     int loopDelay = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
-    bool blynkBatchMode = false; // Send this measurement to Blynk as a batch
-    
+    bool blynkBatchMode = false;                    // Send this measurement to Blynk as a batch
+
     virtual void measureReading(void) = 0;
     void Add2BlynkBatchModeData(float);
+    void setDebug(bool);
 
 protected:
     void publishLevel(int);
 
     int sample;
-    bool zeroingInProgress;
     String data = String(80);
     bool firstTimeThrough = true;
     int previousReading = 0;
@@ -68,16 +67,17 @@ protected:
     uint64_t startOfMeasurement = 0; // Start time of measurement in ms (we only want to delay 1s max per measurement)
     uint publishToSink = 0;          // What stream to publish to - bit set: 1 = datatable, 2=iothub.
     String blynkPinId;
-    char blynkBatchModeData [MAX_BLYNK_BATCH_MODE_BUFFER_SIZE] = {0}; // Data string if batch mode used.
-    uint blynkBatchModeCount = 0;  //Number of measurements so far
-    String blynkBatchmodeReadingFormatString = "";  //The string used to format this sensor measurement for transmission to Blunk
-    float gain = 0.0;           // Gain  (Used only for Blynk data as this cannot be set by the app)
-    int offset = 0;             // Offset  (Used only for Blynk data as this cannot be set by the app)
+    char blynkBatchModeData[MAX_BLYNK_BATCH_MODE_BUFFER_SIZE] = {0}; // Data string if batch mode used.
+    uint blynkBatchModeCount = 0;                                    // Number of measurements so far
+    String blynkBatchmodeReadingFormatString = "";                   // The string used to format this sensor measurement for transmission to Blunk
+    float gain = 0.0;                                                // Gain  (Used only for Blynk data as this cannot be set by the app)
+    int offset = 0;                                                  // Offset  (Used only for Blynk data as this cannot be set by the app)
     bool publishedAReading = false;
     uint diffHeartbeatReadingCount = 0;
     uint ChannelType = ANALOGUE_CHANNEL;
     ulong onTime;
     RunningAverage AveragingArray = RunningAverage(AVERAGING_SAMPLE_SIZE); // averaging bucket
+    bool publishDebugData = false;
 
 private:
     void publish(int);

@@ -170,14 +170,14 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 	{
 	case 1:
 		MBSerial = Serial1;
-		Log.info("mbserial1");
+		Log.info("Port: mbserial1");
 		break;
 	case 2:
 		// Not defined?: MBSerial = Serial2;
 		break;
 	case 5:
 		MBSerial = Serial5;
-		Log.info("mbserial5");
+		Log.info("Port: mbserial5");
 		break;
 	default:
 		MBSerial = Serial1; // Default to Serial1 for Spark Core

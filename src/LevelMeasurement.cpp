@@ -7,7 +7,6 @@
 
 LevelMeasurement::LevelMeasurement()
 {
-    zeroingInProgress = false;
     data = "";
 }
 LevelMeasurement::LevelMeasurement(String sid) : LevelMeasurement()
@@ -61,7 +60,7 @@ void LevelMeasurement::publish(int reading)
                String("\"SensorId\":") + String("\"") + sensorId + String("\",") +
                String("\"SS\":") + String("\"") + String::format("rssi=%d, qual=%d", rssiQual.rssi, rssiQual.qual) + String("\",") +
                String("\"LsBits\":") + String("\"") + String::format("%d", reading) + String("\",") +
-              String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", zeroingInProgress) +
+               String("\"ZeroingInProgress\":") + String("\"") + String::format("%d", 0) +
                String("\"}");
         Particle.publish("TickLevel2", data, 600, PRIVATE); // TTL set to 3600s (may not yet be implemented)
                                                             // Log.info(data);
@@ -92,7 +91,7 @@ void LevelMeasurement::publish(int reading)
         float scaledReading = 0.0;
         if (gain == 0) // This is a bit or integer stream
         {
-            scaledReading = reading;  //used by BatchMode
+            scaledReading = reading; // used by BatchMode
             data = String("{") +
                    String("\"") + blynkPinId + String("\":\"") + +String::format("%d", reading) +
                    String("\"}");
@@ -115,7 +114,7 @@ void LevelMeasurement::publish(int reading)
             {
                 blynkBatchModeCount++;
             }
-            else  //Off we go - flush the buffer...
+            else // Off we go - flush the buffer...
             {
                 Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
                 Log.info("%s\n", blynkBatchModeData);
@@ -139,13 +138,7 @@ void LevelMeasurement::publishLevel(int reading)
 
     if (sample == LONG_SAMPLE_SIZE + 1)
     {
-        sample = -1;           //  Hit the buffers no need to count anymore
-        if (zeroingInProgress) // This is true if a cloud call has been made to set zero
-        {
-            blinkLong(ZEROING_COMPLETED_BLINK_FREQUENCY); // Signal zeroing complete.
-            Particle.publish(System.deviceID() + " zeroing completed for " + String("\"") + sensorId + String("\""), NULL, 600, PRIVATE);
-            zeroingInProgress = false;
-        }
+        sample = -1; //  Hit the buffers no need to count anymore
     }
     // Check for differential reading: If differential is true, only send reading if it changed from last time.
 
@@ -198,3 +191,8 @@ void LevelMeasurement::publishLevel(int reading)
     if (timeTakenForMeasurement < 1000)
         delay(1000 - timeTakenForMeasurement); // make sure we are not publishing events at a rate > 1/sec
 };
+
+void LevelMeasurement::setDebug(bool b)
+{
+    publishDebugData = b;
+}

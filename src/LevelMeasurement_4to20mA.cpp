@@ -14,11 +14,13 @@ LevelMeasurement_4to20mA::LevelMeasurement_4to20mA(String sid, String bpid, bool
 void LevelMeasurement_4to20mA::measureReading()
 {
     int sampleReading = 0;
-    startOfMeasurement = System.millis();                   // mark  start time.
-    sampleReading = ads.readADC_SingleEnded(0);             // FOR NDC setup -- ads.readADC_Differential_0_1() for ...
-    if ((sampleReading != 65535) && (sampleReading > 6400)) // 65535 means no interface present or 24V failure and value must be > 4mA Offset i.e. about 6400
+    startOfMeasurement = System.millis();       // mark  start time.
+    sampleReading = ads.readADC_SingleEnded(0); // FOR NDC setup -- ads.readADC_Differential_0_1() for ...
+    // From ncd.io: at 4mA the raw ADC value will be around 6430 - at 20mA the raw ADC value will be around 32154
+    if ((sampleReading != 65535)) // xxx  && (sampleReading > 6400)) // 65535 means no interface present or 24V failure and value must be > 4mA Offset i.e. about 6400
         publishLevel(sampleReading);
     else
-//        Log.info("4to20ma Reading Failed For Sensor %s\n", sensorId.c_str());
-        Log.info("4to20ma Reading Failed For Sensor " + sensorId);
+        // Log.info("4to20ma Reading Failed For Sensor %s\n", sensorId.c_str());
+        // Log.info("4to20ma Reading Failed For Sensor " + sensorId);
+        Log.info("\nSensor: " + sensorId + ": Failed.  4to20mA Sample Reading: %d", sampleReading);
 };

@@ -33,6 +33,7 @@ LevelMeasurement_4to20mA(String sid, String bpid, boolean diff, uint sink, int o
 
 void measureReading();
 
+
 /* struct adcConfiguration
 {
 int channelNumber;  //adc channel number;

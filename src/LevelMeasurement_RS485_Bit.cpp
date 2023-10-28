@@ -8,9 +8,9 @@ LevelMeasurement_RS485_Bit::LevelMeasurement_RS485_Bit(String sid, String bpid, 
     startingRegister = sR;
     channelBit = bit;
     if (msp == SERIAL_1)
-        node = &node1; 
+        node = &node1;
     else
-        node = &node5; 
+        node = &node5;
     ;
 }
 
@@ -20,14 +20,15 @@ void LevelMeasurement_RS485_Bit::measureReading()
     int sampleReading;
 
     sampleReading = 0;
-    startOfMeasurement = System.millis();                       // mark  start time.
-    (*node).setNodeAddr(nodeAddr);                              
-    result = (*node).readHoldingRegisters(startingRegister, 1); 
+    startOfMeasurement = System.millis(); // mark  start time.
+    (*node).setNodeAddr(nodeAddr);
+    result = (*node).readHoldingRegisters(startingRegister, 1);
+    Log.info("node: %d", (*node)._u8SerialPort); // xxx
 
     // do something with data if read is successful
-    if (result == (*node).ku8MBSuccess) 
+    if (result == (*node).ku8MBSuccess)
     {
-        sampleReading = (*node).getResponseBuffer(0); 
+        sampleReading = (*node).getResponseBuffer(0);
         Log.info("Sensor: " + sensorId + ": Success, Received data: %d" + sampleReading);
         publishLevel(sampleReading);
     }
@@ -37,9 +38,9 @@ void LevelMeasurement_RS485_Bit::measureReading()
         sampleReading = -1;
         //    if (result != (*node).ku8MBResponseTimedOut) // Not sure what this was doing here 2023-09-15
         //   {
-        delay(1000ms);             // delay a bit to make sure sending sensor has sent all its stuff..
-        (*node).flushReadBuffer(); 
-        (*node).reset();           // added reset.  2023-09-15
+        delay(1000ms); // delay a bit to make sure sending sensor has sent all its stuff..
+        (*node).flushReadBuffer();
+        (*node).reset(); // added reset.  2023-09-15
         //   }
     }
 }

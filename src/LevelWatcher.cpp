@@ -32,6 +32,7 @@ int setLoopDelaysWithTimeoutFromCloud(const char *delays);
 int cloudResetFunction(String command);
 int setBlynkBatchModeSize(const char *data);
 int setBlynkPinToBatchMode(const char *data);
+int setSensorDebugPublishState(const char *data);
 void setup();
 void loop();
 void setLoopDelays();
@@ -57,6 +58,8 @@ ModbusMaster node5 = ModbusMaster();
 
 // Define sensor interfaces and objects and initialize sensor interfaces
 // Tank levels
+
+// From ncd.io: at 4mA the raw ADC value will be around 6430 - at 20mA the raw ADC value will be around 32154
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%.1f");
 LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
 LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
@@ -68,7 +71,7 @@ LevelMeasurement_RS485_Analogue lm5 = LevelMeasurement_RS485_Analogue("VM", "V0"
 // Pressures
 LevelMeasurement_RS485_Analogue lm6 = LevelMeasurement_RS485_Analogue("P1", "V6", MODBUS_SLAVE_6, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f", SERIAL_1);
 LevelMeasurement_RS485_Analogue lm7 = LevelMeasurement_RS485_Analogue("P2", "V7", MODBUS_SLAVE_7, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, 0, 0.01, true, "%.2f", SERIAL_1);
-LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -5, 0.01, true, "%.2f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm8 = LevelMeasurement_RS485_Analogue("DP", "V8", MODBUS_SLAVE_8, STARTING_REG_004H, REGISTER_COUNT_1, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, -1, 0.01, true, "%.2f", SERIAL_1);
 
 LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &lm5, &lm6, &lm7, &lm8};
 
@@ -76,11 +79,7 @@ LevelMeasurement *lm[NUMBER_OF_MEASUREMENTS] = {&lm0, &lm1, &lm2, &lm3, &lm4, &l
 JsonParserStatic<256, 20> parser;
 
 // Cellular constants
-
-//String apn = "luner"; // Levelwatcher 3
- String apn = "soracom.io"; // Levelwatcher 2, LevelWatcher4
-
-// String apn = "3iot.com"; // globalM2M
+String apn = "soracom.io";
 
 // xxx SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC); // Used for debug?
@@ -106,6 +105,7 @@ void setup()
     Particle.function("SetLoopDelayWithTimeout", setLoopDelaysWithTimeoutFromCloud);
     Particle.function("SetBlynkBatchModeSize", setBlynkBatchModeSize);
     Particle.function("SetBlynkPinToBatchMode", setBlynkPinToBatchMode);
+    Particle.function("SetSensorDebugPublishState", setSensorDebugPublishState);
 
     // Subscribe to the webhook startup2 response event
     // This handler is called by azure script response to Startup2 event published below.
@@ -118,13 +118,13 @@ void setup()
     //  initialize Modbus communication baud rate and control pin
     //  Note: There is one node object that controls the RS485 interface for all the slaves.
 
-    node1.setMasterSerialPort(1); 
-    node5.setMasterSerialPort(5); 
-    node1.begin(9600);            
-    node5.begin(9600);            
+    node1.setMasterSerialPort(1);
+    node5.setMasterSerialPort(5);
+    node1.begin(9600);
+    node5.begin(9600);
 
-    node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver for Serial1 
-    node5.enableTXpin(D2); // D2 is the pin used to control the TX enable pin of RS485 driver for Serial5  
+    node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver for Serial1
+    node5.enableTXpin(D2); // D2 is the pin used to control the TX enable pin of RS485 driver for Serial5
 
     setLoopDelays(); // Set the delays from power on defaults or persisted values.
     Log.info("Setup Completed");
@@ -139,7 +139,7 @@ void loop()
 
     if (firstTimeThrough)
     {
-        Particle.publish("Startup2", "V1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+        Particle.publish("Startup2", " V2023-10-28", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
         firstTimeThrough = false;
     }
     if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
@@ -186,7 +186,7 @@ void loop()
         if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) && (lm[sensorCount]->loopDelay > 0)) // Set delay to -1 to disable measurement
         {
             lm[sensorCount]->measureReading();
-            blinkShort(OUTER_LOOP_BLINK_FREQUENCY);
+            blinkVeryShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
             lm[sensorCount]->loopDelayCount = 0; // reset loop count
             aSensorRead = true;                  // a sensor has been read
@@ -196,7 +196,7 @@ void loop()
     if (!aSensorRead)
         delay(1s); // make sure we have at least a 1s loop delay  TODO: allow this to be tuned
 
-    blinkVeryShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
+    blinkShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
 
     if (System.millis() > loopDelayTimeout)
         setLoopDelays(); // Time is up, reset loop delays to default value
@@ -280,7 +280,7 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
         if (index == 0) // initial index
         {
             loopDelayTimeout = (parseDecimal(&buffptr) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
-            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);                     
+            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);
         }
         else
         {
@@ -350,8 +350,35 @@ int setBlynkPinToBatchMode(const char *params)
 
     Serial.printlnf("BlynkBatchMode for measurement %d is %d", measurementIndex, OnOff);
     String publishData = String("{") +
-                         String("\"BlynkBatchMode for pin ") + String::format("%d", measurementIndex) + String("\":") + String::format("%d", OnOff) +
+                         String("\"BlynkBatchMode for measurement ") + String::format("%d", measurementIndex) + String(": ") + String::format("%d", OnOff) +
                          String("\"}");
     Particle.publish("BlynkBatchModeForPin updated", publishData, 600, PRIVATE);
+    return 0;
+}
+
+int setSensorDebugPublishState(const char *params)
+{
+    char tempchar[20];        // Plenty
+    strcpy(tempchar, params); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
+
+    uint measurementIndex;
+    bool OnOff;
+
+    if (strlen(params) == 0)
+        return -1;
+
+    measurementIndex = parseDecimal(&buffptr);
+    OnOff = (bool)parseDecimal(&buffptr);
+
+    if (measurementIndex < NUMBER_OF_MEASUREMENTS)
+        lm[measurementIndex]->setDebug(OnOff);
+
+    Serial.printlnf("Debug mode for measurement %d is %d", measurementIndex, OnOff);
+    String publishData = String("{") +
+                         String("\"Debug mode for measurement ") + String::format("%d", measurementIndex) + String(": ") + String::format("%d", OnOff) +
+                         String("\"}");
+    Particle.publish("Debug mode for measurement updated", publishData, 600, PRIVATE);
     return 0;
 }
