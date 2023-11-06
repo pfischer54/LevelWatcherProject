@@ -188,6 +188,9 @@ void loop()
         aSensorRead = false;                                                                                     // reset
         if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) && (lm[sensorCount]->loopDelay > 0)) // Set delay to -1 to disable measurement
         {
+           //xxx
+           Serial.print(Time.hour());
+           Serial.print(Time.minute());
             lm[sensorCount]->measureReading();
             blinkVeryShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
