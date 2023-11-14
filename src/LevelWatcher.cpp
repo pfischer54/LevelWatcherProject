@@ -1,5 +1,5 @@
 // Version info
-// This is branch "master" ... and is WIP
+// This is branch "master" ... and is WIP // chdcking install on MS Laptop
 // synching
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
@@ -35,7 +35,7 @@ int setBlynkPinToBatchMode(const char *data);
 int setSensorDebugPublishState(const char *data);
 int setAllSensorDebugPublishState(const char *data);
 
-void setup();
+void setup(); 
 void loop();
 void setLoopDelays();
 
