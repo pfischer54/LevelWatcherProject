@@ -1,5 +1,5 @@
 // Version info
-// This is branch "master" ... and is WIP // chdcking install on MS Laptop
+// This is branch "master" ... and is WIP // chdcking install on MS Laptop 2nd stage
 // synching
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
