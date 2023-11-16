@@ -41,7 +41,7 @@ void LevelMeasurement::Add2BlynkBatchModeData(float reading)
     strcat(formatString, "]%s");
     char bbmd[100] = {0};
 
-    snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount < BlynkBatchModeSize - 1) ? "," : "]");
+    snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount < blynkBatchModeSize - 1) ? "," : "]");
     strcat(blynkBatchModeData, bbmd); // add this to the main buffer
 }
 
@@ -110,7 +110,7 @@ void LevelMeasurement::publish(int reading)
         {
             Add2BlynkBatchModeData(scaledReading); // Add reading it to the string
 
-            if (blynkBatchModeCount < BlynkBatchModeSize - 1)
+            if (blynkBatchModeCount < blynkBatchModeSize - 1)
             {
                 blynkBatchModeCount++;
             }

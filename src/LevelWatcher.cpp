@@ -35,23 +35,26 @@ int setBlynkPinToBatchMode(const char *data);
 int setSensorDebugPublishState(const char *data);
 int setAllSensorDebugPublishState(const char *data);
 
-void setup(); 
+void setup();
 void loop();
-void setLoopDelays();
+void setDefaultLoopDelays();
 
 // globals
 
 // Retained values
-retained u_int LoopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
-retained u_int BlynkBatchModeSize = DEFAULT_BATCH_COUNT;                                                                        // Batch size if batching data for Blynk
+retained uint loopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
+retained uint blynkBatchModeSize = DEFAULT_BATCH_COUNT;
+retained float schedules[NUMBER_OF_SCHEDULES][NUMBER_OF_MEASUREMENTS + 2] = {{-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; // Batch size if batching data for Blynk
 
 //"normal"
+uint64_t uint64_t_max = std::numeric_limits<uint64_t>::max();
 unsigned long rebootSync = 0;
 bool resetFlag = false;
 bool startupCompleted = false;
-unsigned long loopDelayTimeout = 0; // This will be the time for which the temporary loop delays run for before reverting
+unsigned long loopDelayTimeout = uint64_t_max; // This will be the time for which the temporary loop delays run for before reverting
 int startupLoopsCompleted = 0;
 bool firstTimeThrough = true;
+bool runningASchedule = false;
 
 // RS485 setup
 // Define the main node object. This controls the RS485 interface for all the slaves.
@@ -129,7 +132,11 @@ void setup()
     node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver for Serial1
     node5.enableTXpin(D2); // D2 is the pin used to control the TX enable pin of RS485 driver for Serial5
 
-    setLoopDelays(); // Set the delays from power on defaults or persisted values.
+    setDefaultLoopDelays(); // Set the delays from power on defaults or persisted values.
+
+    //set time zone
+    Time.zone(2);
+
     Log.info("Setup Completed");
 }
 //
@@ -137,7 +144,9 @@ void setup()
 //
 void loop()
 {
-    int sensorCount = 0;
+    uint sensorCount = 0;
+    uint scheduleNumber = 0;
+
     bool aSensorRead = false; //  will be true if at least one sensor read
 
     if (firstTimeThrough)
@@ -188,9 +197,9 @@ void loop()
         aSensorRead = false;                                                                                     // reset
         if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) && (lm[sensorCount]->loopDelay > 0)) // Set delay to -1 to disable measurement
         {
-           //xxx
-           Serial.print(Time.hour());
-           Serial.print(Time.minute());
+            // xxx
+            Serial.print(Time.hour());
+            Serial.print(Time.minute());
             lm[sensorCount]->measureReading();
             blinkVeryShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
@@ -204,8 +213,20 @@ void loop()
 
     blinkShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
 
-    if (System.millis() > loopDelayTimeout)
-        setLoopDelays(); // Time is up, reset loop delays to default value
+    if (System.millis() > loopDelayTimeout && loopDelayTimeout != uint64_t_max)
+    {
+        setDefaultLoopDelays();          // Time is up, reset loop delays to default values
+        loopDelayTimeout = uint64_t_max; // reset
+
+        // Check for active schedules...
+        for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber++)
+        {
+            if (schedules[scheduleNumber, 0] > 0) // check schedules is active i.e. start time > 0
+            {
+                schedules[scheduleNumber, 0] - Time.now() < 10
+            }
+        }
+    }
 }
 
 void startupHandler(const char *event, const char *data)
@@ -215,7 +236,19 @@ void startupHandler(const char *event, const char *data)
     Particle.publish(System.deviceID() + " initialized", NULL, 600, PRIVATE);
 }
 
-//***************************************
+//***************************************//
+
+
+float timeNowAsDecimal()
+{
+time32_t t = Time.local();
+float h = Time.hour(t);
+float m = Time.minute(t);
+float s = Time.second(t);
+
+return h + m/60 + s/3600;
+
+}
 
 // A function that takes a pointer to a string, a pointer to an end character
 // It parses the string as a decimal number and returns it
@@ -239,7 +272,7 @@ int setLoopDelaysFromCloud(const char *delays)
     strcpy(tempchar, delays); // need an mutable copy
     char *buffptr;            // probably redundant but just for now xx
     buffptr = tempchar;       // probably redundant but just for now xx
-    int index = 0;            // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
+    uint index = 0;           // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
 
     String loopDelayData;
     String d = delays; // makes it easier to log and publish
@@ -249,14 +282,14 @@ int setLoopDelaysFromCloud(const char *delays)
 
     while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
-        LoopDelayDefaultCount[index] = parseDecimal(&buffptr); // Set the default loop delays and update the variables;
+        loopDelayDefaultCount[index] = parseDecimal(&buffptr); // Set the default loop delays and update the variables;
         // Log.info("LoopDelayDefaultCount[%d]=%d\n", index, LoopDelayDefaultCount[index]);
         // Log.info("%s\n", buffptr);
         // Log.info("%u\n", LoopDelayDefaultCount[index] );
         index++;
     }
 
-    setLoopDelays(); // Set the working loop delays
+    setDefaultLoopDelays(); // Set the working loop delays
 
     Log.info("Loop Delay updated to: " + d);
     loopDelayData = String("{") +
@@ -271,7 +304,7 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
 {
     String loopDelayData;
     char tempchar[SIZE_OF_DELAY_ARRAY];
-    int index = 0;     // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
+    uint index = 0;    // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
     String d = params; // makes it easier to log and publish
 
     strcpy(tempchar, params); // need an mutable copy
@@ -312,12 +345,12 @@ int cloudResetFunction(String command)
     return 0;
 }
 
-void setLoopDelays()
+void setDefaultLoopDelays()
 {
-    int i = 0;
+    uint i = 0;
 
     for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
-        lm[i]->loopDelay = LoopDelayDefaultCount[i];
+        lm[i]->loopDelay = loopDelayDefaultCount[i];
 }
 
 int setBlynkBatchModeSize(const char *data)
@@ -325,11 +358,11 @@ int setBlynkBatchModeSize(const char *data)
     if (strlen(data) == 0)
         return -1;
 
-    BlynkBatchModeSize = atol(data);
+    blynkBatchModeSize = atol(data);
 
-    Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", BlynkBatchModeSize));
+    Serial.printlnf("BlynkBatchModeSize updated to: " + String::format("%u", blynkBatchModeSize));
     String publishData = String("{") +
-                         String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", BlynkBatchModeSize) +
+                         String("\"BlynkBatchModeSize\":") + String("\"") + String::format("%u", blynkBatchModeSize) +
                          String("\"}");
     Particle.publish("BlynkBatchModeSize updated", publishData, 600, PRIVATE);
     return 0;
@@ -403,7 +436,7 @@ int setAllSensorDebugPublishState(const char *params)
 
     OnOff = (bool)parseDecimal(&buffptr);
 
-    int i;
+    uint i;
     for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
         lm[i]->setDebug(OnOff);
 

@@ -2,11 +2,11 @@
 #define LEVELWATCHER_H 
 #define STATUSLED D7 //D0, D1 used fro I2C,  D5 for RS85 interface, D6 and D7 used for debugger. Set D7 for release and use D4 when WIP and e.g. using debugger
 
-const int NUMBER_OF_MEASUREMENTS = 9;  //number of sensors to scan
-const int SIZE_OF_DELAY_ARRAY = NUMBER_OF_MEASUREMENTS * 6 + 10; // That should do it :)
-const int DEFAULT_BATCH_COUNT = 20; // xxx start with 2 - 100; // Default batch count when batching data for Blynk.
+const uint NUMBER_OF_MEASUREMENTS = 9;  //number of sensors to scan
+const uint SIZE_OF_DELAY_ARRAY = NUMBER_OF_MEASUREMENTS * 6 + 10; // That should do it :)
+const uint DEFAULT_BATCH_COUNT = 20; // xxx start with 2 - 100; // Default batch count when batching data for Blynk.
 const uint DIFFERENTIAL_DELAY_IN_MS = 1000;  //Needs a bit of help to allow for network routing issues etc. Set back to tiny amount as bursts are allowed.
-
+const uint NUMBER_OF_SCHEDULES = 3;  //Max number of timing schedules 
 //Sensor types enum
 
 #define SENSOR_0 "LS";
@@ -37,7 +37,7 @@ const int ZEROING_COMPLETED_BLINK_FREQUENCY = 5;
 
 extern JsonParserStatic<256, 20> parser;
 extern String blynkBatchModeData;
-extern u_int BlynkBatchModeSize;
+extern uint blynkBatchModeSize;
 
 #endif
 
