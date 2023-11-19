@@ -1,5 +1,5 @@
 // Version info
-// This is branch "master" ... and is WIP // chdcking install on MS Laptop 2nd stage 3rd stage
+// This is branch "master" ... and is WIP // synching
 // synching
 #include "Particle.h"
 #include "JsonParserGeneratorRK.h"
@@ -221,9 +221,9 @@ void loop()
         // Check for active schedules...
         for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber++)
         {
-            if (schedules[scheduleNumber, 0] > 0) // check schedules is active i.e. start time > 0
+            if (schedules[scheduleNumber][0] > 0) // check schedules is active i.e. start time > 0
             {
-                schedules[scheduleNumber, 0] - Time.now() < 10
+                schedules[scheduleNumber][0] - Time.now() < timeNowAsDecimal()
             }
         }
     }
@@ -246,7 +246,7 @@ float h = Time.hour(t);
 float m = Time.minute(t);
 float s = Time.second(t);
 
-return h + m/60 + s/3600;
+return (h + m/60 + s/3600) * 1000.0;  // in ms
 
 }
 
