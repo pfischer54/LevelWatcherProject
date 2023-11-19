@@ -218,8 +218,8 @@ void loop()
         setDefaultLoopDelays();          // Time is up, reset loop delays to default values
         loopDelayTimeout = uint64_t_max; // reset
 
-        // Check for active schedules...
-        for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber++)
+        // Check for an active schedule...
+        for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber ++)
         {
             if (schedules[scheduleNumber][0] > 0) // check schedules is active i.e. start time > 0
             {
