@@ -34,17 +34,18 @@ int setBlynkBatchModeSize(const char *data);
 int setBlynkPinToBatchMode(const char *data);
 int setSensorDebugPublishState(const char *data);
 int setAllSensorDebugPublishState(const char *data);
-
+float timeNowAsDecimal();
 void setup();
 void loop();
-void setDefaultLoopDelays();
+void setDefaultLoopDelaysWorkingSet();
+void setLoopDelaysWithRowFromSchedules(uint index);
 
 // globals
 
 // Retained values
 retained uint loopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
 retained uint blynkBatchModeSize = DEFAULT_BATCH_COUNT;
-retained float schedules[NUMBER_OF_SCHEDULES][NUMBER_OF_MEASUREMENTS + 2] = {{-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; // Batch size if batching data for Blynk
+retained float schedules[NUMBER_OF_SCHEDULES][NUMBER_OF_MEASUREMENTS + 2] = {{21.5, 60, -1, -1, 2, -1, -1, -1, -1, -1, 1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
 //"normal"
 uint64_t uint64_t_max = std::numeric_limits<uint64_t>::max();
@@ -55,6 +56,7 @@ unsigned long loopDelayTimeout = uint64_t_max; // This will be the time for whic
 int startupLoopsCompleted = 0;
 bool firstTimeThrough = true;
 bool runningASchedule = false;
+float tInt;
 
 // RS485 setup
 // Define the main node object. This controls the RS485 interface for all the slaves.
@@ -67,7 +69,7 @@ ModbusMaster node5 = ModbusMaster();
 // From ncd.io: at 4mA the raw ADC value will be around 6430 - at 20mA the raw ADC value will be around 32154
 LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 2700, 0.0777484, false, "%.1f");
 LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_101H, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 0.1, false, "%.1f", SERIAL_1); // STARTING_REG_0 for running
 // Pressrising pump state
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, "%.0g", SERIAL_1); // removed:  | PUBLISH_2_AZURE_STREAM  to save data :)
 // FLow and volume
@@ -132,10 +134,10 @@ void setup()
     node1.enableTXpin(D5); // D5 is the pin used to control the TX enable pin of RS485 driver for Serial1
     node5.enableTXpin(D2); // D2 is the pin used to control the TX enable pin of RS485 driver for Serial5
 
-    setDefaultLoopDelays(); // Set the delays from power on defaults or persisted values.
+    setDefaultLoopDelaysWorkingSet(); // Set the delays from power on defaults or persisted values.
 
-    //set time zone
-    Time.zone(2);
+    // set time zone to UTC  (=2 for Grece)
+    Time.zone(0);
 
     Log.info("Setup Completed");
 }
@@ -151,7 +153,7 @@ void loop()
 
     if (firstTimeThrough)
     {
-        Particle.publish("Startup2", " V2023-10-28", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+        Particle.publish("Startup2", "V2024-04-25.1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
         firstTimeThrough = false;
     }
     if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
@@ -181,7 +183,7 @@ void loop()
     // Keep waiting
     {
 
-        Log.info("Startup Loop: Looping");
+        Log.info("Startup Loop: Looping at time %f", timeNowAsDecimal());
         blinkLong(STARTUP_BLINK_FREQUENCY); // Let know i'm waiting...
         delay(STARTUP_LOOP_DELAY);          // Wait a bit to  let system run
         startupLoopsCompleted++;
@@ -194,12 +196,12 @@ void loop()
 
     for (sensorCount = 0; sensorCount < NUMBER_OF_MEASUREMENTS; sensorCount++)
     {
-        aSensorRead = false;                                                                                     // reset
-        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelay) && (lm[sensorCount]->loopDelay > 0)) // Set delay to -1 to disable measurement
+        aSensorRead = false;                                                                                                         // reset
+        if ((lm[sensorCount]->loopDelayCount >= lm[sensorCount]->loopDelayWorkingSet) && (lm[sensorCount]->loopDelayWorkingSet > 0)) // Set delay to -1 to disable measurement
         {
             // xxx
-            Serial.print(Time.hour());
-            Serial.print(Time.minute());
+
+            Log.info("Time sensor read - H: %d M: %d", Time.hour(), Time.minute());
             lm[sensorCount]->measureReading();
             blinkVeryShort(OUTER_LOOP_BLINK_FREQUENCY);
             // delay(1s); // Delay a tiny bit so that we can see the outer look blink distincly
@@ -213,17 +215,34 @@ void loop()
 
     blinkShort(INNER_LOOP_BLINK_FREQUENCY); // Signal normal running loop
 
-    if (System.millis() > loopDelayTimeout && loopDelayTimeout != uint64_t_max)
+    if (System.millis() > loopDelayTimeout && loopDelayTimeout != uint64_t_max) // TODO second condition redundant
     {
-        setDefaultLoopDelays();          // Time is up, reset loop delays to default values
-        loopDelayTimeout = uint64_t_max; // reset
-
-        // Check for an active schedule...
-        for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber ++)
+        setDefaultLoopDelaysWorkingSet(); // Time is up, reset loop delays to default values
+        loopDelayTimeout = uint64_t_max;  // reset
+    }
+    // Check for an active schedule...
+    for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber++)
+    {
+        if (schedules[scheduleNumber][0] >= 0) // check schedules is active i.e. start time  (in decimal hours) >= 0
         {
-            if (schedules[scheduleNumber][0] > 0) // check schedules is active i.e. start time > 0
+            tInt = timeNowAsDecimal() - schedules[scheduleNumber][0]; // tInt is difference between time now in UTC and start time for this schedule in UTC in decimal hours.
+            //Log.info("tint: %f", tInt);
+            if (tInt >= 0)
             {
-                schedules[scheduleNumber][0] - Time.now() < timeNowAsDecimal()
+                if (tInt < (schedules[scheduleNumber][0] + (schedules[scheduleNumber][1] / 60)) && !runningASchedule)
+                // timeout is in minutes (parameter 2)
+                // Time now is > start of this schedule and time now < end of schedule and not running a schedule, then we are at a new schedule
+                {
+                    setLoopDelaysWithRowFromSchedules(scheduleNumber);
+                    runningASchedule = true; // Set this schedule...
+                    Log.info("Schedule set: %d", scheduleNumber);
+                    break; // dont check any more schedules
+                }
+                else if ((tInt >= schedules[scheduleNumber][0] + (schedules[scheduleNumber][1] / 60)) && runningASchedule)
+                {
+                    runningASchedule = false;
+                    Log.info("Schedule reset: %d", scheduleNumber);
+                }
             }
         }
     }
@@ -238,16 +257,12 @@ void startupHandler(const char *event, const char *data)
 
 //***************************************//
 
-
 float timeNowAsDecimal()
 {
-time32_t t = Time.local();
-float h = Time.hour(t);
-float m = Time.minute(t);
-float s = Time.second(t);
-
-return (h + m/60 + s/3600) * 1000.0;  // in ms
-
+    float h = Time.hour();
+    float m = Time.minute();
+    float s = Time.second();
+    return (h + m / 60 + s / 3600); // Time in decimal hours
 }
 
 // A function that takes a pointer to a string, a pointer to an end character
@@ -289,7 +304,7 @@ int setLoopDelaysFromCloud(const char *delays)
         index++;
     }
 
-    setDefaultLoopDelays(); // Set the working loop delays
+    setDefaultLoopDelaysWorkingSet(); // Set the working loop delays
 
     Log.info("Loop Delay updated to: " + d);
     loopDelayData = String("{") +
@@ -297,6 +312,35 @@ int setLoopDelaysFromCloud(const char *delays)
                     String("\"}");
     Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
     return 0;
+}
+
+void setLoopDelaysWithRowFromSchedules(uint scheduleNumber)
+{
+    if (scheduleNumber < 0 || scheduleNumber >= NUMBER_OF_SCHEDULES)
+    {
+        Log.error("Invalid scheduleNumber");
+        return;
+    }
+
+    for (uint i = 0; i < NUMBER_OF_MEASUREMENTS + 2; i++)
+    {
+        switch (i)
+        {
+        case 0:
+            break;
+        case 1:
+        {
+            loopDelayTimeout = schedules[scheduleNumber][1] * 1000 * 60 + +System.millis();  //timeout given in minutes, convert to ms
+            Log.info("loopDelayTimeout=%lu\n", loopDelayTimeout);
+            break;
+        }
+        default:
+        {
+            lm[i - 2]->loopDelayWorkingSet = schedules[scheduleNumber][i]; // Set working set loop delay
+            Log.info("lm[%d]->loopDelay=%d\n", i - 2, lm[i - 2]->loopDelayWorkingSet);
+        }
+        }
+    }
 }
 
 int setLoopDelaysWithTimeoutFromCloud(const char *params)
@@ -314,17 +358,19 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
     if (strlen(params) == 0)
         return -1;
 
-    while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
+    while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS + 1))
+
     {
         if (index == 0) // initial index
         {
+            // loopDelayTimeout is in ms, param is in minutes so convert to ms
             loopDelayTimeout = (parseDecimal(&buffptr) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
-            Log.info("LoopDelayTimeout: %lu\n", loopDelayTimeout);
+            Log.info("LoopDelayTimeout=%lu\n", loopDelayTimeout);
         }
         else
         {
-            lm[index - 1]->loopDelay = (int)parseDecimal(&buffptr); // Parse the other parameters and update the variables;
-            Log.info("lm[%d]->loopDelay=%d\n", index - 1, lm[index - 1]->loopDelay);
+            lm[index - 1]->loopDelayWorkingSet = (int)parseDecimal(&buffptr); // Parse the other parameters and update the variables;
+            Log.info("lm[%d]->loopDelay=%d\n", index - 1, lm[index - 1]->loopDelayWorkingSet);
         }
         index++;
     }
@@ -333,7 +379,7 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
     loopDelayData = String("{") +
                     String("\"LoopDelay\": ") + d +
                     String("\"}");
-    Particle.publish("Loop Delay updated", loopDelayData, 600, PRIVATE);
+    Particle.publish("Loop Delays updated", loopDelayData, 600, PRIVATE);
     return 0;
 }
 
@@ -345,12 +391,12 @@ int cloudResetFunction(String command)
     return 0;
 }
 
-void setDefaultLoopDelays()
+void setDefaultLoopDelaysWorkingSet()
 {
     uint i = 0;
 
     for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
-        lm[i]->loopDelay = loopDelayDefaultCount[i];
+        lm[i]->loopDelayWorkingSet = loopDelayDefaultCount[i];
 }
 
 int setBlynkBatchModeSize(const char *data)

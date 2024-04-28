@@ -20,7 +20,8 @@
 			"xstring": "cpp",
 			"xutility": "cpp",
 			"initializer_list": "cpp",
-			"xiosbase": "cpp"
+			"xiosbase": "cpp",
+			"limits": "cpp"
 		},
 		"particle.firmwareVersion": "",
 		"particle.targetPlatform": "electron",

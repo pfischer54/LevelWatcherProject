@@ -48,7 +48,7 @@ public:
 
     String sensorId = {"Unkown"};
     int loopDelayCount = 0;
-    int loopDelay = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
+    int loopDelayWorkingSet = INNER_LOOP_DELAY_COUNT_DEFAULT; // TODO: need to change this for production version and use retained variable
     bool blynkBatchMode = false;                    // Send this measurement to Blynk as a batch
 
     virtual void measureReading(void) = 0;
