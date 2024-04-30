@@ -28,6 +28,8 @@ SerialLogHandler logHandler(LOG_LEVEL_INFO);
 int measureZeroOffset(String command);
 void startupHandler(const char *event, const char *data);
 int setLoopDelaysFromCloud(const char *delays);
+int setSchedule(const char *delays);
+int resetSchedulesToDefault(const char *params);
 int setLoopDelaysWithTimeoutFromCloud(const char *delays);
 int cloudResetFunction(String command);
 int setBlynkBatchModeSize(const char *data);
@@ -45,7 +47,7 @@ void setLoopDelaysWithRowFromSchedules(uint index);
 // Retained values
 retained uint loopDelayDefaultCount[NUMBER_OF_MEASUREMENTS] = {50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000}; // Default cold start delay settings
 retained uint blynkBatchModeSize = DEFAULT_BATCH_COUNT;
-retained float schedules[NUMBER_OF_SCHEDULES][NUMBER_OF_MEASUREMENTS + 2] = {{21.5, 60, -1, -1, 2, -1, -1, -1, -1, -1, 1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
+retained float schedules[NUMBER_OF_SCHEDULES][NUMBER_OF_MEASUREMENTS + 2] = {{-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}, {-1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
 //"normal"
 uint64_t uint64_t_max = std::numeric_limits<uint64_t>::max();
@@ -110,6 +112,8 @@ void setup()
     Particle.function("CloudResetFunction", cloudResetFunction);
     Particle.function("SetLoopDelay", setLoopDelaysFromCloud);
     Particle.function("SetLoopDelayWithTimeout", setLoopDelaysWithTimeoutFromCloud);
+    Particle.function("SetSchedule", setSchedule);
+    Particle.function("ResetSchedulesToDefault", resetSchedulesToDefault);
     Particle.function("SetBlynkBatchModeSize", setBlynkBatchModeSize);
     Particle.function("SetBlynkPinToBatchMode", setBlynkPinToBatchMode);
     Particle.function("SetSensorDebugPublishState", setSensorDebugPublishState);
@@ -153,7 +157,7 @@ void loop()
 
     if (firstTimeThrough)
     {
-        Particle.publish("Startup2", "V2024-04-25.1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+        Particle.publish("Startup2", "V2024-04-30.1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
         firstTimeThrough = false;
     }
     if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
@@ -219,6 +223,12 @@ void loop()
     {
         setDefaultLoopDelaysWorkingSet(); // Time is up, reset loop delays to default values
         loopDelayTimeout = uint64_t_max;  // reset
+        Log.info("Loop Delay Set back to working set");
+        if (runningASchedule)
+        {
+            runningASchedule = false;
+            Log.info("Schedule reset: %d", scheduleNumber);
+        }
     }
     // Check for an active schedule...
     for (scheduleNumber = 0; scheduleNumber < NUMBER_OF_SCHEDULES; scheduleNumber++)
@@ -226,10 +236,10 @@ void loop()
         if (schedules[scheduleNumber][0] >= 0) // check schedules is active i.e. start time  (in decimal hours) >= 0
         {
             tInt = timeNowAsDecimal() - schedules[scheduleNumber][0]; // tInt is difference between time now in UTC and start time for this schedule in UTC in decimal hours.
-            //Log.info("tint: %f", tInt);
+            Log.info("tint: %f", tInt);
             if (tInt >= 0)
             {
-                if (tInt < (schedules[scheduleNumber][0] + (schedules[scheduleNumber][1] / 60)) && !runningASchedule)
+                if (tInt < (schedules[scheduleNumber][1] / 60.0) && !runningASchedule)
                 // timeout is in minutes (parameter 2)
                 // Time now is > start of this schedule and time now < end of schedule and not running a schedule, then we are at a new schedule
                 {
@@ -237,11 +247,6 @@ void loop()
                     runningASchedule = true; // Set this schedule...
                     Log.info("Schedule set: %d", scheduleNumber);
                     break; // dont check any more schedules
-                }
-                else if ((tInt >= schedules[scheduleNumber][0] + (schedules[scheduleNumber][1] / 60)) && runningASchedule)
-                {
-                    runningASchedule = false;
-                    Log.info("Schedule reset: %d", scheduleNumber);
                 }
             }
         }
@@ -265,10 +270,28 @@ float timeNowAsDecimal()
     return (h + m / 60 + s / 3600); // Time in decimal hours
 }
 
+// This function takes a pointer to a string and parses the beginning of the string as a float.
+// It then skips any commas or spaces following the number and updates the string pointer to point to the next character after the skipped characters.
+// The parsed float is returned.
+
+float parseFloat(char **str)
+{
+    char *end;
+    double result = strtod(*str, &end); // Parse the string as a float number
+
+    while (*end == ',' || *end == ' ') // Skip any commas or spaces
+    {
+        end++;
+    }
+
+    *str = end; // Update to point to next token
+    return result;
+}
+
 // A function that takes a pointer to a string, a pointer to an end character
-// It parses the string as a decimal number and returns it
+// It parses the string as a  long integer number and returns it
 // It also updates the end character
-long parseDecimal(char **str)
+long parseLongInt(char **str)
 {
     char *end;
     long result = strtol(*str, &end, 10); // Parse the string as a decimal number
@@ -280,6 +303,15 @@ long parseDecimal(char **str)
     return result;
 }
 
+/**
+ * @brief Set loop delay count from cloud
+ *
+ * This function takes a string of comma-separated delay values and sets the loop delay count accordingly.
+ * The string is parsed as a series of long integers, each representing a delay count.
+ *
+ * @param delays A string of comma-separated delay values.
+ * @return int Returns 0 if successful, -1 if the input string is empty.
+ */
 int setLoopDelaysFromCloud(const char *delays)
 // Set loop delay count
 {
@@ -297,7 +329,7 @@ int setLoopDelaysFromCloud(const char *delays)
 
     while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS))
     {
-        loopDelayDefaultCount[index] = parseDecimal(&buffptr); // Set the default loop delays and update the variables;
+        loopDelayDefaultCount[index] = parseLongInt(&buffptr); // Set the default loop delays and update the variables;
         // Log.info("LoopDelayDefaultCount[%d]=%d\n", index, LoopDelayDefaultCount[index]);
         // Log.info("%s\n", buffptr);
         // Log.info("%u\n", LoopDelayDefaultCount[index] );
@@ -330,7 +362,7 @@ void setLoopDelaysWithRowFromSchedules(uint scheduleNumber)
             break;
         case 1:
         {
-            loopDelayTimeout = schedules[scheduleNumber][1] * 1000 * 60 + +System.millis();  //timeout given in minutes, convert to ms
+            loopDelayTimeout = schedules[scheduleNumber][1] * 1000 * 60 + System.millis(); // timeout given in minutes, convert to ms
             Log.info("loopDelayTimeout=%lu\n", loopDelayTimeout);
             break;
         }
@@ -341,6 +373,67 @@ void setLoopDelaysWithRowFromSchedules(uint scheduleNumber)
         }
         }
     }
+}
+
+int resetSchedulesToDefault(const char *params)
+{
+    for (uint i = 0; i < NUMBER_OF_SCHEDULES; i++)
+    {
+        for (uint j = 0; j < NUMBER_OF_MEASUREMENTS + 2; j++)
+        {
+            if (j == 1)
+            {
+                schedules[i][j] = 0;
+            }
+            else
+            {
+                schedules[i][j] = -1;
+            }
+        }
+    }
+     Particle.publish("Schedules reset", NULL, 600, PRIVATE);
+    return 0;
+}
+
+int setSchedule(const char *params)
+// Set loop delay count with a given time and then revert to previous
+{
+    String loopDelayData;
+    char tempchar[SIZE_OF_DELAY_ARRAY];
+    uint index = 0;    // sensor delay index - initialize to -1 as call to parseDecimal increments index before first use
+    String d = params; // makes it easier to log and publish
+
+    strcpy(tempchar, params); // need an mutable copy
+    char *buffptr;            // probably redundant but just for now xx
+    buffptr = tempchar;       // probably redundant but just for now xx
+    uint sn;                  // shcedule number
+
+    if (strlen(params) == 0)
+        return -1;
+
+    while ((*buffptr) && (index < NUMBER_OF_MEASUREMENTS + 3))
+
+    {
+        if (index == 0) // initial index
+        {
+            // loopDelayTimeout is in ms, param is in minutes so convert to ms
+            sn = parseLongInt(&buffptr); // Parse the first parameter and update the variables
+            Log.info("Updating schedule=%d\n", sn);
+        }
+        else
+        {
+            schedules[sn][index - 1] = (float)parseFloat(&buffptr); // Parse the other parameters and update the variables;
+            Log.info("schedules[%d][%d]=%f\n", sn, index - 1, schedules[sn][index - 1]);
+        }
+        index++;
+    }
+
+    Log.info("Schedule updated to: " + d);
+    loopDelayData = String("{") +
+                    String("\"Schedult\": ") + d +
+                    String("\"}");
+    Particle.publish("Schedule updated", loopDelayData, 600, PRIVATE);
+    return 0;
 }
 
 int setLoopDelaysWithTimeoutFromCloud(const char *params)
@@ -364,12 +457,12 @@ int setLoopDelaysWithTimeoutFromCloud(const char *params)
         if (index == 0) // initial index
         {
             // loopDelayTimeout is in ms, param is in minutes so convert to ms
-            loopDelayTimeout = (parseDecimal(&buffptr) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
+            loopDelayTimeout = (parseLongInt(&buffptr) * 1000 * 60) + System.millis(); // Parse the first parameter and update the variables
             Log.info("LoopDelayTimeout=%lu\n", loopDelayTimeout);
         }
         else
         {
-            lm[index - 1]->loopDelayWorkingSet = (int)parseDecimal(&buffptr); // Parse the other parameters and update the variables;
+            lm[index - 1]->loopDelayWorkingSet = (int)parseLongInt(&buffptr); // Parse the other parameters and update the variables;
             Log.info("lm[%d]->loopDelay=%d\n", index - 1, lm[index - 1]->loopDelayWorkingSet);
         }
         index++;
@@ -427,8 +520,8 @@ int setBlynkPinToBatchMode(const char *params)
     if (strlen(params) == 0)
         return -1;
 
-    measurementIndex = parseDecimal(&buffptr);
-    OnOff = (bool)parseDecimal(&buffptr);
+    measurementIndex = parseLongInt(&buffptr);
+    OnOff = (bool)parseLongInt(&buffptr);
 
     if (measurementIndex < NUMBER_OF_MEASUREMENTS)
         lm[measurementIndex]->blynkBatchMode = OnOff;
@@ -454,8 +547,8 @@ int setSensorDebugPublishState(const char *params)
     if (strlen(params) == 0)
         return -1;
 
-    measurementIndex = parseDecimal(&buffptr);
-    OnOff = (bool)parseDecimal(&buffptr);
+    measurementIndex = parseLongInt(&buffptr);
+    OnOff = (bool)parseLongInt(&buffptr);
 
     if (measurementIndex < NUMBER_OF_MEASUREMENTS)
         lm[measurementIndex]->setDebug(OnOff);
@@ -480,7 +573,7 @@ int setAllSensorDebugPublishState(const char *params)
     if (strlen(params) == 0)
         return -1;
 
-    OnOff = (bool)parseDecimal(&buffptr);
+    OnOff = (bool)parseLongInt(&buffptr);
 
     uint i;
     for (i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
