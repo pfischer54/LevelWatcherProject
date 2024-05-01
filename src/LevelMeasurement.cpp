@@ -156,7 +156,7 @@ void LevelMeasurement::publishLevel(int reading)
             {
                 publish(reading); // publish one more reading
                 oneExtraSlice = false;
-                diffHeartbeatReadingCount = 0; // we published so reset count
+                publishedAReading = true;      // we published
             }
         }
         else
@@ -178,6 +178,8 @@ void LevelMeasurement::publishLevel(int reading)
             else
                 diffHeartbeatReadingCount++; //  we did not publish a reading so increment count
         }
+        else
+            diffHeartbeatReadingCount = 0; // we published so reset count
     }
 
     previousReading = reading; // update reading;

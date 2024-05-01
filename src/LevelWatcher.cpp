@@ -391,7 +391,7 @@ int resetSchedulesToDefault(const char *params)
             }
         }
     }
-     Particle.publish("Schedules reset", NULL, 600, PRIVATE);
+    Particle.publish("Schedules reset", NULL, 600, PRIVATE);
     return 0;
 }
 
@@ -430,7 +430,7 @@ int setSchedule(const char *params)
 
     Log.info("Schedule updated to: " + d);
     loopDelayData = String("{") +
-                    String("\"Schedult\": ") + d +
+                    String("\"Schedule\": ") + d +
                     String("\"}");
     Particle.publish("Schedule updated", loopDelayData, 600, PRIVATE);
     return 0;
