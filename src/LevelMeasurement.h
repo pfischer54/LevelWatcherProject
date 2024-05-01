@@ -80,7 +80,7 @@ protected:
     bool publishDebugData = false;
 
 private:
-    void publish(int);
+    void publish(int, bool);
 };
 
 #endif

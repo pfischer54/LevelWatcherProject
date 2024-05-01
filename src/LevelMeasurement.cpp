@@ -45,7 +45,7 @@ void LevelMeasurement::Add2BlynkBatchModeData(float reading)
     strcat(blynkBatchModeData, bbmd); // add this to the main buffer
 }
 
-void LevelMeasurement::publish(int reading)
+void LevelMeasurement::publish(int reading, bool forceBlynkPublish)
 {
     CellularHelperRSSIQualResponse rssiQual = CellularHelper.getRSSIQual();
     // TODO:
@@ -110,7 +110,7 @@ void LevelMeasurement::publish(int reading)
         {
             Add2BlynkBatchModeData(scaledReading); // Add reading it to the string
 
-            if (blynkBatchModeCount < blynkBatchModeSize - 1)
+            if ((blynkBatchModeCount < blynkBatchModeSize - 1)  && (!forceBlynkPublish))
             {
                 blynkBatchModeCount++;
             }
@@ -144,7 +144,7 @@ void LevelMeasurement::publishLevel(int reading)
 
     if (firstTimeThrough || !differential)
     {
-        publish(reading);
+        publish(reading, false); // publish reading
         firstTimeThrough = false;
         publishedAReading = true; // we published
     }
@@ -154,16 +154,16 @@ void LevelMeasurement::publishLevel(int reading)
         {
             if (oneExtraSlice) // send last reading one more time in case of timing skew, lost readings, etc.
             {
-                publish(reading); // publish one more reading
+                publish(reading, false); // publish one more reading
                 oneExtraSlice = false;
                 publishedAReading = true;      // we published
             }
         }
         else
         {
-            publish(previousReading);        // First publish previous reading, i.e. reading valid up until this point in time
+            publish(previousReading, false);        // First publish previous reading, i.e. reading valid up until this point in time
             delay(DIFFERENTIAL_DELAY_IN_MS); // wait 1s so as not to overload particle cloud
-            publish(reading);                // Now publish reading following transition to new reading.
+            publish(reading, false);                // Now publish reading following transition to new reading.
             oneExtraSlice = true;            // we will send out one more reading to deal with time skews and missed packets/
             publishedAReading = true;        // we published
         }
@@ -172,7 +172,7 @@ void LevelMeasurement::publishLevel(int reading)
         {
             if (diffHeartbeatReadingCount >= DIFFERENTIAL_READING_HEARTBEAT_COUNT)
             {
-                publish(reading);              // publish a heartbeat reading
+                publish(reading, true);              // publish a heartbeat reading and force to flush blynk data buffer.
                 diffHeartbeatReadingCount = 0; // reset count
             }
             else
