@@ -52,7 +52,7 @@ public:
     bool blynkBatchMode = false;                    // Send this measurement to Blynk as a batch
 
     virtual void measureReading(void) = 0;
-    void Add2BlynkBatchModeData(float);
+    void Add2BlynkBatchModeData(float, bool);
     void setDebug(bool);
 
 protected:

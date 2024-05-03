@@ -25,7 +25,7 @@ LevelMeasurement::LevelMeasurement(String sid, String bpid, boolean diff, uint s
     blynkBatchmodeReadingFormatString = bmfs;
 }
 
-void LevelMeasurement::Add2BlynkBatchModeData(float reading)
+void LevelMeasurement::Add2BlynkBatchModeData(float reading, bool forceBlynkPublish)
 {
     if (blynkBatchModeCount == 0) // Add first open bracket
     {
@@ -41,7 +41,7 @@ void LevelMeasurement::Add2BlynkBatchModeData(float reading)
     strcat(formatString, "]%s");
     char bbmd[100] = {0};
 
-    snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount < blynkBatchModeSize - 1) ? "," : "]");
+   snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount >= blynkBatchModeSize - 1) || forceBlynkPublish ? "]" : ",");
     strcat(blynkBatchModeData, bbmd); // add this to the main buffer
 }
 
@@ -108,18 +108,18 @@ void LevelMeasurement::publish(int reading, bool forceBlynkPublish)
             Particle.publish("BlynkWrite" + blynkPinId, data, PRIVATE);
         else
         {
-            Add2BlynkBatchModeData(scaledReading); // Add reading it to the string
+            Add2BlynkBatchModeData(scaledReading, forceBlynkPublish); // Add reading it to the string
 
-            if ((blynkBatchModeCount < blynkBatchModeSize - 1)  && (!forceBlynkPublish))
+            if ((blynkBatchModeCount >= blynkBatchModeSize - 1)  || (forceBlynkPublish))  // Off we go - flush the buffer...
             {
-                blynkBatchModeCount++;
-            }
-            else // Off we go - flush the buffer...
-            {
-                Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
+              Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
                 Log.info("%s\n", blynkBatchModeData);
                 blynkBatchModeData[0] = 0; // Clear data string
                 blynkBatchModeCount = 0;   // reset count
+            }
+            else
+            {
+                  blynkBatchModeCount++;
             }
         }
     }
