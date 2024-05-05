@@ -41,7 +41,7 @@ void LevelMeasurement::Add2BlynkBatchModeData(float reading, bool forceBlynkPubl
     strcat(formatString, "]%s");
     char bbmd[100] = {0};
 
-   snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount >= blynkBatchModeSize - 1) || forceBlynkPublish ? "]" : ",");
+    snprintf(bbmd, sizeof(bbmd), formatString, readingTime, reading, (blynkBatchModeCount >= blynkBatchModeSize - 1) || forceBlynkPublish ? "]" : ",");
     strcat(blynkBatchModeData, bbmd); // add this to the main buffer
 }
 
@@ -110,16 +110,16 @@ void LevelMeasurement::publish(int reading, bool forceBlynkPublish)
         {
             Add2BlynkBatchModeData(scaledReading, forceBlynkPublish); // Add reading it to the string
 
-            if ((blynkBatchModeCount >= blynkBatchModeSize - 1)  || (forceBlynkPublish))  // Off we go - flush the buffer...
+            if ((blynkBatchModeCount >= blynkBatchModeSize - 1) || (forceBlynkPublish)) // Off we go - flush the buffer...
             {
-              Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
+                Particle.publish("BlynkBatchWrite" + blynkPinId, blynkBatchModeData, PRIVATE);
                 Log.info("%s\n", blynkBatchModeData);
                 blynkBatchModeData[0] = 0; // Clear data string
                 blynkBatchModeCount = 0;   // reset count
             }
             else
             {
-                  blynkBatchModeCount++;
+                blynkBatchModeCount++;
             }
         }
     }
@@ -156,14 +156,14 @@ void LevelMeasurement::publishLevel(int reading)
             {
                 publish(reading, false); // publish one more reading
                 oneExtraSlice = false;
-                publishedAReading = true;      // we published
+                publishedAReading = true; // we published
             }
         }
         else
         {
-            publish(previousReading, false);        // First publish previous reading, i.e. reading valid up until this point in time
+            publish(previousReading, false); // First publish previous reading, i.e. reading valid up until this point in time
             delay(DIFFERENTIAL_DELAY_IN_MS); // wait 1s so as not to overload particle cloud
-            publish(reading, false);                // Now publish reading following transition to new reading.
+            publish(reading, false);         // Now publish reading following transition to new reading.
             oneExtraSlice = true;            // we will send out one more reading to deal with time skews and missed packets/
             publishedAReading = true;        // we published
         }
@@ -172,7 +172,7 @@ void LevelMeasurement::publishLevel(int reading)
         {
             if (diffHeartbeatReadingCount >= DIFFERENTIAL_READING_HEARTBEAT_COUNT)
             {
-                publish(reading, true);              // publish a heartbeat reading and force to flush blynk data buffer.
+                publish(reading, true);        // publish a heartbeat reading and force to flush blynk data buffer.
                 diffHeartbeatReadingCount = 0; // reset count
             }
             else

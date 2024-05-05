@@ -147,6 +147,7 @@ void setup()
 }
 //
 // Main loop
+
 //
 void loop()
 {
@@ -157,7 +158,7 @@ void loop()
 
     if (firstTimeThrough)
     {
-        Particle.publish("Startup2", "V2024-05-03.1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
+        Particle.publish("Startup2", "V2024-05-04.1", 600, PRIVATE); // Device setup completed.  Publish/trigger this event as now ready to do any startup settings etc, currently NOOP.
         firstTimeThrough = false;
     }
     if ((System.millis() >= REBOOT_INTERVAL_IN_MS) || (startupLoopsCompleted > STARTUP_LOOPS))
