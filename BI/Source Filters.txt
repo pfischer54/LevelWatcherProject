@@ -1,2 +1,11 @@
 //** Filters for VS cloud explorer
 Timestamp lt datetime'2022-07-15T00:00:00Z'
+
+Timestamp lt datetime'2025-04-01T00:00:00Z'
+
+Timestamp lt datetime'2024-02-01T00:00:00Z'
+
+Timestamp ge datetime'2024-11-03T14:24:40.000Z' and Timestamp le datetime'2024-11-04T14:24:40.000Z' and SensorId eq 'LS'
+
+Timestamp ge datetime'2024-09-11T14:24:40.000Z' and Timestamp le datetime'2024-09-12T14:24:40.000Z' and SensorId eq 'LS'
+
