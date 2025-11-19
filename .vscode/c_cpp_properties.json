@@ -1,0 +1,51 @@
+{
+    "configurations": [
+        {
+            "name": "Particle",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/RunningAverage/src",
+                "${workspaceFolder}/lib/ModbusMaster/src",
+                "${workspaceFolder}/lib/Adafruit_ADS1015/src",
+                "${workspaceFolder}/lib/JsonParserGeneratorRK/src",
+                "${workspaceFolder}/lib/CellularHelper/src",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/user/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/user/libraries",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/wiring/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/shared",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/src/gcc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/services/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/communication/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/communication/src",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/system/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/shared/STM32/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/dynalib/inc",
+                "${userHome}/.particle/toolchains/gcc-arm/10.2.1/arm-none-eabi/include",
+                "${userHome}/.particle/toolchains/gcc-arm/10.2.1/arm-none-eabi/include/c++/10.2.1",
+                "${userHome}/.particle/toolchains/gcc-arm/10.2.1/arm-none-eabi/include/c++/10.2.1/arm-none-eabi"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/lib/RunningAverage/src",
+                    "${workspaceFolder}/lib/ModbusMaster/src",
+                    "${workspaceFolder}/lib/Adafruit_ADS1015/src",
+                    "${workspaceFolder}/lib/JsonParserGeneratorRK/src",
+                    "${workspaceFolder}/lib/CellularHelper/src"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "defines": [
+                "PARTICLE",
+                "PLATFORM_ID=10"
+            ],
+            "compilerPath": "${userHome}/.particle/toolchains/gcc-arm/10.2.1/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "gcc-x64",
+            "forcedInclude": []
+        }
+    ],
+    "version": 4
+}
