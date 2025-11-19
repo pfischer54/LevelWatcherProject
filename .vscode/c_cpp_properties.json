@@ -15,11 +15,18 @@
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/inc",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/shared",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/src/gcc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/src/electron",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/hal/src/stm32f2xx",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/services/inc",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/communication/inc",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/communication/src",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/system/inc",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/shared/STM32/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/STM32F2xx/SPARK_Firmware_Driver/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/STM32F2xx/STM32_USB_Device_Driver/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/STM32F2xx/STM32_StdPeriph_Driver/inc",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/STM32F2xx/CMSIS/Include",
+                "${userHome}/.particle/toolchains/deviceOS/3.3.1/platform/MCU/STM32F2xx/CMSIS/Device/ST/Include",
                 "${userHome}/.particle/toolchains/deviceOS/3.3.1/dynalib/inc",
                 "${userHome}/.particle/toolchains/gcc-arm/10.2.1/arm-none-eabi/include",
                 "${userHome}/.particle/toolchains/gcc-arm/10.2.1/arm-none-eabi/include/c++/10.2.1",
@@ -38,13 +45,30 @@
             },
             "defines": [
                 "PARTICLE",
-                "PLATFORM_ID=10"
+                "PLATFORM_ID=10",
+                "PLATFORM_THREADING=1",
+                "STM32_DEVICE",
+                "STM32F2XX",
+                "USE_STDPERIPH_DRIVER",
+                "DFU_BUILD_ENABLE",
+                "SYSTEM_VERSION_STRING=3.3.1",
+                "RELEASE_BUILD",
+                "INCLUDE_PLATFORM=1",
+                "PARTICLE_USER_MODULE",
+                "USER_FIRMWARE_IMAGE_SIZE=0x20000",
+                "USER_FIRMWARE_IMAGE_LOCATION=0x80A0000",
+                "MODULE_FUNCTION=5",
+                "MODULE_INDEX=1",
+                "MODULE_VERSION=6",
+                "MODULE_DEPENDENCY=4,2,3.3.1"
             ],
             "compilerPath": "${userHome}/.particle/toolchains/gcc-arm/10.2.1/bin/arm-none-eabi-gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x64",
-            "forcedInclude": []
+            "forcedInclude": [
+                "${workspaceFolder}/.vscode/particle_compat.h"
+            ]
         }
     ],
     "version": 4
