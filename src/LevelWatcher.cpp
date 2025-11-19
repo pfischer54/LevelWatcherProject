@@ -69,9 +69,9 @@ ModbusMaster node5 = ModbusMaster();
 // Tank levels
 
 // From ncd.io: at 4mA the raw ADC value will be around 6430 - at 20mA the raw ADC value will be around 32154
-LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 6227, 1.0512362, false, "%.1f");
-LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 2.241, false, "%.1f", SERIAL_1);
-LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 1.452, false, "%.1f", SERIAL_1); // STARTING_REG_0 for running
+LevelMeasurement_4to20mA lm0 = LevelMeasurement_4to20mA("LS", "V2", PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 6222, 1.828642513, false, "%.1f");
+LevelMeasurement_RS485_Analogue lm1 = LevelMeasurement_RS485_Analogue("MS", "V3", MODBUS_SLAVE_1, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 2.34033, false, "%.1f", SERIAL_1);
+LevelMeasurement_RS485_Analogue lm2 = LevelMeasurement_RS485_Analogue("TS", "V4", MODBUS_SLAVE_2, STARTING_REG_0, REGISTER_COUNT_1, PUBLISH_READINGS, PUBLISH_2_BLYNK | PUBLISH_2_AZURE_TABLE, 0, 1.6498, false, "%.1f", SERIAL_1); // STARTING_REG_0 for running
 // Pressrising pump state
 LevelMeasurement_RS485_Bit lm3 = LevelMeasurement_RS485_Bit("PP", "V1", MODBUS_SLAVE_3, STARTING_REG_081H, BIT_0, PUBLISH_DIFFERENTIAL_CHANGES, PUBLISH_2_BLYNK, true, "%.0g", SERIAL_1); // removed:  | PUBLISH_2_AZURE_STREAM  to save data :)
 // FLow and volume

@@ -1,5 +1,4 @@
 #include "Particle.h"
-#include <Adafruit_ADS1015.h>
 #include "LevelMeasurement.h"
 #include "LevelMeasurement_4to20mA.h"
 

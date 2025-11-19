@@ -1,7 +1,9 @@
 #ifndef UTILITYFUNCTION_H
-#define UTILITYFUCTIONS_H
+#define UTILITYFUNCTION_H
 
-#include "Adafruit_ADS1015.h"
+// Forward declarations
+class Adafruit_ADS1115;
+class LevelMeasurement;
 
 void sos();
 void blink(unsigned long onTime);
